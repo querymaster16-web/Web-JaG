@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JaG — Diseño y Desarrollo Web en A Coruña</title>
+  <meta name="description" content="Somos JaG. Hacemos webs para negocios de A Coruña y alrededores que no tienen página, o que llevan diez años con la misma." />
+  <link rel="icon" type="image/png" href="assets/logoJaGdorado.png" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Import map: resuelve el módulo "three" desde CDN -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <!-- GSAP + ScrollTrigger para animaciones de entrada y de scroll -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+  <!-- ============================================================
+       FONDO DECORATIVO — aurora dorada
+       (fijo, z-index negativo: siempre detrás de todo el contenido)
+       ============================================================ -->
+  <div class="bg-brand" aria-hidden="true">
+    <div class="bg-brand-glow bg-brand-glow--a"></div>
+    <div class="bg-brand-glow bg-brand-glow--b"></div>
+  </div>
+
+  <!-- ============================================================
+       LOGO REAL EN 3D (assets/IMG_0516.PNG) — Three.js
+       Sello de agua de fondo: aparece con fade-in al hacer scroll.
+       z-index negativo: siempre detrás de las secciones.
+       ============================================================ -->
+  <canvas id="logoScene" aria-hidden="true"></canvas>
+
+  <!-- ============================================================
+       LIENZO 3D (Three.js) — ocupa toda la pantalla, detrás de la UI
+       ============================================================ -->
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <!-- ============================================================
+       CABECERA / NAVEGACIÓN
+       ============================================================ -->
+  <header class="site-header" id="header">
+    <a class="brand" href="#" aria-label="JA — Inicio">
+      <span class="brand-letter">J</span><span class="brand-letter brand-letter--gold">A</span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navegación principal">
+      <ul>
+        <li><a href="#servicios">SERVICIOS</a></li>
+        <li><a href="#precios">PRECIOS</a></li>
+        <li><a href="#metodo">MÉTODO</a></li>
+        <li><a href="#nosotros">NOSOTROS</a></li>
+        <li><a href="#" class="cta-button js-open-modal">PEDIR PRESUPUESTO</a></li>
+      </ul>
+    </nav>
+
+    <!-- Botón hamburguesa (solo visible en móvil) -->
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- ============================================================
+       SECCIÓN HERO
+       ============================================================ -->
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero-content">
+        <p class="hero-tag">DISEÑO Y DESARROLLO WEB <span class="tag-dot">•</span> A CORUÑA</p>
+
+        <h1 class="hero-title">
+          Tu negocio ya existe.<br />
+          <em>Ahora que se note online.</em>
+        </h1>
+
+        <p class="hero-subtitle">
+          Somos Ja. Hacemos webs para negocios de A&nbsp;Coruña y alrededores
+          que no tienen página, o que llevan diez años con la misma.
+        </p>
+      </div>
+
+      <!-- Indicador inferior -->
+      <div class="hero-hint" id="heroHint">
+        <span class="hint-line" aria-hidden="true"></span>
+        <span class="hint-text">Interactúa con el entorno — scroll para descubrir</span>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECCIÓN "LUPA DE CÓDIGO" — reveal mask que sigue al cursor
+         Debajo hay código de verdad (a modo de broma/guiño); por
+         encima, una capa limpia con un agujero que sigue al ratón
+         (o al dedo, o al scroll en móvil) y deja ver lo de abajo.
+         ============================================================ -->
+    <section class="reveal-lab" id="revealLab">
+      <div class="reveal-lab-code" aria-hidden="true">
+        <div class="window-bar">
+          <span class="editorbar-dot editorbar-dot--red"></span>
+          <span class="editorbar-dot editorbar-dot--yellow"></span>
+          <span class="editorbar-dot editorbar-dot--green"></span>
+          <span class="window-bar-file">tu-web.jsx — JaG</span>
+        </div>
+        <pre><code><span class="tk-tag">&lt;section</span> <span class="tk-attr">class</span>=<span class="tk-str">"hero"</span> <span class="tk-attr">data-vibe</span>=<span class="tk-str">"a-coruña"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;h1</span> <span class="tk-attr">className</span>=<span class="tk-str">"text-6xl font-black tracking-tight"</span><span class="tk-tag">&gt;</span>
+    Tu negocio ya existe.
+  <span class="tk-tag">&lt;/h1&gt;</span>
+<span class="tk-tag">&lt;/section&gt;</span>
+
+.card {
+  display: grid;
+  gap: clamp(1rem, 2vw, 2rem);
+  <span class="tk-var">--glow</span>: <span class="tk-gold">var(--gold, #c9a24b)</span>;
+  transition: transform .3s cubic-bezier(.2,.8,.2,1);
+}
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">class</span>=<span class="tk-str">"px-6 py-3 rounded-full
+  bg-gold text-black font-bold
+  <span class="tk-gold">hover:animate-work-harder</span>
+  hover:scale-105 active:scale-95"</span><span class="tk-tag">&gt;</span>
+  Pedir presupuesto
+<span class="tk-tag">&lt;/button&gt;</span>
+
+<span class="tk-com">/* No toques esto, es el pegamento de la web */</span>
+<span class="tk-kw">function</span> <span class="tk-fn">keepEverythingAligned</span>() {
+  <span class="tk-kw">return</span> magic ?? coffee;
+}
+
+<span class="tk-kw">const</span> isThisWebAwesome = <span class="tk-gold">jaG</span>.<span class="tk-fn">makeItAwesome</span>();
+console.log(isThisWebAwesome); <span class="tk-com">// true, obviamente</span>
+
+<span class="tk-com">// Un día aprenderé Python... o no.</span>
+<span class="tk-kw">const</span> stack = [<span class="tk-str">"HTML"</span>, <span class="tk-str">"CSS"</span>, <span class="tk-str">"JS"</span>, <span class="tk-str">"café"</span>];
+
+@media (min-width: <span class="tk-num">768px</span>) {
+  .section { padding-inline: <span class="tk-num">4rem</span>; }
+}
+
+<span class="tk-tag">&lt;meta</span> <span class="tk-attr">name</span>=<span class="tk-str">"viewport"</span> <span class="tk-attr">content</span>=<span class="tk-str">"width=device-width"</span><span class="tk-tag">&gt;</span>
+<span class="tk-com">&lt;!-- si esto se rompe, culpa al caché --&gt;</span>
+
+.btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  <span class="tk-com">/* ese microsegundo de magia */</span>
+}
+
+<span class="tk-kw">export default function</span> <span class="tk-gold">JaG</span>() {
+  <span class="tk-kw">return</span> <span class="tk-tag">&lt;Awesome</span> <span class="tk-attr">negocio</span>={tuyo} <span class="tk-tag">/&gt;</span>;
+}
+
+git commit -m <span class="tk-str">"arreglado, no preguntes cómo"</span>
+
+<span class="tk-kw">const</span> cafe = require(<span class="tk-str">'urgente'</span>); <span class="tk-com">// es broma, no usamos require</span>
+
+<span class="tk-com">/* si estás leyendo esto, ya has descubierto el 90% de nuestros secretos */</span>
+<span class="tk-kw">function</span> <span class="tk-fn">fixBugAtLastMinute</span>() {
+  <span class="tk-kw">return</span> <span class="tk-str">"funciona en mi máquina"</span>;
+}
+
+.footer {
+  text-align: center; <span class="tk-com">/* como nuestra ética de trabajo */</span>
+}
+
+<span class="tk-tag">&lt;a</span> <span class="tk-attr">href</span>=<span class="tk-str">"#contacto"</span><span class="tk-tag">&gt;</span>Hablemos<span class="tk-tag">&lt;/a&gt;</span>
+<span class="tk-com">&lt;!-- en serio, hablemos, no mordemos --&gt;</span>
+
+<span class="tk-kw">const</span> deploy = () =&gt; { <span class="tk-fn">cruzarDedos</span>(); <span class="tk-fn">push</span>(); };
+
+<span class="tk-kw">import</span> { magia } <span class="tk-kw">from</span> <span class="tk-str">'./no-preguntes.js'</span>;
+
+<span class="tk-kw">const</span> bug = feature; <span class="tk-com">// depende de a quién le preguntes</span>
+
+<span class="tk-kw">while</span> (cafe.nivel &gt; <span class="tk-num">0</span>) {
+  <span class="tk-fn">seguirCodificando</span>();
+}
+
+git push origin main --force <span class="tk-com">// es broma, JAMÁS hacemos esto</span>
+
+<span class="tk-kw">const</span> clientesFelices = <span class="tk-gold">Infinity</span>;
+
+@keyframes latir {
+  <span class="tk-num">50%</span> { transform: scale(<span class="tk-num">1.05</span>); } <span class="tk-com">/* como el corazón de A Coruña */</span>
+}
+
+<span class="tk-kw">export const</span> <span class="tk-gold">jaG</span> = {
+  cercania: <span class="tk-gold">true</span>,
+  prisa: <span class="tk-gold">false</span>,
+  café: <span class="tk-str">'siempre'</span>,
+};
+
+<span class="tk-tag">&lt;footer&gt;</span>hecho con ❤️ y demasiado café en A Coruña<span class="tk-tag">&lt;/footer&gt;</span>
+
+<span class="tk-com">// TODO: arreglar esto antes de que lo vea el cliente</span>
+<span class="tk-kw">const</span> orden = tareas.sort(() =&gt; Math.random() - <span class="tk-num">0.5</span>); <span class="tk-com">// el método JaG</span>
+
+body {
+  cursor: pointer; <span class="tk-com">/* tú ya lo sabías */</span>
+}
+
+<span class="tk-kw">const</span> responderEmail = <span class="tk-fn">debounce</span>(rapido, <span class="tk-num">0</span>); <span class="tk-com">// no somos de los que tardan</span>
+
+<span class="tk-com">/* aquí debería ir otro chiste, pero se nos acabaron... o no */</span>
+<span class="tk-kw">const</span> presupuesto = <span class="tk-gold">jaG</span>.<span class="tk-fn">calcular</span>(justo, sinLetraPequeña);
+
+.card:hover {
+  transform: translateY(-6px); <span class="tk-com">/* así reaccionamos nosotros también */</span>
+}
+
+<span class="tk-kw">try</span> {
+  <span class="tk-fn">lanzarWeb</span>();
+} <span class="tk-kw">catch</span> (café) {
+  <span class="tk-fn">tomar</span>(café);
+  <span class="tk-fn">reintentar</span>();
+}
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> gracias = <span class="tk-str">"por curiosear por aquí 👋"</span>;
+<span class="tk-tag">&lt;/script&gt;</span></code></pre>
+      </div>
+
+      <div class="reveal-lab-cover">
+        <div class="reveal-lab-content">
+          <p class="section-tag">POR SI TENÍAS CURIOSIDAD <span class="tag-dot">•</span> JaG</p>
+          <h2 class="reveal-lab-title">Así vemos nosotros tu web</h2>
+          <p class="reveal-lab-lead">
+            Mueve el cursor por aquí (o desliza el dedo) y descubre lo que
+            hay debajo del diseño. Spoiler: es código de verdad, hecho a mano.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECCIÓN SERVICIOS
+         ============================================================ -->
+    <section id="servicios" class="section">
+      <div class="section-inner">
+        <header class="section-head">
+          <h2 class="section-title">Lo que construimos</h2>
+          <p class="section-lead">
+            Dos formas de hacer que tu negocio funcione mejor: una web que vende
+            por ti y procesos que se hacen solos.
+          </p>
+        </header>
+
+        <div class="cards-grid">
+          <!-- Tarjeta: Desarrollo Web a Medida -->
+          <article class="glass-card">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 14 L6 24 L16 34" />
+                <path d="M32 14 L42 24 L32 34" />
+                <path d="M27 10 L21 38" />
+              </svg>
+            </div>
+            <h3 class="card-title">Desarrollo Web a Medida</h3>
+            <p class="card-text">
+              Nada de plantillas recicladas. Diseñamos y programamos tu web desde
+              cero: rápida, posicionada en Google y pensada para convertir
+              visitas en clientes.
+            </p>
+            <ul class="card-list">
+              <li>Diseño exclusivo para tu marca</li>
+              <li>Optimización SEO local (A Coruña)</li>
+              <li>Carga ultrarrápida y 100% responsive</li>
+              <li>Panel sencillo para que la actualices tú</li>
+            </ul>
+          </article>
+
+          <!-- Tarjeta: Automatización de Procesos -->
+          <article class="glass-card">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5" />
+                <circle cx="36" cy="24" r="5" />
+                <circle cx="12" cy="36" r="5" />
+                <path d="M17 12 H26 A5 5 0 0 1 31 17 V21" />
+                <path d="M31 27 V31 A5 5 0 0 1 26 36 H17" />
+              </svg>
+            </div>
+            <h3 class="card-title">Automatización de Procesos</h3>
+            <p class="card-text">
+              Conectamos tu web con Make y Google Sheets para que los pedidos,
+              reservas y avisos lleguen solos a donde tienen que llegar. Menos
+              papeleo, cero errores humanos.
+            </p>
+            <ul class="card-list">
+              <li>Alertas instantáneas de nuevos clientes</li>
+              <li>Registro automático en Google Sheets</li>
+              <li>Integración con Make / Zapier</li>
+              <li>Respuestas automáticas por email</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECCIÓN PRECIOS
+         Cada plan en una "ventana" estilo macOS (misma barra de 3
+         puntos que la sección de la lupa de código, .window-bar).
+         Precios EDITAR AQUÍ ✏️ — son orientativos, ajústalos cuando
+         quieras a lo que de verdad cobréis.
+         ============================================================ -->
+    <section id="precios" class="section">
+      <div class="section-inner">
+        <header class="section-head">
+          <h2 class="section-title">Planes claros, sin letra pequeña</h2>
+          <p class="section-lead">
+            Tres formas de empezar, según lo que necesite tu negocio ahora
+            mismo. Si no encajas en ninguna, hablamos y hacemos una a medida.
+          </p>
+        </header>
+
+        <div class="price-grid">
+          <!-- Plan: Landing Page -->
+          <article class="price-card">
+            <div class="window-bar">
+              <span class="editorbar-dot editorbar-dot--red"></span>
+              <span class="editorbar-dot editorbar-dot--yellow"></span>
+              <span class="editorbar-dot editorbar-dot--green"></span>
+              <span class="window-bar-file">landing.html</span>
+            </div>
+            <div class="price-card-body">
+              <h3 class="price-card-title">Landing Page</h3>
+              <p class="price-card-desc">
+                Una sola página, un solo objetivo: vender, reservar o captar
+                contactos. Ideal para lanzar rápido o promocionar algo puntual.
+              </p>
+              <p class="price-card-price">
+                <span class="price-amount"> Desde 790€</span>
+                <span class="price-note">precio cerrado · IVA no incluido</span>
+              </p>
+              <ul class="price-card-list">
+                <li>1 página, diseño 100% a medida</li>
+                <li>Optimizada para móvil y velocidad</li>
+                <li>Formulario de contacto integrado</li>
+                <li>SEO básico on-page</li>
+                <li>Entrega en 1–2 semanas</li>
+              </ul>
+              <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
+            </div>
+          </article>
+
+          <!-- Plan: Web Profesional (destacado) -->
+          <article class="price-card price-card--featured">
+            <span class="price-card-badge">LA MÁS ELEGIDA</span>
+            <div class="window-bar">
+              <span class="editorbar-dot editorbar-dot--red"></span>
+              <span class="editorbar-dot editorbar-dot--yellow"></span>
+              <span class="editorbar-dot editorbar-dot--green"></span>
+              <span class="window-bar-file">web-profesional.html</span>
+            </div>
+            <div class="price-card-body">
+              <h3 class="price-card-title">Web Profesional</h3>
+              <p class="price-card-desc">
+                La web completa de tu negocio: varias páginas, posicionada en
+                Google y lista para que la gestiones tú sin depender de nadie.
+              </p>
+              <p class="price-card-price">
+                <span class="price-amount">Desde 1.500€</span>
+                <span class="price-note">precio cerrado · IVA no incluido</span>
+              </p>
+              <ul class="price-card-list">
+                <li>Hasta 5 páginas (Inicio, Servicios, Sobre ti…)</li>
+                <li>Diseño exclusivo para tu marca</li>
+                <li>SEO local optimizado (A Coruña y alrededores)</li>
+                <li>Panel sencillo para que la actualices tú</li>
+                <li>Formulario de contacto + email automático</li>
+                <li>Dominio, hosting y SSL configurados</li>
+              </ul>
+              <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
+            </div>
+          </article>
+
+          <!-- Plan: Web a Medida -->
+          <article class="price-card">
+            <div class="window-bar">
+              <span class="editorbar-dot editorbar-dot--red"></span>
+              <span class="editorbar-dot editorbar-dot--yellow"></span>
+              <span class="editorbar-dot editorbar-dot--green"></span>
+              <span class="window-bar-file">a-medida.tsx</span>
+            </div>
+            <div class="price-card-body">
+              <h3 class="price-card-title">Web a Medida</h3>
+              <p class="price-card-desc">
+                Cuando necesitas algo que no cabe en un plan cerrado:
+                reservas, tienda online, automatizaciones… lo construimos
+                a tu manera.
+              </p>
+              <p class="price-card-price">
+                <span class="price-amount">Desde 2.000€</span>
+                <span class="price-note">presupuesto cerrado tras la reunión inicial</span>
+              </p>
+              <ul class="price-card-list">
+                <li>Funcionalidades a medida (reservas, tienda, más)</li>
+                <li>Automatización de procesos incluida (Make/Sheets)</li>
+                <li>Diseño exclusivo, sin límite de páginas</li>
+                <li>Integraciones con tus herramientas actuales</li>
+                <li>Soporte y mantenimiento continuo</li>
+              </ul>
+              <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECCIÓN MÉTODO
+         ============================================================ -->
+    <section id="metodo" class="section">
+      <div class="section-inner">
+        <header class="section-head">
+          <h2 class="section-title">Cómo trabajamos</h2>
+          <p class="section-lead">
+            Un proceso claro, sin sorpresas y sin tecnicismos innecesarios.
+            Sabrás en qué punto está tu web en todo momento.
+          </p>
+        </header>
+
+        <ol class="steps">
+          <li class="step">
+            <span class="step-number">01</span>
+            <div class="step-body">
+              <h3 class="step-title">Escuchamos</h3>
+              <p class="step-text">
+                Nos reunimos contigo (en persona o por videollamada) para entender
+                tu negocio, tus clientes y qué necesitas conseguir con la web.
+              </p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-number">02</span>
+            <div class="step-body">
+              <h3 class="step-title">Diseñamos</h3>
+              <p class="step-text">
+                Te presentamos una propuesta visual a medida. Revisamos juntos
+                cada detalle hasta que el diseño refleje exactamente tu marca.
+              </p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-number">03</span>
+            <div class="step-body">
+              <h3 class="step-title">Desarrollamos</h3>
+              <p class="step-text">
+                Programamos la web con código limpio y optimizado, montamos las
+                automatizaciones y probamos todo en móvil, tablet y escritorio.
+              </p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-number">04</span>
+            <div class="step-body">
+              <h3 class="step-title">Lanzamos y medimos</h3>
+              <p class="step-text">
+                Publicamos tu web, la damos de alta en Google y te entregamos un
+                informe claro de resultados. Y seguimos ahí si nos necesitas.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECCIÓN NOSOTROS
+         ============================================================ -->
+    <section id="nosotros" class="section">
+      <div class="section-inner section-inner--narrow">
+        <header class="section-head">
+          <h2 class="section-title">Técnicos, cercanos y de aquí</h2>
+        </header>
+
+        <div class="about-block">
+          <p class="about-lead">
+            JaG nace en A&nbsp;Coruña con una idea simple: los negocios de
+            nuestra tierra merecen la misma calidad técnica que las grandes
+            marcas, <em>sin pagar precios de gran marca.</em>
+          </p>
+          <p class="about-text">
+            No usamos constructores genéricos ni plantillas de catálogo.
+            Escribimos código real —HTML, CSS y JavaScript optimizados— porque
+            es la única forma de garantizar webs rápidas, seguras y que Google
+            posicione bien. Y lo combinamos con automatización de procesos para
+            que la tecnología trabaje para ti, no al revés.
+          </p>
+          <p class="about-text">
+            Trabajamos con negocios de A&nbsp;Coruña y alrededores, cara a cara.
+            Si tu web lleva diez años sin tocarse, o directamente no existe,
+            hablemos.
+          </p>
+          <div class="about-cta">
+            <a href="#" class="cta-button cta-button--large js-open-modal">PEDIR PRESUPUESTO</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       PIE DE PÁGINA
+       ============================================================ -->
+  <footer class="site-footer">
+    <span class="brand brand--small">
+      <span class="brand-letter">J</span><span class="brand-letter brand-letter--gold">a</span><span class="brand-letter">G</span>
+    </span>
+    <p class="footer-text">Diseño y desarrollo web · A Coruña · © 2026 JaG</p>
+  </footer>
+
+  <!-- ============================================================
+       MODAL "PEDIR PRESUPUESTO"
+       ============================================================ -->
+  <div class="modal" id="budgetModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal-backdrop" data-close-modal></div>
+
+    <div class="modal-panel">
+      <button class="modal-close" aria-label="Cerrar" data-close-modal>&times;</button>
+
+      <!-- Vista 1: formulario -->
+      <div class="modal-form-view" id="modalFormView">
+        <p class="section-tag">PEDIR PRESUPUESTO</p>
+        <h2 class="modal-title" id="modalTitle">Cuéntanos tu proyecto</h2>
+        <p class="modal-subtitle">Respondemos en menos de 24 horas. Sin compromiso.</p>
+
+        <form id="budgetForm" novalidate>
+          <div class="form-field">
+            <label for="fName">Nombre</label>
+            <input type="text" id="fName" name="nombre" autocomplete="name" placeholder="Tu nombre" required />
+            <span class="field-error">Escribe tu nombre, por favor.</span>
+          </div>
+
+          <div class="form-field">
+            <label for="fEmail">Correo electrónico</label>
+            <input type="email" id="fEmail" name="correo" autocomplete="email" placeholder="tu@correo.com" required />
+            <span class="field-error">Introduce un correo válido.</span>
+          </div>
+
+          <div class="form-field">
+            <label for="fBusiness">Tipo de negocio</label>
+            <select id="fBusiness" name="tipoNegocio" required>
+              <option value="" selected disabled>Selecciona una opción…</option>
+              <option>Hostelería / Restauración</option>
+              <option>Comercio local</option>
+              <option>Servicios profesionales</option>
+              <option>Salud y bienestar</option>
+              <option>Otro</option>
+            </select>
+            <span class="field-error">Selecciona el tipo de negocio.</span>
+          </div>
+
+          <div class="form-field">
+            <label for="fDetails">Detalles del proyecto</label>
+            <textarea id="fDetails" name="detalles" rows="4" placeholder="Cuéntanos qué necesitas: web nueva, rediseño, automatización…" required></textarea>
+            <span class="field-error">Cuéntanos brevemente qué necesitas.</span>
+          </div>
+
+          <!-- Consentimiento RGPD: obligatorio para poder enviar -->
+          <div class="form-field form-field--check" id="privacyField">
+            <label class="check-label" for="privacidad">
+              <input type="checkbox" id="privacidad" name="privacidad" required />
+              <span class="check-text">
+                He leído y acepto la
+                <a href="#" class="privacy-link js-open-privacy">política de privacidad</a>.
+              </span>
+            </label>
+            <span class="field-error">Debes aceptar la política de privacidad para continuar.</span>
+          </div>
+
+          <button type="submit" class="cta-button cta-button--large form-submit" id="formSubmit">
+            ENVIAR SOLICITUD
+          </button>
+        </form>
+      </div>
+
+      <!-- Vista 2: envío exitoso -->
+      <div class="modal-success-view" id="modalSuccessView" hidden>
+        <svg class="success-check" viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="check-circle" cx="50" cy="50" r="44" fill="none" stroke-width="2.5" />
+          <path class="check-mark" d="M30 52 L44 66 L72 36" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <h2 class="modal-title">¡Solicitud enviada!</h2>
+        <p class="modal-subtitle">
+          Gracias por confiar en JaG. Te responderemos en menos de 24 horas
+          con una propuesta a medida.
+        </p>
+        <button class="cta-button" data-close-modal>CERRAR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL "POLÍTICA DE PRIVACIDAD"
+       ============================================================ -->
+  <div class="modal modal--privacy" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacyTitle" hidden>
+    <div class="modal-backdrop" data-close-privacy></div>
+
+    <div class="modal-panel modal-panel--privacy">
+      <button class="modal-close" aria-label="Cerrar" data-close-privacy>&times;</button>
+
+      <p class="section-tag">LEGAL</p>
+      <h2 class="modal-title" id="privacyTitle">Política de privacidad</h2>
+
+      <div class="privacy-content">
+        <h3>Responsable del tratamiento</h3>
+        <p>
+          <strong>JaG — Diseño y Desarrollo Web</strong>, con domicilio en
+          A&nbsp;Coruña (España). Correo de contacto:
+          <a href="mailto:grupojag.contacto@gmail.com" class="privacy-link">grupojag.contacto@gmail.com</a>.
+        </p>
+
+        <h3>Qué datos recogemos</h3>
+        <p>
+          A través del formulario de presupuesto recogemos únicamente los datos
+          que tú nos facilitas: nombre, correo electrónico, tipo de negocio y
+          los detalles del proyecto que decidas contarnos.
+        </p>
+
+        <h3>Para qué los usamos</h3>
+        <p>
+          Exclusivamente para responder a tu solicitud de presupuesto y ponernos
+          en contacto contigo. No enviamos publicidad ni cedemos tus datos a
+          terceros con fines comerciales.
+        </p>
+
+        <h3>Base legal</h3>
+        <p>
+          Tu consentimiento expreso, que otorgas al marcar la casilla de
+          aceptación antes de enviar el formulario (art. 6.1.a RGPD).
+        </p>
+
+        <h3>Dónde se almacenan</h3>
+        <p>
+          Los datos se registran en una hoja de cálculo privada de Google
+          Sheets, protegida por la cuenta de JaG. Google LLC actúa como
+          encargado del tratamiento conforme a sus cláusulas contractuales
+          tipo aprobadas por la UE.
+        </p>
+
+        <h3>Cuánto tiempo los conservamos</h3>
+        <p>
+          Durante el tiempo necesario para gestionar tu solicitud y, como
+          máximo, 12 meses desde el último contacto, salvo que iniciemos una
+          relación contractual.
+        </p>
+
+        <h3>Tus derechos</h3>
+        <p>
+          Puedes ejercer en cualquier momento tus derechos de acceso,
+          rectificación, supresión, oposición, limitación y portabilidad
+          escribiendo a
+          <a href="mailto:grupojag.contacto@gmail.com" class="privacy-link">grupojag.contacto@gmail.com</a>.
+          También puedes reclamar ante la Agencia Española de Protección de
+          Datos (aepd.es).
+        </p>
+      </div>
+
+      <button class="cta-button privacy-accept" data-close-privacy>ENTENDIDO</button>
+    </div>
+  </div>
+
+  <!-- Escena 3D + interacciones -->
+  <script type="module" src="main.js"></script>
+</body>
+</html>

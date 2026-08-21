@@ -1,0 +1,1084 @@
+/* ================================================================
+   JaG — Hoja de estilos de la Landing Page
+   Paleta:
+     --bg        : negro profundo (#0a0a0a)
+     --text      : blanco roto (no cansa la vista)
+     --text-dim  : gris claro secundario
+     --gold      : dorado del logo
+     --bronze    : bronce oscuro (degradados metálicos)
+   ================================================================ */
+
+:root {
+  --bg: #0a0a0a;
+  --text: #eae7e0;
+  --text-dim: #9a968e;
+  --gold: #c9a24b;
+  --gold-bright: #e8c877;
+  --bronze: #8a6a2f;
+  --line: rgba(234, 231, 224, 0.12);
+
+  --font-sans: "Helvetica Neue", "Inter", -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Arial, sans-serif;
+
+  --header-h: 84px;
+  --pad-x: clamp(1.25rem, 4vw, 4rem);
+}
+
+/* ---------- Reset básico ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+
+/* ================================================================
+   LIENZO 3D — fijo a pantalla completa, detrás de todo
+   ================================================================ */
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+  /* En táctil ya no hay arrastre manual (los bloques se mueven solos,
+     ver main.js): el dedo se reserva entero para el scroll nativo,
+     sin ningún gesto que compita con él. */
+  touch-action: pan-y;
+}
+
+/* ================================================================
+   FONDO DECORATIVO — aurora dorada
+   Capa fija con z-index negativo: siempre detrás del contenido.
+   El canvas 3D es transparente y las secciones no tienen fondo
+   opaco, por eso esta capa se percibe en toda la página.
+   ================================================================ */
+.bg-brand {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ================================================================
+   LOGO REAL EN 3D (Three.js) — sello de agua de fondo
+   Fijo a pantalla completa, detrás de las secciones. Su opacidad
+   la controla main.js: oculto en el hero, fade-in al hacer scroll.
+   ================================================================ */
+#logoScene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Aurora / ambient glow: dos manchas de luz dorada muy tenues que
+   derivan lentamente para dar profundidad de "estudio de diseño" */
+.bg-brand-glow {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.bg-brand-glow--a {
+  inset: 0;
+  margin: auto;                 /* Centrada en el viewport */
+  width: 110vmax;
+  height: 80vmax;
+  background: radial-gradient(closest-side,
+    rgba(201, 162, 75, 0.07),
+    rgba(138, 106, 47, 0.025) 45%,
+    transparent 72%);
+  animation: auroraDrift 26s ease-in-out infinite alternate;
+}
+
+.bg-brand-glow--b {
+  left: 45%;
+  top: -12%;
+  width: 80vmax;
+  height: 60vmax;
+  background: radial-gradient(closest-side,
+    rgba(232, 200, 119, 0.04),
+    transparent 68%);
+  animation: auroraDrift 34s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes auroraDrift {
+  from { transform: translate3d(-4%, 3%, 0) scale(1); }
+  to   { transform: translate3d(6%, -5%, 0) scale(1.18); }
+}
+
+/* ================================================================
+   CABECERA
+   ================================================================ */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--pad-x);
+  /* Degradado sutil para que la nav se lea sobre el 3D */
+  background: linear-gradient(to bottom, rgba(10,10,10,0.85), transparent);
+}
+
+/* Logo de texto "J a G" — la "a" en dorado, como en el logo */
+.brand {
+  font-weight: 800;
+  font-size: 1.6rem;
+  letter-spacing: 0.35em;
+  display: flex;
+}
+.brand-letter { color: var(--text); }
+.brand-letter--gold { color: var(--gold); }
+
+/* Menú */
+.main-nav ul {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.main-nav a {
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  color: var(--text-dim);
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+/* Microinteracción: subrayado dorado que crece al hacer hover */
+.main-nav a:not(.cta-button)::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -6px;
+  width: 100%; height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.main-nav a:not(.cta-button):hover { color: var(--text); }
+.main-nav a:not(.cta-button):hover::after { transform: scaleX(1); }
+
+/* Botón destacado (boxed) */
+.cta-button {
+  border: 1px solid var(--gold);
+  color: var(--gold) !important;
+  padding: 0.8em 1.6em;
+  transition: background 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+}
+.cta-button:hover {
+  background: var(--gold);
+  color: #0a0a0a !important;
+  box-shadow: 0 0 30px rgba(201, 162, 75, 0.35);
+}
+
+/* Hamburguesa (oculta en escritorio) */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 20;
+}
+.nav-toggle span {
+  width: 26px; height: 1.5px;
+  background: var(--text);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* ================================================================
+   HERO
+   ================================================================ */
+.hero {
+  position: relative;
+  z-index: 5;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: var(--header-h) var(--pad-x) 4rem;
+  /* Deja pasar los eventos del ratón al canvas 3D… */
+  pointer-events: none;
+}
+/* …excepto en los elementos interactivos de texto */
+.hero a, .hero button { pointer-events: auto; }
+
+.hero-content { max-width: 62rem; }
+
+.hero-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.4em;
+  color: var(--text-dim);
+  margin-bottom: 2rem;
+}
+.tag-dot { color: var(--gold); margin: 0 0.4em; }
+
+.hero-title {
+  font-size: clamp(2.4rem, 6.5vw, 5.4rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  /* Sombra suave para separar el texto de la escena 3D */
+  text-shadow: 0 0 60px rgba(10, 10, 10, 0.9);
+}
+
+.hero-title em {
+  font-style: normal;
+  /* Degradado metálico dorado, como el acabado del logo */
+  background: linear-gradient(100deg,
+    var(--bronze) 0%,
+    var(--gold) 35%,
+    var(--gold-bright) 50%,
+    var(--gold) 65%,
+    var(--bronze) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-subtitle {
+  /* Por delante de cualquier capa decorativa (canvas 3D, aurora…) */
+  position: relative;
+  z-index: 6;
+  margin-top: 2rem;
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  line-height: 1.7;
+  color: #ffffff;
+  /* Sombra suave: garantiza la lectura sobre la escena 3D */
+  text-shadow: 0 2px 26px rgba(10, 10, 10, 0.9);
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+/* ---------- Indicador inferior ---------- */
+.hero-hint {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.hint-line {
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, transparent, var(--gold));
+  animation: hintPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.25; transform: scaleY(0.6); transform-origin: top; }
+  50%      { opacity: 1;    transform: scaleY(1); }
+}
+
+.hint-text {
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+/* ================================================================
+   LUPA DE CÓDIGO — sección justo debajo del Hero
+   ----------------------------------------------------------------
+   Dos capas superpuestas dentro de .reveal-lab:
+     1) .reveal-lab-code  → el "editor" con código real, siempre ahí
+     2) .reveal-lab-cover → capa limpia con un agujero (mask-image)
+                             que sigue al cursor/dedo y deja ver el
+                             código de debajo. Las coordenadas y el
+                             radio los controla main.js vía las
+                             variables --reveal-x / --reveal-y / --reveal-r.
+   ================================================================ */
+.reveal-lab {
+  position: relative;
+  z-index: 5;
+  height: clamp(680px, 100svh, 980px);
+  overflow: hidden;
+  border-block: 1px solid var(--line);
+  /* En táctil el revelado ya no depende del dedo (solo del scroll,
+     ver main.js), así que el gesto se reserva entero para bajar la
+     página, sin gestos horizontales que compitan con el scroll. */
+  touch-action: pan-y;
+
+  /* Coordenadas y radio del "agujero" — animadas desde JS (rAF + lerp) */
+  --reveal-x: 50%;
+  --reveal-y: 50%;
+  --reveal-r: 0px;
+  --reveal-soft: 150px;
+}
+
+/* ---------- Capa 1: el "editor" con código real ---------- */
+.reveal-lab-code {
+  position: absolute;
+  inset: 0;
+  background: #0d0d14;
+}
+
+/* ---------- Barra de "ventana" tipo macOS (3 puntos) ----------
+   Componente reutilizable: la usan el editor de la sección "lupa
+   de código" y las tarjetas de precios (.price-card). */
+.window-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.6rem;
+  padding: 0 1.1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.editorbar-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  opacity: 0.85;
+}
+.editorbar-dot--red    { background: #ff5f57; }
+.editorbar-dot--yellow { background: #febc2e; }
+.editorbar-dot--green  { background: #28c840; }
+
+.window-bar-file {
+  margin-left: 0.6rem;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--text-dim);
+}
+
+.reveal-lab-code pre {
+  height: calc(100% - 2.6rem);
+  margin: 0;
+  padding: 1.6rem clamp(1.25rem, 4vw, 3rem);
+  overflow: hidden;
+  columns: clamp(190px, 20vw, 260px) auto;
+  column-gap: clamp(1.5rem, 3vw, 3rem);
+  /* "auto" (en vez de "balance"): cada columna se rellena hasta el
+     final antes de pasar a la siguiente, así el código ocupa toda
+     la altura de la sección en lugar de apilarse arriba */
+  column-fill: auto;
+}
+
+.reveal-lab-code code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: clamp(0.72rem, 1vw, 0.86rem);
+  line-height: 1.85;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Tokens de "syntax highlighting" — estilo editor moderno,
+   con el dorado de JaG reservado para los guiños a la marca */
+.tk-tag  { color: #ff7b9c; }
+.tk-attr { color: #e8c877; }
+.tk-str  { color: #8fd19e; }
+.tk-kw   { color: #c99bf0; }
+.tk-fn   { color: #7db8f0; }
+.tk-var  { color: var(--text); }
+.tk-num  { color: #f0a868; }
+.tk-com  { color: #6f7787; font-style: italic; }
+.tk-gold { color: var(--gold-bright); font-weight: 600; }
+
+/* ---------- Capa 2: fondo limpio con el "agujero" que revela ---------- */
+.reveal-lab-cover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--pad-x);
+  background: var(--bg);
+  text-align: center;
+
+  /* Sin máscara por defecto → la capa cubre TODO y arranca en negro.
+     La sorpresa de atrás solo se revela cuando JS añade .is-revealing
+     (evita que un radial-gradient de radio 0 —caso degenerado en
+     algunos navegadores, p. ej. Safari— deje ver el código al cargar). */
+}
+
+/* El agujero: transparente en el centro, opaco fuera, con borde suave
+   (--reveal-soft) para que el código se desvanezca, no se corte. Solo
+   activo mientras hay un revelado en curso. */
+.reveal-lab.is-revealing .reveal-lab-cover {
+  -webkit-mask-image: radial-gradient(
+    circle var(--reveal-r) at var(--reveal-x) var(--reveal-y),
+    transparent 0,
+    transparent calc(var(--reveal-r) - var(--reveal-soft)),
+    black var(--reveal-r)
+  );
+  mask-image: radial-gradient(
+    circle var(--reveal-r) at var(--reveal-x) var(--reveal-y),
+    transparent 0,
+    transparent calc(var(--reveal-r) - var(--reveal-soft)),
+    black var(--reveal-r)
+  );
+}
+
+.reveal-lab-content { max-width: 34rem; pointer-events: none; }
+
+.reveal-lab-title {
+  margin-top: 0.8rem;
+  font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.reveal-lab-lead {
+  margin-top: 1rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-size: clamp(0.9rem, 1.2vw, 1.02rem);
+}
+
+/* ================================================================
+   SECCIONES DE CONTENIDO (Servicios / Método / Nosotros)
+   ================================================================ */
+.section {
+  position: relative;
+  z-index: 5;
+  /* Sin fondo opaco: deja ver el logo "JaG" y la aurora del fondo.
+     La escena 3D del hero se desvanece al hacer scroll (main.js). */
+  padding: clamp(5rem, 10vw, 8rem) var(--pad-x);
+  /* Deja hueco bajo la cabecera fija al navegar con anclas */
+  scroll-margin-top: var(--header-h);
+}
+
+/* La primera sección deja aire extra tras la escena 3D del hero */
+.section--fade-top {
+  padding-top: clamp(7rem, 14vw, 11rem);
+}
+
+.section-inner {
+  max-width: 72rem;
+  margin-inline: auto;
+}
+.section-inner--narrow { max-width: 52rem; }
+
+/* Cabecera de cada sección */
+.section-head { margin-bottom: clamp(2.5rem, 6vw, 4.5rem); }
+
+.section-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+
+.section-title {
+  font-size: clamp(1.9rem, 4.5vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.section-lead {
+  margin-top: 1.2rem;
+  max-width: 36rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+}
+
+/* ---------- Tarjetas de cristal (Servicios) ---------- */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.glass-card {
+  /* Mismo lenguaje visual que los bloques 3D: cristal esmerilado */
+  position: relative;
+  padding: clamp(1.8rem, 3.5vw, 2.8rem);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow: hidden;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.45s ease,
+              box-shadow 0.45s ease;
+}
+
+/* Foco de luz dorada que sigue al cursor (coords --mx/--my desde JS) */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(201, 162, 75, 0.10),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+
+.glass-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 162, 75, 0.45);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(201, 162, 75, 0.08);
+}
+.glass-card:hover::before { opacity: 1; }
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--gold);
+  margin-bottom: 1.6rem;
+}
+.card-icon svg { width: 100%; height: 100%; }
+
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+}
+
+.card-text {
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  margin-bottom: 1.4rem;
+}
+
+.card-list { display: grid; gap: 0.6rem; }
+.card-list li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+/* Viñeta: guion dorado, coherente con los filamentos del hero */
+.card-list li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
+
+/* ---------- Tarjetas de precios (ventanas macOS) ---------- */
+.price-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: start;
+}
+
+.price-card {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow: hidden;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.45s ease,
+              box-shadow 0.45s ease;
+}
+
+/* Foco de luz dorada que sigue al cursor (coords --mx/--my desde JS) */
+.price-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(201, 162, 75, 0.10),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+
+.price-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 162, 75, 0.45);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(201, 162, 75, 0.08);
+}
+.price-card:hover::after { opacity: 1; }
+
+/* El plan destacado: borde dorado permanente + ligera elevación */
+.price-card--featured {
+  border-color: rgba(201, 162, 75, 0.55);
+  background: rgba(201, 162, 75, 0.05);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45), 0 0 50px rgba(201, 162, 75, 0.1);
+}
+@media (min-width: 860px) {
+  .price-card--featured { transform: translateY(-0.9rem); }
+  .price-card--featured:hover { transform: translateY(-1.5rem); }
+}
+
+.price-card-badge {
+  position: absolute;
+  top: 0.62rem;
+  right: 1.1rem;
+  z-index: 2;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #0a0a0a;
+  background: linear-gradient(100deg, var(--gold), var(--gold-bright));
+  padding: 0.35em 0.7em;
+  border-radius: 999px;
+}
+
+.price-card-body {
+  padding: clamp(1.6rem, 3vw, 2.2rem) clamp(1.6rem, 3.5vw, 2.4rem) clamp(2rem, 3.5vw, 2.6rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.price-card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.price-card-desc {
+  margin-top: 0.7rem;
+  color: var(--text-dim);
+  line-height: 1.65;
+  font-size: 0.9rem;
+}
+
+.price-card-price {
+  margin-top: 1.6rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.price-amount {
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--gold-bright);
+}
+
+.price-note {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+}
+
+.price-card-list {
+  margin-top: 1.4rem;
+  display: grid;
+  gap: 0.65rem;
+  flex-grow: 1;
+}
+.price-card-list li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+.price-card-list li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
+
+.price-card-cta {
+  margin-top: 1.8rem;
+  width: 100%;
+  text-align: center;
+}
+
+/* ---------- Pasos (Método) ---------- */
+.steps {
+  display: grid;
+  gap: 0;
+  counter-reset: step;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: clamp(1.8rem, 3vw, 2.6rem) 0;
+  border-top: 1px solid var(--line);
+  transition: border-color 0.4s ease;
+}
+.step:last-child { border-bottom: 1px solid var(--line); }
+.step:hover { border-top-color: rgba(201, 162, 75, 0.5); }
+
+.step-number {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--gold);   /* Número "hueco" dorado */
+  line-height: 1;
+}
+
+.step-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.step-text {
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  max-width: 44rem;
+}
+
+/* ---------- Nosotros ---------- */
+.about-lead {
+  font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+  line-height: 1.5;
+  font-weight: 500;
+  margin-bottom: 2rem;
+}
+.about-lead em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.about-text {
+  color: var(--text-dim);
+  line-height: 1.8;
+  margin-bottom: 1.4rem;
+  font-size: 1rem;
+}
+
+.about-cta { margin-top: 3rem; }
+
+.cta-button--large {
+  display: inline-block;
+  font-size: 0.85rem;
+  padding: 1em 2.2em;
+  letter-spacing: 0.22em;
+}
+
+/* ================================================================
+   PIE DE PÁGINA
+   ================================================================ */
+.site-footer {
+  position: relative;
+  z-index: 5;
+  border-top: 1px solid var(--line);
+  padding: 2.5rem var(--pad-x);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  text-align: center;
+}
+.brand--small { font-size: 1.1rem; }
+.footer-text {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+}
+
+/* ================================================================
+   MODAL "PEDIR PRESUPUESTO"
+   ================================================================ */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+.modal[hidden] { display: none; }
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 5, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal-panel {
+  position: relative;
+  width: min(100%, 34rem);
+  max-height: calc(100svh - 2.5rem);
+  overflow-y: auto;
+  background: #101010;
+  border: 1px solid rgba(201, 162, 75, 0.3);
+  border-radius: 6px;
+  padding: clamp(2rem, 5vw, 3rem);
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8), 0 0 60px rgba(201, 162, 75, 0.06);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem; right: 1.1rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.9rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+.modal-close:hover { color: var(--gold); transform: rotate(90deg); }
+
+.modal-title {
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-weight: 700;
+  margin: 0.8rem 0 0.6rem;
+}
+.modal-subtitle {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+/* ---------- Campos del formulario ---------- */
+.form-field { margin-bottom: 1.4rem; }
+
+.form-field label {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.55rem;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  padding: 0.85em 1em;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.form-field textarea { resize: vertical; min-height: 6rem; }
+
+.form-field select { appearance: none; cursor: pointer; }
+.form-field option { background: #141414; color: var(--text); }
+
+.form-field input::placeholder,
+.form-field textarea::placeholder { color: rgba(154, 150, 142, 0.55); }
+
+/* Microinteracción: borde dorado al enfocar */
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 75, 0.12);
+}
+
+/* Estado de error (clase aplicada desde JS) */
+.field-error {
+  display: none;
+  font-size: 0.75rem;
+  color: #d98a7a;
+  margin-top: 0.45rem;
+}
+.form-field.has-error input,
+.form-field.has-error select,
+.form-field.has-error textarea { border-color: #b0604f; }
+.form-field.has-error .field-error { display: block; }
+
+/* ---------- Checkbox de privacidad (personalizado) ---------- */
+.form-field--check { margin: 1.6rem 0 0.4rem; }
+
+.check-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  text-transform: none;      /* Anula el uppercase de los labels normales */
+  letter-spacing: normal;
+}
+
+/* Checkbox nativo estilizado: accent-color dorado suave.
+   Al ser un <input> real dentro del <label>, la validación del
+   formulario (validateField → input.checked) funciona sin cambios. */
+.check-label input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--gold);
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Halo dorado al marcar */
+.check-label input[type="checkbox"]:checked {
+  box-shadow: 0 0 14px rgba(201, 162, 75, 0.35);
+}
+
+.check-label input[type="checkbox"]:focus-visible {
+  outline: 2px solid rgba(201, 162, 75, 0.6);
+  outline-offset: 2px;
+}
+
+.check-text {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+
+/* Enlace dorado reutilizable (formulario y textos legales) */
+.privacy-link {
+  color: var(--gold);
+  border-bottom: 1px solid rgba(201, 162, 75, 0.4);
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+.privacy-link:hover { color: var(--gold-bright); border-bottom-color: var(--gold-bright); }
+
+/* Estado de error del checkbox */
+.form-field--check.has-error input[type="checkbox"] {
+  outline: 1px solid #b0604f;
+  outline-offset: 2px;
+}
+
+.form-submit {
+  width: 100%;
+  margin-top: 0.6rem;
+  background: none;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.form-submit:disabled { opacity: 0.5; cursor: wait; }
+
+/* ---------- Vista de envío exitoso ---------- */
+.modal-success-view {
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+.success-check {
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 1.2rem;
+  display: block;
+}
+.check-circle { stroke: var(--gold); }
+.check-mark { stroke: var(--gold-bright); }
+
+/* ---------- Modal de Política de Privacidad ---------- */
+.modal--privacy { z-index: 60; }   /* Por encima del modal de presupuesto */
+
+.modal-panel--privacy {
+  width: min(100%, 42rem);
+}
+
+.privacy-content {
+  margin: 1.4rem 0 2rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.privacy-content h3 {
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 1.2rem;
+  font-weight: 600;
+}
+
+.privacy-content p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.privacy-content strong { color: var(--text); font-weight: 600; }
+
+.privacy-accept {
+  display: block;
+  margin-left: auto;
+  background: none;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  font-size: 0.78rem;
+}
+
+/* Secciones ancla vacías (compatibilidad) */
+.section-placeholder { min-height: 40vh; }
+
+/* ================================================================
+   RESPONSIVE — móvil
+   ================================================================ */
+@media (max-width: 820px) {
+  .nav-toggle { display: flex; }
+
+  /* El menú pasa a panel de pantalla completa */
+  .main-nav {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.96);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 15;
+  }
+  .main-nav.is-open { opacity: 1; pointer-events: auto; }
+
+  .main-nav ul { flex-direction: column; gap: 2.4rem; }
+  .main-nav a { font-size: 1rem; }
+
+  /* Animación del icono hamburguesa a "X" */
+  .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+  .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+  .hero-hint .hint-text { font-size: 0.58rem; }
+}
+
+/* Accesibilidad: respeta la preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hint-line { animation: none; }
+  .bg-brand-glow { animation: none; }
+  /* Sin lupa animada: la sección se queda en su estado limpio, sin
+     movimiento (main.js no anima --reveal-r si hay reduced-motion) */
+}
