@@ -322,9 +322,10 @@ ul { list-style: none; }
   height: clamp(680px, 100svh, 980px);
   overflow: hidden;
   border-block: 1px solid var(--line);
-  /* En táctil el revelado ya no depende del dedo (solo del scroll,
-     ver main.js), así que el gesto se reserva entero para bajar la
-     página, sin gestos horizontales que compitan con el scroll. */
+  /* pan-y: el navegador gestiona de forma nativa el gesto vertical
+     (scroll de la página) y deja libres los gestos horizontales para
+     que main.js los use como "arrastra para revelar" sin competir
+     nunca con el scroll — no hace falta preventDefault. */
   touch-action: pan-y;
 
   /* Coordenadas y radio del "agujero" — animadas desde JS (rAF + lerp) */
@@ -456,6 +457,39 @@ ul { list-style: none; }
   color: var(--text-dim);
   line-height: 1.7;
   font-size: clamp(0.9rem, 1.2vw, 1.02rem);
+}
+
+/* ---------- Pista táctil "pulsa aquí y desliza" ----------
+   Solo en pantallas táctiles (sin hover / puntero impreciso): indica
+   el gesto de arrastre horizontal que revela el código, para que no
+   se confunda con el scroll vertical de la página. Se desvanece en
+   cuanto main.js detecta el primer arrastre (clase .has-interacted). */
+.reveal-lab-hint { display: none; }
+
+@media (hover: none), (pointer: coarse) {
+  .reveal-lab-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    margin-top: 1.4rem;
+    padding: 0.55em 1.1em;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--gold-bright, #c9a24b);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+    animation: reveal-lab-hint-pulse 1.8s ease-in-out infinite;
+  }
+
+  .reveal-lab.has-interacted .reveal-lab-hint { opacity: 0; }
+}
+
+@keyframes reveal-lab-hint-pulse {
+  50% { transform: scale(1.04); opacity: 0.7; }
 }
 
 /* ================================================================
@@ -1081,4 +1115,5 @@ ul { list-style: none; }
   .bg-brand-glow { animation: none; }
   /* Sin lupa animada: la sección se queda en su estado limpio, sin
      movimiento (main.js no anima --reveal-r si hay reduced-motion) */
+  .reveal-lab-hint { display: none; }
 }

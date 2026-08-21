@@ -888,8 +888,9 @@ gsap.from('.about-block > *', {
 /* ================================================================
    10. LUPA DE CÓDIGO — reveal mask (sección bajo el Hero). En
        escritorio sigue al ratón con un ligero lag orgánico (rAF +
-       interpolación). En móvil no depende del dedo: primero se lee
-       el titular y luego el agujero crece solo con el scroll.
+       interpolación). En móvil se revela pulsando y deslizando el
+       dedo dentro de la sección, sin competir con el scroll de la
+       página (ver touch-action: pan-y en el CSS).
    ================================================================ */
 (function initRevealLab() {
   const lab = document.getElementById('revealLab');
@@ -958,28 +959,62 @@ gsap.from('.about-block > *', {
     });
     lab.addEventListener('pointerleave', () => setTarget(state.tx, state.ty, 0));
   } else {
-    /* ---------- Móvil: se revela solo, a medida que bajas ----------
-       Nada de arrastrar el dedo (competía con el scroll). El agujero
-       está fijo en el centro del titular y su radio lo controla
-       únicamente el scroll dentro de la sección, en dos fases:
-         1) Lectura: el agujero sigue cerrado — primero se lee
-            "Así vemos nosotros tu web" sin distracción.
-         2) Revelado: el titular se desvanece y el agujero crece
-            hasta cubrir todo el panel, "iluminando" el código. */
-    const content = lab.querySelector('.reveal-lab-content');
-    const rect = lab.getBoundingClientRect();
-    const fullRadius = Math.hypot(rect.width, rect.height); // cubre cualquier esquina
+    /* ---------- Móvil: pulsa y desliza el dedo para revelar ----------
+       El agujero sigue al dedo mientras arrastras dentro de la
+       sección; su radio crece con la distancia recorrida, así que el
+       código se descubre "poco a poco". La sección tiene
+       touch-action: pan-y (ver CSS), por lo que el navegador se
+       queda con los gestos verticales para el scroll normal de la
+       página y deja libres los horizontales para este arrastre — no
+       hace falta preventDefault ni hay conflicto con el scroll. */
+    const REVEAL_GAIN = 1.6; // px de radio revelado por px de dedo recorrido
+    const fullRadius = Math.hypot(lab.getBoundingClientRect().width, lab.getBoundingClientRect().height);
 
     state.x = state.tx = 50;
     state.y = state.ty = 45;
     applyVars();
 
-    gsap.timeline({
-      scrollTrigger: { trigger: lab, start: 'top bottom', end: 'bottom top', scrub: 0.6 },
-    })
-      .to({}, { duration: 0.42 })   // fase 1: solo lectura, el agujero no se mueve
-      .to(content, { opacity: 0, duration: 0.18, ease: 'power1.in' })
-      .to(state, { r: fullRadius, duration: 0.6, ease: 'power1.inOut', onUpdate: applyVars }, '<');
+    let lastX = 0;
+    let lastY = 0;
+    let dragging = false;
+    let pathLength = 0;
+
+    lab.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      lastX = t.clientX;
+      lastY = t.clientY;
+      dragging = false;
+      pathLength = 0;
+    }, { passive: true });
+
+    lab.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      const dx = t.clientX - lastX;
+      const dy = t.clientY - lastY;
+      lastX = t.clientX;
+      lastY = t.clientY;
+
+      /* Solo cuenta como "revelar" el recorrido horizontal: si el
+         navegador ha tomado el gesto como scroll vertical, apenas
+         llegan aquí movimientos horizontales y no pasa nada. */
+      if (Math.abs(dx) <= Math.abs(dy)) return;
+
+      dragging = true;
+      lab.classList.add('has-interacted');
+      pathLength += Math.abs(dx);
+
+      const rect = lab.getBoundingClientRect();
+      const x = ((t.clientX - rect.left) / rect.width) * 100;
+      const y = ((t.clientY - rect.top) / rect.height) * 100;
+      setTarget(x, y, Math.min(fullRadius, pathLength * REVEAL_GAIN));
+    }, { passive: true });
+
+    const closeReveal = () => {
+      if (dragging) setTarget(state.tx, state.ty, 0);
+      dragging = false;
+    };
+    lab.addEventListener('touchend', closeReveal);
+    lab.addEventListener('touchcancel', closeReveal);
   }
 })();
 
