@@ -319,7 +319,7 @@ ul { list-style: none; }
 .reveal-lab {
   position: relative;
   z-index: 5;
-  height: clamp(680px, 100svh, 980px);
+  height: clamp(780px, 118svh, 1180px);
   overflow: hidden;
   border-block: 1px solid var(--line);
   /* pan-y: el navegador gestiona de forma nativa el gesto vertical
@@ -327,12 +327,19 @@ ul { list-style: none; }
      que main.js los use como "arrastra para revelar" sin competir
      nunca con el scroll — no hace falta preventDefault. */
   touch-action: pan-y;
+  /* El arrastre con el dedo no debe seleccionar texto ni disparar el
+     menú de "copiar/definir" (long-press) ni el resaltado táctil por
+     defecto — todo eso interrumpía el gesto de revelar. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 
   /* Coordenadas y radio del "agujero" — animadas desde JS (rAF + lerp) */
   --reveal-x: 50%;
   --reveal-y: 50%;
   --reveal-r: 0px;
-  --reveal-soft: 150px;
+  --reveal-soft: 95px;
 }
 
 /* ---------- Capa 1: el "editor" con código real ---------- */
