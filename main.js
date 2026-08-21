@@ -897,7 +897,7 @@ gsap.from('.about-block > *', {
   if (!lab) return;
 
   const hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const maxRadius = 190; // px — tamaño de la lupa (pequeña a propósito: obliga a explorar la sección poco a poco)
+  const maxRadius = 130; // px — tamaño de la lupa (pequeña a propósito: obliga a explorar la sección poco a poco)
 
   /* x/y en %, r en px. Los valores "t*" son el objetivo; el bucle
      rAF los persigue con lerp para el efecto de lag/suavizado. */
@@ -959,32 +959,40 @@ gsap.from('.about-block > *', {
     });
     lab.addEventListener('pointerleave', () => setTarget(state.tx, state.ty, 0));
   } else {
-    /* ---------- Móvil: pulsa y desliza el dedo para revelar ----------
-       Una lupa de tamaño fijo (maxRadius) sigue al dedo mientras
-       arrastras dentro de la sección: como es pequeña, hay que
-       recorrer con el dedo las distintas zonas del panel para ir
-       descubriendo el código "poco a poco", en vez de destaparlo
-       todo de un tirón. La sección tiene touch-action: pan-y (ver
-       CSS), por lo que el navegador se queda con los gestos
-       verticales para el scroll normal de la página y deja libres
-       los horizontales para este arrastre — no hace falta
-       preventDefault ni hay conflicto con el scroll. */
+    /* ---------- Móvil: pulsa el aviso "Pulsa aquí y desliza" ----------
+       El gesto solo se "arma" si el toque empieza sobre el aviso
+       (.reveal-lab-hint); así el resto de la sección queda libre
+       para el scroll normal y el descubrimiento es siempre
+       intencional. Una vez armado, una lupa de tamaño fijo
+       (maxRadius) sigue al dedo mientras arrastras dentro de la
+       sección: como es pequeña, hay que recorrer las distintas
+       zonas del panel para ir descubriendo el código "poco a poco".
+       La sección tiene touch-action: pan-y (ver CSS), por lo que el
+       navegador se queda con los gestos verticales para el scroll
+       de la página y deja libres los horizontales para este
+       arrastre — no hace falta preventDefault. */
+    const hint = lab.querySelector('.reveal-lab-hint');
+
     state.x = state.tx = 50;
     state.y = state.ty = 45;
     applyVars();
 
     let lastX = 0;
     let lastY = 0;
+    let armed = false;
     let dragging = false;
 
     lab.addEventListener('touchstart', (e) => {
       const t = e.touches[0];
+      armed = !!(hint && t.target.closest('.reveal-lab-hint'));
       lastX = t.clientX;
       lastY = t.clientY;
       dragging = false;
+      if (armed) lab.classList.add('is-dragging');
     }, { passive: true });
 
     lab.addEventListener('touchmove', (e) => {
+      if (!armed) return;
       const t = e.touches[0];
       const dx = t.clientX - lastX;
       const dy = t.clientY - lastY;
@@ -997,7 +1005,6 @@ gsap.from('.about-block > *', {
       if (!dragging && Math.abs(dx) <= Math.abs(dy)) return;
 
       dragging = true;
-      lab.classList.add('has-interacted');
 
       const rect = lab.getBoundingClientRect();
       const x = ((t.clientX - rect.left) / rect.width) * 100;
@@ -1007,7 +1014,9 @@ gsap.from('.about-block > *', {
 
     const closeReveal = () => {
       if (dragging) setTarget(state.tx, state.ty, 0);
+      armed = false;
       dragging = false;
+      lab.classList.remove('is-dragging');
     };
     lab.addEventListener('touchend', closeReveal);
     lab.addEventListener('touchcancel', closeReveal);

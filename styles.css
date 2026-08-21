@@ -319,7 +319,7 @@ ul { list-style: none; }
 .reveal-lab {
   position: relative;
   z-index: 5;
-  height: clamp(780px, 118svh, 1180px);
+  height: clamp(880px, 132svh, 1420px);
   overflow: hidden;
   border-block: 1px solid var(--line);
   /* pan-y: el navegador gestiona de forma nativa el gesto vertical
@@ -339,7 +339,7 @@ ul { list-style: none; }
   --reveal-x: 50%;
   --reveal-y: 50%;
   --reveal-r: 0px;
-  --reveal-soft: 95px;
+  --reveal-soft: 65px;
 }
 
 /* ---------- Capa 1: el "editor" con código real ---------- */
@@ -467,10 +467,11 @@ ul { list-style: none; }
 }
 
 /* ---------- Pista táctil "pulsa aquí y desliza" ----------
-   Solo en pantallas táctiles (sin hover / puntero impreciso): indica
-   el gesto de arrastre horizontal que revela el código, para que no
-   se confunda con el scroll vertical de la página. Se desvanece en
-   cuanto main.js detecta el primer arrastre (clase .has-interacted). */
+   Solo en pantallas táctiles (sin hover / puntero impreciso): es el
+   único punto por el que puede empezar el gesto que revela el
+   código (ver main.js), así el resto de la sección queda libre para
+   el scroll normal. Mientras se arrastra, el propio dedo la tapa, así
+   que se atenúa (clase .is-dragging) y vuelve a aparecer al soltar. */
 .reveal-lab-hint { display: none; }
 
 @media (hover: none), (pointer: coarse) {
@@ -488,11 +489,15 @@ ul { list-style: none; }
     font-weight: 600;
     letter-spacing: 0.01em;
     opacity: 1;
-    transition: opacity 0.4s ease;
+    /* .reveal-lab-content (el padre) desactiva pointer-events para
+       dejar pasar el toque a la sección entera salvo aquí, que es
+       justo donde main.js exige que empiece el gesto. */
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
     animation: reveal-lab-hint-pulse 1.8s ease-in-out infinite;
   }
 
-  .reveal-lab.has-interacted .reveal-lab-hint { opacity: 0; }
+  .reveal-lab.is-dragging .reveal-lab-hint { opacity: 0.15; }
 }
 
 @keyframes reveal-lab-hint-pulse {
