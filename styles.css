@@ -322,10 +322,10 @@ ul { list-style: none; }
   height: clamp(880px, 132svh, 1420px);
   overflow: hidden;
   border-block: 1px solid var(--line);
-  /* pan-y: el navegador gestiona de forma nativa el gesto vertical
-     (scroll de la página) y deja libres los gestos horizontales para
-     que main.js los use como "arrastra para revelar" sin competir
-     nunca con el scroll — no hace falta preventDefault. */
+  /* pan-y: permite el scroll vertical normal mientras NO se está
+     revelando (el gesto no ha empezado en .reveal-lab-hint). En
+     cuanto se arma el arrastre, .is-dragging fuerza touch-action:
+     none más abajo y main.js bloquea además el scroll de la página. */
   touch-action: pan-y;
   /* El arrastre con el dedo no debe seleccionar texto ni disparar el
      menú de "copiar/definir" (long-press) ni el resaltado táctil por
@@ -498,6 +498,12 @@ ul { list-style: none; }
   }
 
   .reveal-lab.is-dragging .reveal-lab-hint { opacity: 0.15; }
+
+  /* Mientras se arrastra para revelar, el scroll de la página está
+     bloqueado desde JS (body en position: fixed) y el navegador no
+     debe intentar ningún gesto nativo (scroll, rebote) sobre la
+     sección: así el arrastre no compite nunca con el scroll. */
+  .reveal-lab.is-dragging { touch-action: none; }
 }
 
 @keyframes reveal-lab-hint-pulse {

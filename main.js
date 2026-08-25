@@ -881,9 +881,10 @@ gsap.from('.about-block > *', {
 /* ================================================================
    10. LUPA DE CÓDIGO — reveal mask (sección bajo el Hero). En
        escritorio sigue al ratón con un ligero lag orgánico (rAF +
-       interpolación). En móvil se revela pulsando y deslizando el
-       dedo dentro de la sección, sin competir con el scroll de la
-       página (ver touch-action: pan-y en el CSS).
+       interpolación). En móvil, el gesto solo empieza si se pulsa el
+       aviso "Pulsa aquí y desliza"; mientras se arrastra, la página
+       se bloquea (se "fija" con position: fixed) para que el scroll
+       nunca compita con el arrastre de revelar.
    ================================================================ */
 (function initRevealLab() {
   const lab = document.getElementById('revealLab');
@@ -959,60 +960,69 @@ gsap.from('.about-block > *', {
        El gesto solo se "arma" si el toque empieza sobre el aviso
        (.reveal-lab-hint); así el resto de la sección queda libre
        para el scroll normal y el descubrimiento es siempre
-       intencional. Una vez armado, una lupa de tamaño fijo
-       (maxRadius) sigue al dedo mientras arrastras dentro de la
-       sección: como es pequeña, hay que recorrer las distintas
-       zonas del panel para ir descubriendo el código "poco a poco".
-       La sección tiene touch-action: pan-y (ver CSS), por lo que el
-       navegador se queda con los gestos verticales para el scroll
-       de la página y deja libres los horizontales para este
-       arrastre — no hace falta preventDefault. */
+       intencional. En cuanto se arma, se bloquea el scroll de toda
+       la página (el body se "fija" con position: fixed, ver
+       lockPageScroll) para que el arrastre —en cualquier dirección—
+       nunca se confunda con el gesto de hacer scroll. Al soltar el
+       dedo, se restaura el scroll exactamente donde estaba. */
     const hint = lab.querySelector('.reveal-lab-hint');
 
     state.x = state.tx = 50;
     state.y = state.ty = 45;
     applyVars();
 
-    let lastX = 0;
-    let lastY = 0;
     let armed = false;
-    let dragging = false;
+    let savedScrollY = 0;
+
+    function lockPageScroll() {
+      savedScrollY = window.scrollY;
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${savedScrollY}px`;
+      document.body.style.width = '100%';
+    }
+
+    function unlockPageScroll() {
+      document.documentElement.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, savedScrollY);
+    }
+
+    function revealAt(clientX, clientY) {
+      const rect = lab.getBoundingClientRect();
+      const x = ((clientX - rect.left) / rect.width) * 100;
+      const y = ((clientY - rect.top) / rect.height) * 100;
+      setTarget(x, y, maxRadius);
+    }
 
     lab.addEventListener('touchstart', (e) => {
       const t = e.touches[0];
       armed = !!(hint && t.target.closest('.reveal-lab-hint'));
-      lastX = t.clientX;
-      lastY = t.clientY;
-      dragging = false;
-      if (armed) lab.classList.add('is-dragging');
+      if (!armed) return;
+      lab.classList.add('is-dragging');
+      lockPageScroll();
+      revealAt(t.clientX, t.clientY);
     }, { passive: true });
 
+    /* passive: false — necesitamos poder cancelar el gesto (además
+       del bloqueo con position: fixed) para que ni siquiera el
+       rebote/inercia nativo del navegador se cuele durante el
+       arrastre. */
     lab.addEventListener('touchmove', (e) => {
       if (!armed) return;
+      e.preventDefault();
       const t = e.touches[0];
-      const dx = t.clientX - lastX;
-      const dy = t.clientY - lastY;
-      lastX = t.clientX;
-      lastY = t.clientY;
-
-      /* Solo cuenta como "revelar" el recorrido horizontal: si el
-         navegador ha tomado el gesto como scroll vertical, apenas
-         llegan aquí movimientos horizontales y no pasa nada. */
-      if (!dragging && Math.abs(dx) <= Math.abs(dy)) return;
-
-      dragging = true;
-
-      const rect = lab.getBoundingClientRect();
-      const x = ((t.clientX - rect.left) / rect.width) * 100;
-      const y = ((t.clientY - rect.top) / rect.height) * 100;
-      setTarget(x, y, maxRadius);
-    }, { passive: true });
+      revealAt(t.clientX, t.clientY);
+    }, { passive: false });
 
     const closeReveal = () => {
-      if (dragging) setTarget(state.tx, state.ty, 0);
+      if (!armed) return;
+      setTarget(state.tx, state.ty, 0);
       armed = false;
-      dragging = false;
       lab.classList.remove('is-dragging');
+      unlockPageScroll();
     };
     lab.addEventListener('touchend', closeReveal);
     lab.addEventListener('touchcancel', closeReveal);
