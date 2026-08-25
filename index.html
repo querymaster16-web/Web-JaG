@@ -476,6 +476,18 @@ git log --oneline <span class="tk-com">// spoiler: hay muchos "fix" ahí dentro<
     <span class="brand brand--small">
       <span class="brand-letter">J</span><span class="brand-letter brand-letter--gold">a</span><span class="brand-letter">G</span>
     </span>
+
+    <!-- Enlaces legales: obligatorios en toda página para cumplir LSSI-CE / RGPD -->
+    <nav class="footer-legal" aria-label="Información legal">
+      <a href="#" class="js-open-legal">Aviso legal</a>
+      <span aria-hidden="true">·</span>
+      <a href="#" class="js-open-privacy">Política de privacidad</a>
+      <span aria-hidden="true">·</span>
+      <a href="#" class="js-open-cookies">Política de cookies</a>
+      <span aria-hidden="true">·</span>
+      <a href="#" class="js-open-terms">Términos y condiciones</a>
+    </nav>
+
     <p class="footer-text">Diseño y desarrollo web · A Coruña · © 2026 JaG</p>
   </footer>
 
@@ -532,10 +544,12 @@ git log --oneline <span class="tk-com">// spoiler: hay muchos "fix" ahí dentro<
               <input type="checkbox" id="privacidad" name="privacidad" required />
               <span class="check-text">
                 He leído y acepto la
-                <a href="#" class="privacy-link js-open-privacy">política de privacidad</a>.
+                <a href="#" class="privacy-link js-open-privacy">política de privacidad</a>
+                y los
+                <a href="#" class="privacy-link js-open-terms">términos y condiciones</a>.
               </span>
             </label>
-            <span class="field-error">Debes aceptar la política de privacidad para continuar.</span>
+            <span class="field-error">Debes aceptar la política de privacidad y los términos y condiciones para continuar.</span>
           </div>
 
           <button type="submit" class="cta-button cta-button--large form-submit" id="formSubmit">
@@ -631,6 +645,191 @@ git log --oneline <span class="tk-com">// spoiler: hay muchos "fix" ahí dentro<
   </div>
 
   <!-- ============================================================
+       MODAL "AVISO LEGAL"
+       Identificación del titular del sitio, condiciones de uso y
+       propiedad intelectual. Obligatorio en España (art. 10 LSSI-CE).
+       NIF/CIF y domicilio EDITAR AQUÍ ✏️ con los datos reales.
+       ============================================================ -->
+  <div class="modal modal--legal" id="legalModal" role="dialog" aria-modal="true" aria-labelledby="legalTitle" hidden>
+    <div class="modal-backdrop" data-close-legal></div>
+
+    <div class="modal-panel modal-panel--legal">
+      <button class="modal-close" aria-label="Cerrar" data-close-legal>&times;</button>
+
+      <p class="section-tag">LEGAL</p>
+      <h2 class="modal-title" id="legalTitle">Aviso legal</h2>
+
+      <div class="privacy-content">
+        <h3>Titular del sitio web</h3>
+        <p>
+          <strong>JaG — Diseño y Desarrollo Web</strong>, con domicilio en
+          A&nbsp;Coruña (España) y NIF/CIF <em>[EDITAR AQUÍ]</em>. Correo de
+          contacto:
+          <a href="mailto:grupojag.contacto@gmail.com" class="privacy-link">grupojag.contacto@gmail.com</a>.
+        </p>
+
+        <h3>Objeto</h3>
+        <p>
+          Este sitio web tiene carácter informativo y comercial: presenta los
+          servicios de diseño web, desarrollo y automatización de procesos de
+          JaG, y permite solicitar un presupuesto a través del formulario de
+          contacto.
+        </p>
+
+        <h3>Condiciones de uso</h3>
+        <p>
+          El acceso a este sitio web es gratuito y no requiere registro. Al
+          navegar por él, el usuario acepta hacerlo de forma diligente,
+          conforme a la ley, la moral y el orden público, y se compromete a no
+          utilizarlo con fines ilícitos o lesivos para JaG o terceros.
+        </p>
+
+        <h3>Propiedad intelectual</h3>
+        <p>
+          Los textos, imágenes, código fuente, diseño y demás contenidos de
+          este sitio web son propiedad de JaG o se utilizan con la debida
+          autorización. Queda prohibida su reproducción, distribución o
+          transformación total o parcial sin permiso expreso, salvo para uso
+          personal y privado.
+        </p>
+
+        <h3>Exclusión de responsabilidad</h3>
+        <p>
+          JaG no garantiza la disponibilidad continua e ininterrumpida del
+          sitio web y no se responsabiliza de los daños derivados de
+          interrupciones, virus u otros elementos ajenos a su control. Los
+          enlaces a sitios externos se ofrecen a título informativo; JaG no
+          controla ni responde por su contenido.
+        </p>
+
+        <h3>Legislación aplicable</h3>
+        <p>
+          Estas condiciones se rigen por la legislación española. Para
+          cualquier controversia relacionada con este sitio web, las partes
+          se someten a los juzgados y tribunales que correspondan conforme a
+          la normativa vigente de protección de personas consumidoras.
+        </p>
+      </div>
+
+      <button class="cta-button privacy-accept" data-close-legal>ENTENDIDO</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL "POLÍTICA DE COOKIES"
+       ============================================================ -->
+  <div class="modal modal--legal" id="cookiesModal" role="dialog" aria-modal="true" aria-labelledby="cookiesTitle" hidden>
+    <div class="modal-backdrop" data-close-cookies></div>
+
+    <div class="modal-panel modal-panel--legal">
+      <button class="modal-close" aria-label="Cerrar" data-close-cookies>&times;</button>
+
+      <p class="section-tag">LEGAL</p>
+      <h2 class="modal-title" id="cookiesTitle">Política de cookies</h2>
+
+      <div class="privacy-content">
+        <h3>Qué son las cookies</h3>
+        <p>
+          Las cookies son pequeños archivos que un sitio web puede guardar en
+          tu navegador para recordar información entre visitas.
+        </p>
+
+        <h3>Cookies que usamos</h3>
+        <p>
+          Esta web <strong>no instala cookies propias</strong> de analítica,
+          publicidad ni seguimiento. El formulario de presupuesto envía tus
+          datos directamente a nuestra hoja de cálculo sin usar cookies para
+          ello.
+        </p>
+
+        <h3>Recursos de terceros</h3>
+        <p>
+          Para funcionar, la web carga desde servidores externos las
+          librerías Three.js (unpkg.com) y GSAP (cdnjs.cloudflare.com), y
+          envía las solicitudes de presupuesto a Google Apps Script (Google
+          LLC). Estos proveedores podrían registrar datos técnicos básicos de
+          conexión (como tu dirección IP) según sus propias políticas, ajenas
+          a JaG.
+        </p>
+
+        <h3>Cómo desactivar las cookies</h3>
+        <p>
+          Puedes permitir, bloquear o eliminar las cookies instaladas en tu
+          equipo en cualquier momento desde la configuración de tu navegador.
+        </p>
+      </div>
+
+      <button class="cta-button privacy-accept" data-close-cookies>ENTENDIDO</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL "TÉRMINOS Y CONDICIONES"
+       Condiciones del servicio y del proceso de presupuesto. El
+       usuario debe aceptarlas antes de enviar el formulario.
+       ============================================================ -->
+  <div class="modal modal--legal" id="termsModal" role="dialog" aria-modal="true" aria-labelledby="termsTitle" hidden>
+    <div class="modal-backdrop" data-close-terms></div>
+
+    <div class="modal-panel modal-panel--legal">
+      <button class="modal-close" aria-label="Cerrar" data-close-terms>&times;</button>
+
+      <p class="section-tag">LEGAL</p>
+      <h2 class="modal-title" id="termsTitle">Términos y condiciones</h2>
+
+      <div class="privacy-content">
+        <h3>Objeto</h3>
+        <p>
+          Estas condiciones regulan la solicitud de presupuesto a través del
+          formulario de este sitio web y el posterior encargo de los
+          servicios de diseño web, desarrollo y automatización de JaG.
+        </p>
+
+        <h3>El presupuesto no es una contratación</h3>
+        <p>
+          Enviar el formulario solo inicia una conversación: no supone ningún
+          compromiso de pago ni de contratación. El proyecto, su alcance y su
+          precio final se acuerdan por escrito (email o documento firmado)
+          antes de empezar a trabajar.
+        </p>
+
+        <h3>Precios y forma de pago</h3>
+        <p>
+          Los precios mostrados en la sección de planes son orientativos y no
+          incluyen IVA. El presupuesto cerrado que recibas tras la reunión
+          inicial detallará el precio final, el calendario de pagos (
+          <em>[EDITAR AQUÍ: p. ej. 50% al inicio y 50% a la entrega]</em>) y
+          los plazos de entrega estimados.
+        </p>
+
+        <h3>Propiedad del trabajo entregado</h3>
+        <p>
+          Una vez abonado el proyecto en su totalidad, el código y los
+          contenidos desarrollados a medida pasan a ser propiedad del
+          cliente. JaG puede conservar y mostrar el trabajo como parte de su
+          portfolio, salvo acuerdo contrario por escrito.
+        </p>
+
+        <h3>Responsabilidad</h3>
+        <p>
+          JaG se compromete a desarrollar el proyecto con diligencia
+          profesional. No se garantizan resultados de negocio (ventas,
+          posicionamiento) que dependan de factores externos, aunque sí las
+          buenas prácticas técnicas y de SEO aplicadas.
+        </p>
+
+        <h3>Legislación aplicable</h3>
+        <p>
+          Estas condiciones se rigen por la legislación española, en los
+          mismos términos que el <a href="#" class="privacy-link js-open-legal">aviso legal</a>.
+        </p>
+      </div>
+
+      <button class="cta-button privacy-accept" data-close-terms>ENTENDIDO</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
        MODAL "PRECIOS"
        Solo se abre al pulsar "PRECIOS" en el menú de arriba: no forma
        parte del scroll normal de la página. Precios EDITAR AQUÍ ✏️ —
@@ -677,6 +876,7 @@ git log --oneline <span class="tk-com">// spoiler: hay muchos "fix" ahí dentro<
               <li>SEO básico on-page</li>
               <li>Entrega en 1–2 semanas</li>
             </ul>
+            <a href="servicios/landing-page.html" class="price-card-link">Ver qué incluye este plan →</a>
             <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
           </div>
         </article>
@@ -708,6 +908,7 @@ git log --oneline <span class="tk-com">// spoiler: hay muchos "fix" ahí dentro<
               <li>Formulario de contacto + email automático</li>
               <li>Dominio, hosting y SSL configurados</li>
             </ul>
+            <a href="servicios/web-profesional.html" class="price-card-link">Ver qué incluye este plan →</a>
             <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
           </div>
         </article>
@@ -738,6 +939,7 @@ git log --oneline <span class="tk-com">// spoiler: hay muchos "fix" ahí dentro<
               <li>Integraciones con tus herramientas actuales</li>
               <li>Soporte y mantenimiento continuo</li>
             </ul>
+            <a href="servicios/a-medida.html" class="price-card-link">Ver qué incluye este plan →</a>
             <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
           </div>
         </article>

@@ -766,6 +766,21 @@ ul { list-style: none; }
   text-align: center;
 }
 
+/* Enlace a la subpágina de explicación de cada plan */
+.price-card-link {
+  display: inline-block;
+  margin-top: 1.4rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  color: var(--gold);
+  border-bottom: 1px solid transparent;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.price-card-link:hover {
+  color: var(--gold-bright);
+  border-bottom-color: var(--gold-bright);
+}
+
 /* ---------- Pasos (Método) ---------- */
 .steps {
   display: grid;
@@ -853,6 +868,20 @@ ul { list-style: none; }
   letter-spacing: 0.18em;
   color: var(--text-dim);
 }
+
+/* Enlaces legales del pie — presentes en todas las páginas del sitio */
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.74rem;
+  color: var(--text-dim);
+}
+.footer-legal a { transition: color 0.3s ease; }
+.footer-legal a:hover { color: var(--gold-bright); }
+.footer-legal span[aria-hidden] { color: var(--line); }
 
 /* ================================================================
    MODAL "PEDIR PRESUPUESTO"
@@ -1048,9 +1077,13 @@ ul { list-style: none; }
 .check-mark { stroke: var(--gold-bright); }
 
 /* ---------- Modal de Política de Privacidad ---------- */
-.modal--privacy { z-index: 60; }   /* Por encima del modal de presupuesto */
+.modal--privacy,
+.modal--legal { z-index: 60; }   /* Por encima del modal de presupuesto.
+                                     .modal--legal se reutiliza para Aviso
+                                     legal, Cookies y Términos y condiciones */
 
-.modal-panel--privacy {
+.modal-panel--privacy,
+.modal-panel--legal {
   width: min(100%, 42rem);
 }
 
@@ -1097,6 +1130,87 @@ ul { list-style: none; }
 
 /* Secciones ancla vacías (compatibilidad) */
 .section-placeholder { min-height: 40vh; }
+
+/* ================================================================
+   SUBPÁGINAS DE PLANES (servicios/*.html)
+   Explican con detalle cada plan de precios, para quien quiera
+   entender bien qué incluye antes de pedir presupuesto.
+   ================================================================ */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  margin-bottom: 1.6rem;
+  transition: color 0.3s ease;
+}
+.back-link:hover { color: var(--gold); }
+
+.plan-recap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.7rem;
+  margin: 1.6rem 0 2rem;
+}
+.plan-recap .price-amount {
+  font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+  font-weight: 700;
+  color: var(--gold-bright);
+}
+.plan-recap .price-note {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.plan-section-title {
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+
+/* Preguntas frecuentes: <details>/<summary> nativo, sin JS */
+.faq-list { display: grid; gap: 0.9rem; }
+.faq-item {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1.1rem 1.4rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: "+";
+  color: var(--gold);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-item p {
+  margin-top: 0.9rem;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.plan-cta-row { margin-top: 1rem; }
+
+.section-lead--wide { max-width: none; }
+
+.plan-closing { text-align: center; }
+.plan-closing .section-lead { margin-inline: auto; }
 
 /* ================================================================
    RESPONSIVE — móvil

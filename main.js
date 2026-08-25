@@ -756,9 +756,12 @@ animate();
    ================================================================ */
 
 /* ---------- Al recargar, la página SIEMPRE empieza desde arriba ----------
-   1) Desactiva la restauración automática de scroll del navegador.
-   2) Elimina el #ancla de la URL si quedó de una navegación anterior.
-   3) Sube al inicio. */
+   1) Guarda el #ancla original (una subpágina puede llegar con
+      #presupuesto o #privacidad para abrir un modal, ver más abajo).
+   2) Desactiva la restauración automática de scroll del navegador.
+   3) Elimina el #ancla de la URL si quedó de una navegación anterior.
+   4) Sube al inicio. */
+const initialHash = location.hash;
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (location.hash) history.replaceState(null, '', location.pathname);
 window.scrollTo(0, 0);
@@ -1089,49 +1092,67 @@ modal.querySelectorAll('[data-close-modal]').forEach((el) =>
   el.addEventListener('click', closeModal)
 );
 
-/* ---------- Modal de Política de Privacidad ---------- */
-const privacyModal    = document.getElementById('privacyModal');
-const privacyPanel    = privacyModal.querySelector('.modal-panel');
-const privacyBackdrop = privacyModal.querySelector('.modal-backdrop');
+/* ---------- Modales legales (Privacidad, Aviso legal, Cookies, Términos) ----------
+   Los cuatro comparten la misma animación y comportamiento, así que se
+   generan con una única fábrica en vez de repetir el código cuatro veces. */
+function createLegalModal(modalEl, closeAttr) {
+  const panel    = modalEl.querySelector('.modal-panel');
+  const backdrop = modalEl.querySelector('.modal-backdrop');
 
-function openPrivacy() {
-  privacyModal.hidden = false;
-  document.body.style.overflow = 'hidden';
+  function open() {
+    modalEl.hidden = false;
+    document.body.style.overflow = 'hidden';
 
-  gsap.timeline()
-    .fromTo(privacyBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' })
-    .fromTo(
-      privacyPanel,
-      { opacity: 0, y: 40, scale: 0.97 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'power3.out' },
-      '-=0.12'
-    );
+    gsap.timeline()
+      .fromTo(backdrop, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' })
+      .fromTo(
+        panel,
+        { opacity: 0, y: 40, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'power3.out' },
+        '-=0.12'
+      );
+  }
+
+  function close() {
+    gsap.timeline({
+      onComplete: () => {
+        modalEl.hidden = true;
+        /* Solo desbloquea el scroll si el modal de presupuesto
+           tampoco está abierto (estos modales pueden abrirse encima) */
+        if (modal.hidden) document.body.style.overflow = '';
+      },
+    })
+      .to(panel, { opacity: 0, y: 26, scale: 0.98, duration: 0.25, ease: 'power2.in' })
+      .to(backdrop, { opacity: 0, duration: 0.2 }, '-=0.08');
+  }
+
+  modalEl.querySelectorAll(`[${closeAttr}]`).forEach((el) => el.addEventListener('click', close));
+
+  return { modalEl, open, close };
 }
 
-function closePrivacy() {
-  gsap.timeline({
-    onComplete: () => {
-      privacyModal.hidden = true;
-      /* Solo desbloquea el scroll si el modal de presupuesto
-         tampoco está abierto (la privacidad se abre encima de él) */
-      if (modal.hidden) document.body.style.overflow = '';
-    },
-  })
-    .to(privacyPanel, { opacity: 0, y: 26, scale: 0.98, duration: 0.25, ease: 'power2.in' })
-    .to(privacyBackdrop, { opacity: 0, duration: 0.2 }, '-=0.08');
-}
+const privacyModal = document.getElementById('privacyModal');
+const legalModal    = document.getElementById('legalModal');
+const cookiesModal  = document.getElementById('cookiesModal');
+const termsModal    = document.getElementById('termsModal');
 
-/* Enlaces que abren la política (formulario y donde se necesite) */
+const privacy = createLegalModal(privacyModal, 'data-close-privacy');
+const legal   = createLegalModal(legalModal, 'data-close-legal');
+const cookies = createLegalModal(cookiesModal, 'data-close-cookies');
+const terms   = createLegalModal(termsModal, 'data-close-terms');
+
+/* Enlaces que abren cada modal legal (formulario, pie de página, entre modales…) */
 document.querySelectorAll('.js-open-privacy').forEach((link) =>
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    openPrivacy();
-  })
+  link.addEventListener('click', (e) => { e.preventDefault(); privacy.open(); })
 );
-
-/* Elementos que cierran la privacidad (X, fondo, botón ENTENDIDO) */
-privacyModal.querySelectorAll('[data-close-privacy]').forEach((el) =>
-  el.addEventListener('click', closePrivacy)
+document.querySelectorAll('.js-open-legal').forEach((link) =>
+  link.addEventListener('click', (e) => { e.preventDefault(); legal.open(); })
+);
+document.querySelectorAll('.js-open-cookies').forEach((link) =>
+  link.addEventListener('click', (e) => { e.preventDefault(); cookies.open(); })
+);
+document.querySelectorAll('.js-open-terms').forEach((link) =>
+  link.addEventListener('click', (e) => { e.preventDefault(); terms.open(); })
 );
 
 /* ---------- Modal de Precios ----------
@@ -1194,10 +1215,30 @@ pricingModal.querySelectorAll('[data-close-pricing]').forEach((el) =>
    presupuesto, luego precios) */
 window.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
-  if (!privacyModal.hidden) closePrivacy();
+  if (!privacyModal.hidden) privacy.close();
+  else if (!legalModal.hidden) legal.close();
+  else if (!cookiesModal.hidden) cookies.close();
+  else if (!termsModal.hidden) terms.close();
   else if (!modal.hidden) closeModal();
   else if (!pricingModal.hidden) closePricingModal();
 });
+
+/* ================================================================
+   12b. APERTURA AUTOMÁTICA DE MODALES DESDE OTRA PÁGINA
+   Las subpáginas de servicios/ enlazan de vuelta con anclas como
+   index.html#presupuesto o index.html#privacidad para abrir el modal
+   correspondiente nada más cargar (en vez de duplicar los modales en
+   cada subpágina). "initialHash" se capturó al principio del archivo,
+   antes de que se limpiara la URL. */
+const HASH_MODAL_OPENERS = {
+  '#presupuesto': openModal,
+  '#precios': openPricingModal,
+  '#privacidad': privacy.open,
+  '#aviso-legal': legal.open,
+  '#cookies': cookies.open,
+  '#terminos': terms.open,
+};
+if (HASH_MODAL_OPENERS[initialHash]) HASH_MODAL_OPENERS[initialHash]();
 
 /* ================================================================
    13. VALIDACIÓN + ENVÍO DEL FORMULARIO
