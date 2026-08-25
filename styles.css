@@ -1054,6 +1054,16 @@ ul { list-style: none; }
   width: min(100%, 42rem);
 }
 
+/* ---------- Modal de Precios ---------- */
+.modal--pricing { z-index: 45; }   /* Por debajo del modal de presupuesto,
+                                       que puede abrirse encima desde una
+                                       tarjeta de precio */
+
+.modal-panel--pricing {
+  width: min(100%, 72rem);
+}
+.modal-panel--pricing .section-head { margin-bottom: clamp(2rem, 5vw, 3rem); }
+
 .privacy-content {
   margin: 1.4rem 0 2rem;
   display: grid;

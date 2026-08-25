@@ -56,7 +56,7 @@
     <nav class="main-nav" aria-label="Navegación principal">
       <ul>
         <li><a href="#servicios">SERVICIOS</a></li>
-        <li><a href="#precios">PRECIOS</a></li>
+        <li><a href="#" class="js-open-pricing-modal">PRECIOS</a></li>
         <li><a href="#metodo">MÉTODO</a></li>
         <li><a href="#nosotros">NOSOTROS</a></li>
         <li><a href="#" class="cta-button js-open-modal">PEDIR PRESUPUESTO</a></li>
@@ -377,117 +377,6 @@ git log --oneline <span class="tk-com">// spoiler: hay muchos "fix" ahí dentro<
     </section>
 
     <!-- ============================================================
-         SECCIÓN PRECIOS
-         Cada plan en una "ventana" estilo macOS (misma barra de 3
-         puntos que la sección de la lupa de código, .window-bar).
-         Precios EDITAR AQUÍ ✏️ — son orientativos, ajústalos cuando
-         quieras a lo que de verdad cobréis.
-         ============================================================ -->
-    <section id="precios" class="section">
-      <div class="section-inner">
-        <header class="section-head">
-          <h2 class="section-title">Planes claros, sin letra pequeña</h2>
-          <p class="section-lead">
-            Tres formas de empezar, según lo que necesite tu negocio ahora
-            mismo. Si no encajas en ninguna, hablamos y hacemos una a medida.
-          </p>
-        </header>
-
-        <div class="price-grid">
-          <!-- Plan: Landing Page -->
-          <article class="price-card">
-            <div class="window-bar">
-              <span class="editorbar-dot editorbar-dot--red"></span>
-              <span class="editorbar-dot editorbar-dot--yellow"></span>
-              <span class="editorbar-dot editorbar-dot--green"></span>
-              <span class="window-bar-file">landing.html</span>
-            </div>
-            <div class="price-card-body">
-              <h3 class="price-card-title">Landing Page</h3>
-              <p class="price-card-desc">
-                Una sola página, un solo objetivo: vender, reservar o captar
-                contactos. Ideal para lanzar rápido o promocionar algo puntual.
-              </p>
-              <p class="price-card-price">
-                <span class="price-amount"> Desde 790€</span>
-                <span class="price-note">precio cerrado · IVA no incluido</span>
-              </p>
-              <ul class="price-card-list">
-                <li>1 página, diseño 100% a medida</li>
-                <li>Optimizada para móvil y velocidad</li>
-                <li>Formulario de contacto integrado</li>
-                <li>SEO básico on-page</li>
-                <li>Entrega en 1–2 semanas</li>
-              </ul>
-              <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
-            </div>
-          </article>
-
-          <!-- Plan: Web Profesional (destacado) -->
-          <article class="price-card price-card--featured">
-            <span class="price-card-badge">LA MÁS ELEGIDA</span>
-            <div class="window-bar">
-              <span class="editorbar-dot editorbar-dot--red"></span>
-              <span class="editorbar-dot editorbar-dot--yellow"></span>
-              <span class="editorbar-dot editorbar-dot--green"></span>
-              <span class="window-bar-file">web-profesional.html</span>
-            </div>
-            <div class="price-card-body">
-              <h3 class="price-card-title">Web Profesional</h3>
-              <p class="price-card-desc">
-                La web completa de tu negocio: varias páginas, posicionada en
-                Google y lista para que la gestiones tú sin depender de nadie.
-              </p>
-              <p class="price-card-price">
-                <span class="price-amount">Desde 1.500€</span>
-                <span class="price-note">precio cerrado · IVA no incluido</span>
-              </p>
-              <ul class="price-card-list">
-                <li>Hasta 5 páginas (Inicio, Servicios, Sobre ti…)</li>
-                <li>Diseño exclusivo para tu marca</li>
-                <li>SEO local optimizado (A Coruña y alrededores)</li>
-                <li>Panel sencillo para que la actualices tú</li>
-                <li>Formulario de contacto + email automático</li>
-                <li>Dominio, hosting y SSL configurados</li>
-              </ul>
-              <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
-            </div>
-          </article>
-
-          <!-- Plan: Web a Medida -->
-          <article class="price-card">
-            <div class="window-bar">
-              <span class="editorbar-dot editorbar-dot--red"></span>
-              <span class="editorbar-dot editorbar-dot--yellow"></span>
-              <span class="editorbar-dot editorbar-dot--green"></span>
-              <span class="window-bar-file">a-medida.tsx</span>
-            </div>
-            <div class="price-card-body">
-              <h3 class="price-card-title">Web a Medida</h3>
-              <p class="price-card-desc">
-                Cuando necesitas algo que no cabe en un plan cerrado:
-                reservas, tienda online, automatizaciones… lo construimos
-                a tu manera.
-              </p>
-              <p class="price-card-price">
-                <span class="price-amount">Desde 2.000€</span>
-                <span class="price-note">presupuesto cerrado tras la reunión inicial</span>
-              </p>
-              <ul class="price-card-list">
-                <li>Funcionalidades a medida (reservas, tienda, más)</li>
-                <li>Automatización de procesos incluida (Make/Sheets)</li>
-                <li>Diseño exclusivo, sin límite de páginas</li>
-                <li>Integraciones con tus herramientas actuales</li>
-                <li>Soporte y mantenimiento continuo</li>
-              </ul>
-              <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================================================
          SECCIÓN MÉTODO
          ============================================================ -->
     <section id="metodo" class="section">
@@ -738,6 +627,121 @@ git log --oneline <span class="tk-com">// spoiler: hay muchos "fix" ahí dentro<
       </div>
 
       <button class="cta-button privacy-accept" data-close-privacy>ENTENDIDO</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL "PRECIOS"
+       Solo se abre al pulsar "PRECIOS" en el menú de arriba: no forma
+       parte del scroll normal de la página. Precios EDITAR AQUÍ ✏️ —
+       son orientativos, ajústalos cuando quieras a lo que de verdad
+       cobréis.
+       ============================================================ -->
+  <div class="modal modal--pricing" id="pricingModal" role="dialog" aria-modal="true" aria-labelledby="pricingTitle" hidden>
+    <div class="modal-backdrop" data-close-pricing></div>
+
+    <div class="modal-panel modal-panel--pricing">
+      <button class="modal-close" aria-label="Cerrar" data-close-pricing>&times;</button>
+
+      <header class="section-head">
+        <h2 class="modal-title" id="pricingTitle">Planes claros, sin letra pequeña</h2>
+        <p class="modal-subtitle">
+          Tres formas de empezar, según lo que necesite tu negocio ahora
+          mismo. Si no encajas en ninguna, hablamos y hacemos una a medida.
+        </p>
+      </header>
+
+      <div class="price-grid">
+        <!-- Plan: Landing Page -->
+        <article class="price-card">
+          <div class="window-bar">
+            <span class="editorbar-dot editorbar-dot--red"></span>
+            <span class="editorbar-dot editorbar-dot--yellow"></span>
+            <span class="editorbar-dot editorbar-dot--green"></span>
+            <span class="window-bar-file">landing.html</span>
+          </div>
+          <div class="price-card-body">
+            <h3 class="price-card-title">Landing Page</h3>
+            <p class="price-card-desc">
+              Una sola página, un solo objetivo: vender, reservar o captar
+              contactos. Ideal para lanzar rápido o promocionar algo puntual.
+            </p>
+            <p class="price-card-price">
+              <span class="price-amount"> Desde 790€</span>
+              <span class="price-note">precio cerrado · IVA no incluido</span>
+            </p>
+            <ul class="price-card-list">
+              <li>1 página, diseño 100% a medida</li>
+              <li>Optimizada para móvil y velocidad</li>
+              <li>Formulario de contacto integrado</li>
+              <li>SEO básico on-page</li>
+              <li>Entrega en 1–2 semanas</li>
+            </ul>
+            <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
+          </div>
+        </article>
+
+        <!-- Plan: Web Profesional (destacado) -->
+        <article class="price-card price-card--featured">
+          <span class="price-card-badge">LA MÁS ELEGIDA</span>
+          <div class="window-bar">
+            <span class="editorbar-dot editorbar-dot--red"></span>
+            <span class="editorbar-dot editorbar-dot--yellow"></span>
+            <span class="editorbar-dot editorbar-dot--green"></span>
+            <span class="window-bar-file">web-profesional.html</span>
+          </div>
+          <div class="price-card-body">
+            <h3 class="price-card-title">Web Profesional</h3>
+            <p class="price-card-desc">
+              La web completa de tu negocio: varias páginas, posicionada en
+              Google y lista para que la gestiones tú sin depender de nadie.
+            </p>
+            <p class="price-card-price">
+              <span class="price-amount">Desde 1.500€</span>
+              <span class="price-note">precio cerrado · IVA no incluido</span>
+            </p>
+            <ul class="price-card-list">
+              <li>Hasta 5 páginas (Inicio, Servicios, Sobre ti…)</li>
+              <li>Diseño exclusivo para tu marca</li>
+              <li>SEO local optimizado (A Coruña y alrededores)</li>
+              <li>Panel sencillo para que la actualices tú</li>
+              <li>Formulario de contacto + email automático</li>
+              <li>Dominio, hosting y SSL configurados</li>
+            </ul>
+            <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
+          </div>
+        </article>
+
+        <!-- Plan: Web a Medida -->
+        <article class="price-card">
+          <div class="window-bar">
+            <span class="editorbar-dot editorbar-dot--red"></span>
+            <span class="editorbar-dot editorbar-dot--yellow"></span>
+            <span class="editorbar-dot editorbar-dot--green"></span>
+            <span class="window-bar-file">a-medida.tsx</span>
+          </div>
+          <div class="price-card-body">
+            <h3 class="price-card-title">Web a Medida</h3>
+            <p class="price-card-desc">
+              Cuando necesitas algo que no cabe en un plan cerrado:
+              reservas, tienda online, automatizaciones… lo construimos
+              a tu manera.
+            </p>
+            <p class="price-card-price">
+              <span class="price-amount">Desde 2.000€</span>
+              <span class="price-note">presupuesto cerrado tras la reunión inicial</span>
+            </p>
+            <ul class="price-card-list">
+              <li>Funcionalidades a medida (reservas, tienda, más)</li>
+              <li>Automatización de procesos incluida (Make/Sheets)</li>
+              <li>Diseño exclusivo, sin límite de páginas</li>
+              <li>Integraciones con tus herramientas actuales</li>
+              <li>Soporte y mantenimiento continuo</li>
+            </ul>
+            <a href="#" class="cta-button price-card-cta js-open-modal">PEDIR PRESUPUESTO</a>
+          </div>
+        </article>
+      </div>
     </div>
   </div>
 

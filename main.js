@@ -855,16 +855,6 @@ gsap.from('.glass-card', {
   ease: 'power3.out',
 });
 
-/* Tarjetas de precios: suben y aparecen escalonadas */
-gsap.from('.price-card', {
-  scrollTrigger: { trigger: '.price-grid', start: 'top 80%' },
-  y: 70,
-  opacity: 0,
-  duration: 1.1,
-  stagger: 0.18,
-  ease: 'power3.out',
-});
-
 /* Pasos del método: entran desde la izquierda uno a uno */
 gsap.from('.step', {
   scrollTrigger: { trigger: '.steps', start: 'top 78%' },
@@ -897,7 +887,10 @@ gsap.from('.about-block > *', {
   if (!lab) return;
 
   const hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const maxRadius = 130; // px — tamaño de la lupa (pequeña a propósito: obliga a explorar la sección poco a poco)
+  // px — tamaño de la lupa. En escritorio algo más grande (más cómodo con
+  // el ratón); en móvil se mantiene pequeña a propósito para que haya que
+  // explorar la sección poco a poco.
+  const maxRadius = hasFinePointer ? 190 : 130;
 
   /* x/y en %, r en px. Los valores "t*" son el objetivo; el bucle
      rAF los persigue con lerp para el efecto de lag/suavizado. */
@@ -1066,7 +1059,10 @@ function closeModal() {
   gsap.timeline({
     onComplete: () => {
       modal.hidden = true;
-      document.body.style.overflow = '';
+      /* Solo desbloquea el scroll si el modal de precios (que puede
+         quedar abierto detrás, ver CTA "Pedir presupuesto") tampoco
+         está abierto */
+      if (pricingModal.hidden) document.body.style.overflow = '';
       /* Reset para la próxima apertura */
       successView.hidden = true;
       formView.hidden = false;
@@ -1138,11 +1134,69 @@ privacyModal.querySelectorAll('[data-close-privacy]').forEach((el) =>
   el.addEventListener('click', closePrivacy)
 );
 
-/* Tecla Escape: cierra primero el modal superior (privacidad) */
+/* ---------- Modal de Precios ----------
+   Ya no es una sección más del scroll: vive oculta hasta que se pulsa
+   "PRECIOS" en el menú de arriba. */
+const pricingModal    = document.getElementById('pricingModal');
+const pricingPanel    = pricingModal.querySelector('.modal-panel');
+const pricingBackdrop = pricingModal.querySelector('.modal-backdrop');
+
+function openPricingModal() {
+  pricingModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+
+  gsap.timeline()
+    .fromTo(pricingBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' })
+    .fromTo(
+      pricingPanel,
+      { opacity: 0, y: 46, scale: 0.96 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power3.out' },
+      '-=0.15'
+    )
+    /* Tarjetas de precio: suben y aparecen escalonadas al abrir
+       (antes se disparaba con el scroll, pero el modal no forma
+       parte del flujo de scroll de la página) */
+    .fromTo(
+      pricingPanel.querySelectorAll('.price-card'),
+      { y: 50, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, stagger: 0.14, ease: 'power3.out' },
+      '-=0.25'
+    );
+}
+
+function closePricingModal() {
+  gsap.timeline({
+    onComplete: () => {
+      pricingModal.hidden = true;
+      /* No desbloquea el scroll si el modal de presupuesto se abrió
+         encima (CTA "Pedir presupuesto" de una tarjeta de precio) */
+      if (modal.hidden) document.body.style.overflow = '';
+    },
+  })
+    .to(pricingPanel, { opacity: 0, y: 30, scale: 0.97, duration: 0.3, ease: 'power2.in' })
+    .to(pricingBackdrop, { opacity: 0, duration: 0.25 }, '-=0.1');
+}
+
+/* Enlace que abre los precios (PRECIOS en el menú) */
+document.querySelectorAll('.js-open-pricing-modal').forEach((link) =>
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    openPricingModal();
+  })
+);
+
+/* Elementos que cierran los precios (X, fondo) */
+pricingModal.querySelectorAll('[data-close-pricing]').forEach((el) =>
+  el.addEventListener('click', closePricingModal)
+);
+
+/* Tecla Escape: cierra primero el modal superior (privacidad, luego
+   presupuesto, luego precios) */
 window.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   if (!privacyModal.hidden) closePrivacy();
   else if (!modal.hidden) closeModal();
+  else if (!pricingModal.hidden) closePricingModal();
 });
 
 /* ================================================================
