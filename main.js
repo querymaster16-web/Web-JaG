@@ -1031,6 +1031,18 @@ document.querySelectorAll('.glass-card, .price-card').forEach((card) => {
   });
 });
 
+/* Tarjeta de precio completa clicable: pulsar en cualquier parte del
+   "cuadrado" lleva a la subpágina de explicación del plan, igual que el
+   enlace "Ver qué incluye este plan →". Los enlaces/botones internos
+   (esa misma explicación y "PEDIR PRESUPUESTO") conservan su propio
+   comportamiento y no disparan esta navegación. */
+document.querySelectorAll('.price-card[data-plan-href]').forEach((card) => {
+  card.addEventListener('click', (e) => {
+    if (e.target.closest('a, button')) return;
+    window.location.href = card.dataset.planHref;
+  });
+});
+
 /* ================================================================
    12. MODAL "PEDIR PRESUPUESTO" + FORMULARIO
    ================================================================ */
