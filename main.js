@@ -987,7 +987,19 @@ gsap.from('.about-block > *', {
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
+
+      /* Al quitar el position: fixed, el navegador pierde la posición
+         de scroll (vuelve a 0) y hay que restaurarla. La página estaba
+         fija ahí visualmente todo el rato, así que este scroll debe
+         ser instantáneo, sin animación — si no, "scroll-behavior:
+         smooth" (activo en toda la página) lo convierte en un
+         desplazamiento visible y brusco justo al soltar el dedo. Se
+         desactiva el suave un instante solo para este ajuste. */
+      const html = document.documentElement;
+      const previousScrollBehavior = html.style.scrollBehavior;
+      html.style.scrollBehavior = 'auto';
       window.scrollTo(0, savedScrollY);
+      html.style.scrollBehavior = previousScrollBehavior;
     }
 
     function revealAt(clientX, clientY) {
