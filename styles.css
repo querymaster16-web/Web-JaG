@@ -538,10 +538,21 @@ ul { list-style: none; }
   .reveal-lab.is-closing .reveal-lab-recover { opacity: 1; }
 
   .reveal-lab-hint {
+    /* Vive fuera de .reveal-lab-cover (no dentro, ya no) — igual que
+       .reveal-lab-torch y por el mismo motivo: .reveal-lab-cover lleva
+       un mask-image que se recalcula en cada frame mientras se revela
+       (--reveal-r animado), y en Safari/iOS un hijo que intenta hacer
+       su propia transición de opacity justo ahí dentro, mientras tanto,
+       a veces se queda sin repintar — el botón "funciona" (sigue
+       recibiendo el toque) pero no se vuelve a pintar visible. Al
+       vivir fuera, en su propia capa, no compite con esa máscara. */
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    transform: translate(-50%, -50%);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: 1.4rem;
     width: 2.6rem;
     height: 2.6rem;
     border-radius: 999px;
@@ -560,12 +571,11 @@ ul { list-style: none; }
     font-size: 1.3rem;
     line-height: 1;
     opacity: 1;
-    /* .reveal-lab-content (su hermano) desactiva pointer-events para
-       dejar pasar el toque a la sección entera salvo aquí, que es
-       justo donde main.js exige que empiece el gesto. La pista vive
-       fuera de .reveal-lab-content (no dentro) precisamente para
-       poder mostrarse de nuevo aunque el título/texto sigan ocultos
-       mientras el código está iluminado (ver .is-lit más abajo). */
+    /* .reveal-lab-content desactiva pointer-events para dejar pasar el
+       toque a la sección entera salvo aquí, que es justo donde main.js
+       exige que empiece el gesto. La pista no depende de .is-lit (a
+       diferencia del título/texto), así que puede mostrarse de nuevo
+       aunque el código siga iluminado (ver .is-lit más abajo). */
     pointer-events: auto;
     /* Solo "opacity" aquí — el pulso vive en el <span> de dentro
        (.reveal-lab-hint-emoji) para no tener nunca una animation y
