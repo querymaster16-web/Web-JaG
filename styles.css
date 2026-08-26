@@ -570,8 +570,14 @@ ul { list-style: none; }
   /* La pista, en cambio, solo se oculta mientras el dedo está tocando
      (el icono de la linterna y el propio dedo ya ocupan ese sitio);
      en cuanto se suelta reaparece al momento, aunque el código siga
-     iluminado, para poder volver a tocarla y seguir alumbrando. */
-  .reveal-lab.is-dragging .reveal-lab-hint { opacity: 0; pointer-events: none; }
+     iluminado, para poder volver a tocarla y seguir alumbrando.
+     animation: none — si un toque rápido (sin arrastrar) mete y
+     quita .is-dragging casi a la vez, la animación de pulso (que
+     también anima "opacity") competía con esta transición y ganaba
+     ella, dejando el icono a medio camino o directamente invisible.
+     Al desactivar la animación mientras se toca, solo manda la
+     transición y el icono vuelve a aparecer de forma fiable. */
+  .reveal-lab.is-dragging .reveal-lab-hint { animation: none; opacity: 0; pointer-events: none; }
 
   /* El brillo cálido de la "linterna" solo se ve mientras el dedo
      está tocando y arrastrando — igual que el icono de la linterna
@@ -590,7 +596,10 @@ ul { list-style: none; }
     position: absolute;
     left: var(--reveal-x);
     top: var(--reveal-y);
-    transform: translate(-38%, -128%) rotate(-38deg);
+    /* translateY extra (además del -128%) para que el icono quede más
+       lejos del punto que toca el dedo y no se solape con el código
+       revelado justo ahí debajo. */
+    transform: translate(-38%, -128%) translateY(-16px) rotate(-38deg);
     font-size: clamp(1.6rem, 7vw, 2.1rem);
     line-height: 1;
     pointer-events: none;

@@ -772,7 +772,14 @@ gsap.set('.site-header', { opacity: 0, y: -20 });
 
 const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
 intro
-  .to('.site-header',   { opacity: 1, y: 0, duration: 1.0, delay: 0.3 })
+  /* clearProps: 'transform' — GSAP anima "y" con un transform inline
+     que, aunque termine en 0, se queda puesto en el elemento. Eso
+     convierte a .site-header en el "containing block" de cualquier
+     descendiente position: fixed (spec de CSS), así que el menú móvil
+     de pantalla completa (.main-nav, position: fixed) quedaba
+     encogido dentro de la cabecera en vez de cubrir toda la pantalla.
+     Quitando el transform al terminar la entrada, se soluciona. */
+  .to('.site-header',   { opacity: 1, y: 0, duration: 1.0, delay: 0.3, clearProps: 'transform' })
   .to('.hero-tag',      { opacity: 1, y: 0, duration: 0.9 }, '-=0.6')
   .to('.hero-title',    { opacity: 1, y: 0, duration: 1.1 }, '-=0.6')
   .to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.9 }, '-=0.7')
