@@ -956,8 +956,8 @@ gsap.from('.about-block > *', {
     });
     lab.addEventListener('pointerleave', () => setTarget(state.tx, state.ty, 0));
   } else {
-    /* ---------- Móvil: pulsa el aviso "Pulsa aquí y desliza" ----------
-       El gesto solo se "arma" si el toque empieza sobre el aviso
+    /* ---------- Móvil: pulsa el aviso de la linterna ----------
+       El gesto solo se "arma" si el toque empieza sobre el icono
        (.reveal-lab-hint); así el resto de la sección queda libre
        para el scroll normal y el descubrimiento es siempre
        intencional. En cuanto se arma, se bloquea el scroll de toda
@@ -965,7 +965,11 @@ gsap.from('.about-block > *', {
        cualquier dirección— nunca se confunda con el gesto de hacer
        scroll, y el texto de la sección desaparece a la vez (ver
        .is-dragging en styles.css) dejando solo el icono de linterna
-       siguiendo al dedo. Al soltar, todo vuelve a su sitio. */
+       siguiendo al dedo. Al soltar el dedo, lo revelado se queda
+       iluminado (no se cierra al momento) y el texto reaparece; solo
+       si pasan 30s sin volver a tocar se apaga otra vez (ver
+       scheduleClose). Tocar de nuevo antes de esos 30s cancela el
+       apagado y retoma el arrastre donde estaba. */
     const hint = lab.querySelector('.reveal-lab-hint');
 
     state.x = state.tx = 50;
@@ -973,6 +977,22 @@ gsap.from('.about-block > *', {
     applyVars();
 
     let armed = false;
+    let closeTimer = null;
+
+    function cancelScheduledClose() {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+    }
+
+    function scheduleClose() {
+      cancelScheduledClose();
+      closeTimer = setTimeout(() => {
+        closeTimer = null;
+        setTarget(state.tx, state.ty, 0);
+      }, 30000);
+    }
 
     /* Antes esto fijaba el <body> con position: fixed (guardando el
        scroll y restaurándolo al soltar), pero ese cambio de layout
@@ -999,6 +1019,7 @@ gsap.from('.about-block > *', {
       const t = e.touches[0];
       armed = !!(hint && t.target.closest('.reveal-lab-hint'));
       if (!armed) return;
+      cancelScheduledClose();
       lab.classList.add('is-dragging');
       lockPageScroll();
       revealAt(t.clientX, t.clientY);
@@ -1017,10 +1038,10 @@ gsap.from('.about-block > *', {
 
     const closeReveal = () => {
       if (!armed) return;
-      setTarget(state.tx, state.ty, 0);
       armed = false;
       lab.classList.remove('is-dragging');
       unlockPageScroll();
+      scheduleClose();
     };
     lab.addEventListener('touchend', closeReveal);
     lab.addEventListener('touchcancel', closeReveal);

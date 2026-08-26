@@ -500,16 +500,15 @@ ul { list-style: none; }
   .reveal-lab-hint {
     display: inline-flex;
     align-items: center;
-    gap: 0.45em;
+    justify-content: center;
     margin-top: 1.4rem;
-    padding: 0.55em 1.1em;
+    width: 2.6rem;
+    height: 2.6rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.14);
-    color: var(--gold-bright, #c9a24b);
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
+    font-size: 1.3rem;
+    line-height: 1;
     opacity: 1;
     /* .reveal-lab-content (el padre) desactiva pointer-events para
        dejar pasar el toque a la sección entera salvo aquí, que es
