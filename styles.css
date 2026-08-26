@@ -545,8 +545,16 @@ ul { list-style: none; }
     width: 2.6rem;
     height: 2.6rem;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    /* Casi opaco (no el 6% translúcido de antes): al soltar el dedo
+       tras un toque en el mismo sitio, la pista reaparece justo
+       encima del código recién iluminado, y con un fondo tan sutil
+       se camuflaba contra ese fondo claro/de colores — parecía que
+       el icono había desaparecido, aunque en realidad seguía ahí. */
+    background: rgba(10, 10, 10, 0.82);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     font-size: 1.3rem;
     line-height: 1;
     opacity: 1;
