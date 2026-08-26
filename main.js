@@ -1004,13 +1004,18 @@ gsap.from('.about-block > *', {
        a mano en qué "top" (px) cae justo debajo del título/texto. Como
        ese bloque cambia de tamaño según la pantalla (clamp() en las
        fuentes), un porcentaje fijo en CSS a veces se quedaba corto y
-       la pista tapaba la última línea del texto. */
+       la pista tapaba la última línea del texto.
+       Se guarda en la variable --hint-rest-top (no en hint.style.top
+       directamente) para que, con el código destapado, la regla CSS
+       .is-lit pueda subirla a su propio sitio fijo sin pelearse con
+       un estilo puesto inline — un selector con clase nunca gana a un
+       inline style, pero si aquí solo hay una custom property, sí. */
     function positionHint() {
       if (!hint || !content) return;
       const labRect = lab.getBoundingClientRect();
       const contentRect = content.getBoundingClientRect();
       const gap = 24; // separación bajo el texto, en px
-      hint.style.top = `${contentRect.bottom - labRect.top + gap}px`;
+      lab.style.setProperty('--hint-rest-top', `${contentRect.bottom - labRect.top + gap}px`);
     }
     positionHint();
     window.addEventListener('resize', positionHint);

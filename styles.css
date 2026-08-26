@@ -548,13 +548,15 @@ ul { list-style: none; }
        vivir fuera, en su propia capa, no compite con esa máscara. */
     position: absolute;
     left: 50%;
-    /* top real (en px, justo debajo del texto) lo calcula main.js según
-       la altura real de .reveal-lab-content — el texto cambia de
-       tamaño según la pantalla (clamp()), así que un porcentaje fijo
-       aquí unas veces se quedaba corto y tapaba palabras del texto
-       (p.ej. "diseño"). Este 62% es solo el valor de respaldo antes
-       de que main.js lo ajuste. */
-    top: 62%;
+    /* --hint-rest-top (en px, justo debajo del texto) lo calcula
+       main.js según la altura real de .reveal-lab-content — el texto
+       cambia de tamaño según la pantalla (clamp()), así que un
+       porcentaje fijo aquí unas veces se quedaba corto y tapaba
+       palabras del texto (p.ej. "diseño"). El 62% es solo el valor de
+       respaldo antes de que main.js lo calcule. Con el código
+       destapado (.is-lit más abajo) la pista sube a un sitio fijo
+       cerca de arriba para no quedar encima del código ya revelado. */
+    top: var(--hint-rest-top, 62%);
     transform: translate(-50%, 0);
     display: inline-flex;
     align-items: center;
@@ -583,14 +585,20 @@ ul { list-style: none; }
        diferencia del título/texto), así que puede mostrarse de nuevo
        aunque el código siga iluminado (ver .is-lit más abajo). */
     pointer-events: auto;
-    /* Solo "opacity" aquí — el pulso vive en el <span> de dentro
-       (.reveal-lab-hint-emoji) para no tener nunca una animation y
-       una transition peleando por la misma propiedad en el mismo
-       elemento (esa pelea es la otra causa conocida del mismo bug
-       de repintado en Safari/iOS: un toque rápido que mete y quita
-       la clase a la vez que el pulso está a mitad de ciclo). */
-    transition: opacity 0.3s ease;
+    /* Solo "opacity" y "top" aquí — el pulso vive en el <span> de
+       dentro (.reveal-lab-hint-emoji) para no tener nunca una
+       animation y una transition peleando por la misma propiedad en
+       el mismo elemento (esa pelea es la otra causa conocida del
+       mismo bug de repintado en Safari/iOS: un toque rápido que mete
+       y quita la clase a la vez que el pulso está a mitad de ciclo). */
+    transition: opacity 0.3s ease, top 0.3s ease;
   }
+
+  /* Con el código destapado, la pista sube a un sitio fijo cerca de
+     arriba de la sección: su posición de reposo (justo debajo del
+     texto) coincide con la zona donde más se suele revelar código, así
+     que ahí se quedaría tapando lo ya iluminado. */
+  .reveal-lab.is-lit .reveal-lab-hint { top: 24px; }
 
   .reveal-lab-hint-emoji {
     display: block;
