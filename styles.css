@@ -419,6 +419,7 @@ ul { list-style: none; }
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 0 var(--pad-x);
@@ -518,11 +519,12 @@ ul { list-style: none; }
    Solo en pantallas táctiles (sin hover / puntero impreciso): es el
    único punto por el que puede empezar el gesto que revela el
    código (ver main.js), así el resto de la sección queda libre para
-   el scroll normal. Mientras dura el gesto —incluido el rato que
-   queda iluminado tras soltar, ver .is-lit en main.js— todo el texto
-   (incluida la propia pista) desaparece y aparece en su lugar el
-   icono de linterna que sigue al dedo (.reveal-lab-torch); el texto
-   no vuelve hasta que el rastro se ha tapado del todo otra vez. */
+   el scroll normal. Mientras se arrastra, el título y el texto
+   desaparecen y aparece en su lugar el icono de linterna que sigue al
+   dedo (.reveal-lab-torch); no vuelven hasta que el rastro se ha
+   tapado del todo (ver .is-lit en main.js). La propia pista, en
+   cambio, reaparece nada más soltar el dedo —aunque el código siga
+   iluminado— para poder volver a tocarla. */
 .reveal-lab-hint { display: none; }
 .reveal-lab-torch { display: none; }
 
@@ -548,19 +550,28 @@ ul { list-style: none; }
     font-size: 1.3rem;
     line-height: 1;
     opacity: 1;
-    /* .reveal-lab-content (el padre) desactiva pointer-events para
+    /* .reveal-lab-content (su hermano) desactiva pointer-events para
        dejar pasar el toque a la sección entera salvo aquí, que es
-       justo donde main.js exige que empiece el gesto. */
+       justo donde main.js exige que empiece el gesto. La pista vive
+       fuera de .reveal-lab-content (no dentro) precisamente para
+       poder mostrarse de nuevo aunque el título/texto sigan ocultos
+       mientras el código está iluminado (ver .is-lit más abajo). */
     pointer-events: auto;
     transition: opacity 0.3s ease;
     animation: reveal-lab-hint-pulse 1.8s ease-in-out infinite;
   }
 
-  /* Todo el texto de la sección (título, texto y la propia pista)
-     desaparece en cuanto se ilumina algo, y no vuelve hasta que el
-     rastro se ha tapado del todo otra vez (.is-lit, ver main.js) —
-     no basta con soltar el dedo, hay que esperar a que oscurezca. */
+  /* El título y el texto desaparecen en cuanto se ilumina algo, y no
+     vuelven hasta que el rastro se ha tapado del todo otra vez
+     (.is-lit, ver main.js) — no basta con soltar el dedo, hay que
+     esperar a que oscurezca. */
   .reveal-lab.is-lit .reveal-lab-content { opacity: 0; }
+
+  /* La pista, en cambio, solo se oculta mientras el dedo está tocando
+     (el icono de la linterna y el propio dedo ya ocupan ese sitio);
+     en cuanto se suelta reaparece al momento, aunque el código siga
+     iluminado, para poder volver a tocarla y seguir alumbrando. */
+  .reveal-lab.is-dragging .reveal-lab-hint { opacity: 0; pointer-events: none; }
 
   /* El brillo cálido de la "linterna" solo se ve mientras el dedo
      está tocando y arrastrando — igual que el icono de la linterna

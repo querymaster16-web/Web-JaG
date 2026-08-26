@@ -979,13 +979,14 @@ gsap.from('.about-block > *', {
        intencional. En cuanto se arma, se bloquea el scroll de toda
        la página (ver lockPageScroll) para que el arrastre —en
        cualquier dirección— nunca se confunda con el gesto de hacer
-       scroll, y el texto de la sección desaparece a la vez (ver
-       .is-dragging en styles.css) dejando solo el icono de linterna
-       siguiendo al dedo. Al soltar el dedo, lo revelado se queda
-       iluminado (no se cierra al momento) y el texto reaparece; solo
-       si pasan 30s sin volver a tocar se apaga otra vez (ver
-       scheduleClose). Tocar de nuevo antes de esos 30s cancela el
-       apagado y retoma el arrastre donde estaba. */
+       scroll; mientras se arrastra, el título/texto desaparecen y
+       aparece el icono de linterna siguiendo al dedo (.reveal-lab-torch
+       + .is-dragging en styles.css). Al soltar el dedo, lo revelado se
+       queda iluminado (no se cierra al momento): la propia pista
+       (.reveal-lab-hint) reaparece para poder volver a tocarla, pero
+       el título/texto no vuelven hasta que pasan 30s sin tocar y el
+       rastro se tapa del todo otra vez (ver scheduleClose). Tocar de
+       nuevo antes de esos 30s cancela el apagado y retoma el rastro. */
     const hint = lab.querySelector('.reveal-lab-hint');
     const canvas = lab.querySelector('.reveal-lab-canvas');
     const ctx = canvas && canvas.getContext('2d');
