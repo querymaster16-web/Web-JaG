@@ -995,8 +995,25 @@ gsap.from('.about-block > *', {
        rastro se tapa del todo otra vez (ver scheduleClose). Tocar de
        nuevo antes de esos 30s cancela el apagado y retoma el rastro. */
     const hint = lab.querySelector('.reveal-lab-hint');
+    const content = lab.querySelector('.reveal-lab-content');
     const canvas = lab.querySelector('.reveal-lab-canvas');
     const ctx = canvas && canvas.getContext('2d');
+
+    /* La pista vive fuera de .reveal-lab-content (ver styles.css), así
+       que no hereda su posición en el flujo de texto — hay que calcular
+       a mano en qué "top" (px) cae justo debajo del título/texto. Como
+       ese bloque cambia de tamaño según la pantalla (clamp() en las
+       fuentes), un porcentaje fijo en CSS a veces se quedaba corto y
+       la pista tapaba la última línea del texto. */
+    function positionHint() {
+      if (!hint || !content) return;
+      const labRect = lab.getBoundingClientRect();
+      const contentRect = content.getBoundingClientRect();
+      const gap = 24; // separación bajo el texto, en px
+      hint.style.top = `${contentRect.bottom - labRect.top + gap}px`;
+    }
+    positionHint();
+    window.addEventListener('resize', positionHint);
 
     // ms — debe coincidir con la transición de opacidad de
     // .reveal-lab-recover en styles.css (el fundido que vuelve a tapar

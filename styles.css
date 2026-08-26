@@ -548,8 +548,14 @@ ul { list-style: none; }
        vivir fuera, en su propia capa, no compite con esa máscara. */
     position: absolute;
     left: 50%;
-    top: 58%;
-    transform: translate(-50%, -50%);
+    /* top real (en px, justo debajo del texto) lo calcula main.js según
+       la altura real de .reveal-lab-content — el texto cambia de
+       tamaño según la pantalla (clamp()), así que un porcentaje fijo
+       aquí unas veces se quedaba corto y tapaba palabras del texto
+       (p.ej. "diseño"). Este 62% es solo el valor de respaldo antes
+       de que main.js lo ajuste. */
+    top: 62%;
+    transform: translate(-50%, 0);
     display: inline-flex;
     align-items: center;
     justify-content: center;
