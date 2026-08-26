@@ -562,10 +562,12 @@ ul { list-style: none; }
      no basta con soltar el dedo, hay que esperar a que oscurezca. */
   .reveal-lab.is-lit .reveal-lab-content { opacity: 0; }
 
-  /* El brillo cálido de la "linterna" solo se activa en móvil, al
-     revelar (ver .reveal-lab-glow arriba, definida sin depender de
-     media query para poder reutilizarse si hiciera falta). */
-  .reveal-lab.is-revealing .reveal-lab-glow { opacity: 1; }
+  /* El brillo cálido de la "linterna" solo se ve mientras el dedo
+     está tocando y arrastrando — igual que el icono de la linterna
+     (.reveal-lab-torch). Al soltar desaparece de inmediato aunque el
+     código siga iluminado (eso lo mantiene el rastro del canvas, no
+     este brillo, que es solo el efecto visual de "estar alumbrando"). */
+  .reveal-lab.is-dragging .reveal-lab-glow { opacity: 1; }
 
   /* Icono de linterna que "apunta" justo donde está el dedo — sigue
      las mismas variables --reveal-x/--reveal-y que la máscara, así

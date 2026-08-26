@@ -1011,9 +1011,28 @@ gsap.from('.about-block > *', {
       ctx.fillRect(0, 0, rect.width, rect.height);
     }
 
+    // Tamaño (en CSS px) con el que se dimensionó el canvas la última
+    // vez, para poder ignorar los "resize" que no cambian nada real.
+    let lastCanvasCssW = -1;
+    let lastCanvasCssH = -1;
+
     function sizeCanvas() {
       if (!canvas) return;
       const rect = lab.getBoundingClientRect();
+
+      /* En móvil, mostrar/ocultar la barra de direcciones al hacer
+         scroll dispara un "resize" del window aunque la sección (su
+         altura usa svh, estable) no cambie de tamaño real. Si no se
+         filtra, cada scroll redimensionaba el canvas — lo que borra
+         todo su contenido — y lo volvía a rellenar opaco, tapando de
+         golpe el código ya iluminado. Solo redimensionamos si el
+         tamaño de verdad cambió (p.ej. al girar el móvil). */
+      if (Math.abs(rect.width - lastCanvasCssW) < 2 && Math.abs(rect.height - lastCanvasCssH) < 2) {
+        return;
+      }
+      lastCanvasCssW = rect.width;
+      lastCanvasCssH = rect.height;
+
       const dpr = window.devicePixelRatio || 1;
       canvas.width = Math.max(1, Math.round(rect.width * dpr));
       canvas.height = Math.max(1, Math.round(rect.height * dpr));
