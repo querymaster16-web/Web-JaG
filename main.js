@@ -1017,8 +1017,30 @@ gsap.from('.about-block > *', {
       const gap = 24; // separación bajo el texto, en px
       lab.style.setProperty('--hint-rest-top', `${contentRect.bottom - labRect.top + gap}px`);
     }
+
+    /* Con el código destapado, la pista sube a la línea en blanco justo
+       encima del comentario "es el pegamento de la web" (#pegamentoLine
+       en index.html) — ahí no hay texto nunca, se elija la columna que
+       se elija, así que no tapa nada ni tapado ni destapado. El código
+       fluye en columnas (ver .reveal-lab-code pre { columns: … }), así
+       que su posición real cambia según el ancho de pantalla y hay que
+       recalcularla, no vale un valor fijo. */
+    function positionHintLit() {
+      if (!hint) return;
+      const pegamento = document.getElementById('pegamentoLine');
+      if (!pegamento) return;
+      const labRect = lab.getBoundingClientRect();
+      const pegamentoRect = pegamento.getBoundingClientRect();
+      const hintHeight = hint.offsetHeight || 42;
+      const gap = 10; // separación sobre la línea en blanco, en px
+      const top = pegamentoRect.top - labRect.top - hintHeight - gap;
+      lab.style.setProperty('--hint-lit-top', `${top}px`);
+    }
+
     positionHint();
+    positionHintLit();
     window.addEventListener('resize', positionHint);
+    window.addEventListener('resize', positionHintLit);
 
     // ms — debe coincidir con la transición de opacidad de
     // .reveal-lab-recover en styles.css (el fundido que vuelve a tapar

@@ -594,11 +594,11 @@ ul { list-style: none; }
     transition: opacity 0.3s ease, top 0.3s ease;
   }
 
-  /* Con el código destapado, la pista sube a un sitio fijo cerca de
-     arriba de la sección: su posición de reposo (justo debajo del
-     texto) coincide con la zona donde más se suele revelar código, así
-     que ahí se quedaría tapando lo ya iluminado. */
-  .reveal-lab.is-lit .reveal-lab-hint { top: 24px; }
+  /* Con el código destapado, la pista sube a la línea en blanco justo
+     encima del comentario "pegamento" del código falso (calculado por
+     main.js en --hint-lit-top, ver #pegamentoLine) — ahí no hay texto
+     nunca, así que no tapa nada ni tapado ni destapado. */
+  .reveal-lab.is-lit .reveal-lab-hint { top: var(--hint-lit-top, 24px); }
 
   .reveal-lab-hint-emoji {
     display: block;
