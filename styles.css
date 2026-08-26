@@ -449,7 +449,27 @@ ul { list-style: none; }
   );
 }
 
-.reveal-lab-content { max-width: 34rem; pointer-events: none; }
+.reveal-lab-content {
+  max-width: 34rem;
+  pointer-events: none;
+  transition: opacity 0.2s ease-out;
+}
+
+/* Capa de brillo cálido tipo "haz de linterna" sobre el agujero — solo
+   aporta calidez alrededor del borde revelado, no sustituye a la máscara. */
+.reveal-lab-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    circle var(--reveal-r) at var(--reveal-x) var(--reveal-y),
+    rgba(255, 200, 120, 0.5),
+    rgba(255, 200, 120, 0.16) 55%,
+    transparent 72%
+  );
+}
 
 .reveal-lab-title {
   margin-top: 0.8rem;
@@ -470,9 +490,11 @@ ul { list-style: none; }
    Solo en pantallas táctiles (sin hover / puntero impreciso): es el
    único punto por el que puede empezar el gesto que revela el
    código (ver main.js), así el resto de la sección queda libre para
-   el scroll normal. Mientras se arrastra, el propio dedo la tapa, así
-   que se atenúa (clase .is-dragging) y vuelve a aparecer al soltar. */
+   el scroll normal. Mientras se arrastra, todo el texto (incluida la
+   propia pista) desaparece y aparece en su lugar el icono de linterna
+   que sigue al dedo (.reveal-lab-torch); ambos vuelven al soltar. */
 .reveal-lab-hint { display: none; }
+.reveal-lab-torch { display: none; }
 
 @media (hover: none), (pointer: coarse) {
   .reveal-lab-hint {
@@ -497,12 +519,41 @@ ul { list-style: none; }
     animation: reveal-lab-hint-pulse 1.8s ease-in-out infinite;
   }
 
-  .reveal-lab.is-dragging .reveal-lab-hint { opacity: 0.15; }
+  /* Mientras se arrastra, todo el texto de la sección (título, texto
+     y la propia pista) desaparece: el dedo hace de linterna y no debe
+     competir con nada escrito por encima. Vuelve a aparecer al soltar. */
+  .reveal-lab.is-dragging .reveal-lab-content { opacity: 0; }
+
+  /* El brillo cálido de la "linterna" solo se activa en móvil, al
+     revelar (ver .reveal-lab-glow arriba, definida sin depender de
+     media query para poder reutilizarse si hiciera falta). */
+  .reveal-lab.is-revealing .reveal-lab-glow { opacity: 1; }
+
+  /* Icono de linterna que "apunta" justo donde está el dedo — sigue
+     las mismas variables --reveal-x/--reveal-y que la máscara, así
+     que se mueve exactamente por donde se alumbra. Vive fuera de
+     .reveal-lab-cover (que tiene la máscara) para no quedar recortado
+     justo en el centro, que es donde más se necesita que se vea. */
+  .reveal-lab-torch {
+    display: block;
+    position: absolute;
+    left: var(--reveal-x);
+    top: var(--reveal-y);
+    transform: translate(-38%, -128%) rotate(-38deg);
+    font-size: clamp(1.6rem, 7vw, 2.1rem);
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0;
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.45));
+    transition: opacity 0.15s ease-out;
+  }
+
+  .reveal-lab.is-dragging .reveal-lab-torch { opacity: 1; }
 
   /* Mientras se arrastra para revelar, el scroll de la página está
-     bloqueado desde JS (body en position: fixed) y el navegador no
-     debe intentar ningún gesto nativo (scroll, rebote) sobre la
-     sección: así el arrastre no compite nunca con el scroll. */
+     bloqueado desde JS y el navegador no debe intentar ningún gesto
+     nativo (scroll, rebote) sobre la sección: así el arrastre no
+     compite nunca con el scroll. */
   .reveal-lab.is-dragging { touch-action: none; }
 }
 
@@ -1259,4 +1310,5 @@ ul { list-style: none; }
   /* Sin lupa animada: la sección se queda en su estado limpio, sin
      movimiento (main.js no anima --reveal-r si hay reduced-motion) */
   .reveal-lab-hint { display: none; }
+  .reveal-lab-torch { display: none; }
 }

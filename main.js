@@ -883,8 +883,8 @@ gsap.from('.about-block > *', {
        escritorio sigue al ratón con un ligero lag orgánico (rAF +
        interpolación). En móvil, el gesto solo empieza si se pulsa el
        aviso "Pulsa aquí y desliza"; mientras se arrastra, la página
-       se bloquea (se "fija" con position: fixed) para que el scroll
-       nunca compita con el arrastre de revelar.
+       se bloquea (overflow: hidden) para que el scroll nunca compita
+       con el arrastre de revelar.
    ================================================================ */
 (function initRevealLab() {
   const lab = document.getElementById('revealLab');
@@ -961,10 +961,11 @@ gsap.from('.about-block > *', {
        (.reveal-lab-hint); así el resto de la sección queda libre
        para el scroll normal y el descubrimiento es siempre
        intencional. En cuanto se arma, se bloquea el scroll de toda
-       la página (el body se "fija" con position: fixed, ver
-       lockPageScroll) para que el arrastre —en cualquier dirección—
-       nunca se confunda con el gesto de hacer scroll. Al soltar el
-       dedo, se restaura el scroll exactamente donde estaba. */
+       la página (ver lockPageScroll) para que el arrastre —en
+       cualquier dirección— nunca se confunda con el gesto de hacer
+       scroll, y el texto de la sección desaparece a la vez (ver
+       .is-dragging en styles.css) dejando solo el icono de linterna
+       siguiendo al dedo. Al soltar, todo vuelve a su sitio. */
     const hint = lab.querySelector('.reveal-lab-hint');
 
     state.x = state.tx = 50;
@@ -972,34 +973,19 @@ gsap.from('.about-block > *', {
     applyVars();
 
     let armed = false;
-    let savedScrollY = 0;
 
+    /* Antes esto fijaba el <body> con position: fixed (guardando el
+       scroll y restaurándolo al soltar), pero ese cambio de layout
+       provocaba un pequeño tirón visible justo al pulsar. Basta con
+       "overflow: hidden" en <html> — la página no se mueve ni un
+       píxel al bloquear/desbloquear— y el touchmove de abajo, con
+       preventDefault, ya impide cualquier scroll mientras se arrastra. */
     function lockPageScroll() {
-      savedScrollY = window.scrollY;
       document.documentElement.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${savedScrollY}px`;
-      document.body.style.width = '100%';
     }
 
     function unlockPageScroll() {
       document.documentElement.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-
-      /* Al quitar el position: fixed, el navegador pierde la posición
-         de scroll (vuelve a 0) y hay que restaurarla. La página estaba
-         fija ahí visualmente todo el rato, así que este scroll debe
-         ser instantáneo, sin animación — si no, "scroll-behavior:
-         smooth" (activo en toda la página) lo convierte en un
-         desplazamiento visible y brusco justo al soltar el dedo. Se
-         desactiva el suave un instante solo para este ajuste. */
-      const html = document.documentElement;
-      const previousScrollBehavior = html.style.scrollBehavior;
-      html.style.scrollBehavior = 'auto';
-      window.scrollTo(0, savedScrollY);
-      html.style.scrollBehavior = previousScrollBehavior;
     }
 
     function revealAt(clientX, clientY) {
@@ -1019,8 +1005,8 @@ gsap.from('.about-block > *', {
     }, { passive: true });
 
     /* passive: false — necesitamos poder cancelar el gesto (además
-       del bloqueo con position: fixed) para que ni siquiera el
-       rebote/inercia nativo del navegador se cuele durante el
+       del "overflow: hidden" de lockPageScroll) para que ni siquiera
+       el rebote/inercia nativo del navegador se cuele durante el
        arrastre. */
     lab.addEventListener('touchmove', (e) => {
       if (!armed) return;
