@@ -455,6 +455,34 @@ ul { list-style: none; }
   transition: opacity 0.2s ease-out;
 }
 
+/* ---------- Rastro pintado a mano (solo móvil) ----------
+   En vez de un único agujero que sigue al dedo, en móvil el "agujero"
+   lo dibuja main.js sobre este <canvas> (destination-out), así que
+   todo lo que se ha iluminado se queda iluminado (rastro acumulado)
+   en vez de cerrarse detrás del dedo. .reveal-lab-cover pasa a fondo
+   transparente en móvil porque ya no hace falta su propia máscara. */
+.reveal-lab-canvas {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Cortina opaca que vuelve a tapar el rastro cuando pasan los 30s sin
+   tocar — un simple fundido de opacidad (ver .is-closing en main.js),
+   mucho más barato que redibujar el canvas frame a frame. */
+.reveal-lab-recover {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease-in;
+}
+
 /* Capa de brillo cálido tipo "haz de linterna" sobre el agujero — solo
    aporta calidez alrededor del borde revelado, no sustituye a la máscara. */
 .reveal-lab-glow {
@@ -486,17 +514,27 @@ ul { list-style: none; }
   font-size: clamp(0.9rem, 1.2vw, 1.02rem);
 }
 
-/* ---------- Pista táctil "pulsa aquí y desliza" ----------
+/* ---------- Pista táctil (icono de linterna) ----------
    Solo en pantallas táctiles (sin hover / puntero impreciso): es el
    único punto por el que puede empezar el gesto que revela el
    código (ver main.js), así el resto de la sección queda libre para
-   el scroll normal. Mientras se arrastra, todo el texto (incluida la
-   propia pista) desaparece y aparece en su lugar el icono de linterna
-   que sigue al dedo (.reveal-lab-torch); ambos vuelven al soltar. */
+   el scroll normal. Mientras dura el gesto —incluido el rato que
+   queda iluminado tras soltar, ver .is-lit en main.js— todo el texto
+   (incluida la propia pista) desaparece y aparece en su lugar el
+   icono de linterna que sigue al dedo (.reveal-lab-torch); el texto
+   no vuelve hasta que el rastro se ha tapado del todo otra vez. */
 .reveal-lab-hint { display: none; }
 .reveal-lab-torch { display: none; }
 
 @media (hover: none), (pointer: coarse) {
+  /* En móvil el "agujero" lo pinta el <canvas> de rastro, no la
+     máscara de .reveal-lab-cover (esa la sigue usando el escritorio) */
+  .reveal-lab-cover { background: transparent; }
+  .reveal-lab-canvas,
+  .reveal-lab-recover { display: block; }
+
+  .reveal-lab.is-closing .reveal-lab-recover { opacity: 1; }
+
   .reveal-lab-hint {
     display: inline-flex;
     align-items: center;
@@ -518,10 +556,11 @@ ul { list-style: none; }
     animation: reveal-lab-hint-pulse 1.8s ease-in-out infinite;
   }
 
-  /* Mientras se arrastra, todo el texto de la sección (título, texto
-     y la propia pista) desaparece: el dedo hace de linterna y no debe
-     competir con nada escrito por encima. Vuelve a aparecer al soltar. */
-  .reveal-lab.is-dragging .reveal-lab-content { opacity: 0; }
+  /* Todo el texto de la sección (título, texto y la propia pista)
+     desaparece en cuanto se ilumina algo, y no vuelve hasta que el
+     rastro se ha tapado del todo otra vez (.is-lit, ver main.js) —
+     no basta con soltar el dedo, hay que esperar a que oscurezca. */
+  .reveal-lab.is-lit .reveal-lab-content { opacity: 0; }
 
   /* El brillo cálido de la "linterna" solo se activa en móvil, al
      revelar (ver .reveal-lab-glow arriba, definida sin depender de
@@ -1310,4 +1349,6 @@ ul { list-style: none; }
      movimiento (main.js no anima --reveal-r si hay reduced-motion) */
   .reveal-lab-hint { display: none; }
   .reveal-lab-torch { display: none; }
+  .reveal-lab-canvas { display: none; }
+  .reveal-lab-recover { display: none; }
 }

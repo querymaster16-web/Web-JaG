@@ -902,13 +902,29 @@ gsap.from('.about-block > *', {
   let rafId = null;
   let inView = false;
 
+  /* En móvil, cuando el rastro pintado en el <canvas> termina de
+     taparse (ver .is-closing / resetCanvas más abajo), hay que
+     limpiarlo justo en el frame en que el radio cae a 0 — ni antes
+     (se vería el rastro "saltar" a tapado de golpe) ni después (se
+     vería un parpadeo del rastro ya sin dedo encima). canvasNeedsReset
+     lo arma scheduleClose(); resetCanvasFn solo existe en móvil. */
+  let canvasNeedsReset = false;
+  let resetCanvasFn = null;
+
   function applyVars() {
     lab.style.setProperty('--reveal-x', `${state.x}%`);
     lab.style.setProperty('--reveal-y', `${state.y}%`);
     lab.style.setProperty('--reveal-r', `${Math.max(0, state.r)}px`);
     /* Solo aplicamos la máscara (el "agujero") cuando hay radio real.
        En reposo la capa cubre todo → la sección arranca y vuelve a negro. */
-    lab.classList.toggle('is-revealing', state.r > 0.5);
+    const revealing = state.r > 0.5;
+    lab.classList.toggle('is-revealing', revealing);
+
+    if (!revealing && canvasNeedsReset) {
+      canvasNeedsReset = false;
+      lab.classList.remove('is-closing', 'is-lit');
+      if (resetCanvasFn) resetCanvasFn();
+    }
   }
 
   function tick() {
@@ -971,10 +987,97 @@ gsap.from('.about-block > *', {
        scheduleClose). Tocar de nuevo antes de esos 30s cancela el
        apagado y retoma el arrastre donde estaba. */
     const hint = lab.querySelector('.reveal-lab-hint');
+    const canvas = lab.querySelector('.reveal-lab-canvas');
+    const ctx = canvas && canvas.getContext('2d');
 
-    state.x = state.tx = 50;
-    state.y = state.ty = 45;
-    applyVars();
+    // ms — debe coincidir con la transición de opacidad de
+    // .reveal-lab-recover en styles.css (el fundido que vuelve a tapar
+    // el rastro una vez pasan los 30s).
+    const RECOVER_MS = 600;
+    const soft = 65; // igual que --reveal-soft, para el borde difuminado del rastro
+
+    let bgColor = '#0b0b10';
+    function readBgColor() {
+      const val = getComputedStyle(lab).getPropertyValue('--bg').trim();
+      if (val) bgColor = val;
+    }
+
+    function fillOpaque() {
+      if (!ctx) return;
+      const rect = lab.getBoundingClientRect();
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, rect.width, rect.height);
+    }
+
+    function sizeCanvas() {
+      if (!canvas) return;
+      const rect = lab.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.round(rect.width * dpr));
+      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      readBgColor();
+      fillOpaque();
+    }
+
+    function resetCanvas() {
+      readBgColor();
+      fillOpaque();
+      lastPunch = null;
+    }
+    resetCanvasFn = resetCanvas;
+
+    sizeCanvas();
+    window.addEventListener('resize', sizeCanvas);
+
+    /* El "agujero" que revela el código, en móvil, lo pinta este
+       canvas a base de círculos (destination-out): cada toque queda
+       marcado ahí para siempre (hasta el reset), así que arrastrar el
+       dedo va "pintando" un rastro acumulado en vez de mover un único
+       agujero que se cierra detrás. */
+    function punchHole(xPercent, yPercent) {
+      if (!ctx) return;
+      const rect = lab.getBoundingClientRect();
+      const px = (xPercent / 100) * rect.width;
+      const py = (yPercent / 100) * rect.height;
+      const r = maxRadius;
+      ctx.globalCompositeOperation = 'destination-out';
+      const grad = ctx.createRadialGradient(px, py, 0, px, py, r);
+      const innerStop = Math.max(0, (r - soft) / r);
+      grad.addColorStop(0, 'rgba(0,0,0,1)');
+      grad.addColorStop(innerStop, 'rgba(0,0,0,1)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(px, py, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Último punto pintado (en %), para rellenar el trazo entre dos
+    // touchmove seguidos con pasos intermedios y que no queden huecos
+    // en arrastres rápidos. Se reinicia al soltar el dedo, para no
+    // dibujar una línea "fantasma" entre dos toques sueltos.
+    let lastPunch = null;
+
+    function punchAlong(xPercent, yPercent) {
+      if (lastPunch) {
+        const dx = xPercent - lastPunch.x;
+        const dy = yPercent - lastPunch.y;
+        const rect = lab.getBoundingClientRect();
+        const distPx = Math.hypot((dx / 100) * rect.width, (dy / 100) * rect.height);
+        const stepPx = Math.max(8, maxRadius * 0.25);
+        const steps = Math.max(1, Math.ceil(distPx / stepPx));
+        for (let i = 1; i <= steps; i++) {
+          const t = i / steps;
+          punchHole(lastPunch.x + dx * t, lastPunch.y + dy * t);
+        }
+      } else {
+        punchHole(xPercent, yPercent);
+      }
+      lastPunch = { x: xPercent, y: yPercent };
+    }
 
     let armed = false;
     let closeTimer = null;
@@ -984,13 +1087,28 @@ gsap.from('.about-block > *', {
         clearTimeout(closeTimer);
         closeTimer = null;
       }
+      canvasNeedsReset = false;
+      lab.classList.remove('is-closing');
     }
 
     function scheduleClose() {
       cancelScheduledClose();
       closeTimer = setTimeout(() => {
         closeTimer = null;
+        // Arranca el fundido de la cortina opaca (.is-closing) y, a la
+        // vez, encoge el agujero/brillo de escritorio-en-móvil; el
+        // canvas en sí se limpia en applyVars() justo cuando el radio
+        // llega a 0 (canvasNeedsReset), no antes.
+        lab.classList.add('is-closing');
+        canvasNeedsReset = true;
         setTarget(state.tx, state.ty, 0);
+        setTimeout(() => {
+          if (canvasNeedsReset) {
+            canvasNeedsReset = false;
+            lab.classList.remove('is-closing', 'is-lit');
+            resetCanvas();
+          }
+        }, RECOVER_MS);
       }, 30000);
     }
 
@@ -1013,6 +1131,7 @@ gsap.from('.about-block > *', {
       const x = ((clientX - rect.left) / rect.width) * 100;
       const y = ((clientY - rect.top) / rect.height) * 100;
       setTarget(x, y, maxRadius);
+      punchAlong(x, y);
     }
 
     lab.addEventListener('touchstart', (e) => {
@@ -1020,7 +1139,7 @@ gsap.from('.about-block > *', {
       armed = !!(hint && t.target.closest('.reveal-lab-hint'));
       if (!armed) return;
       cancelScheduledClose();
-      lab.classList.add('is-dragging');
+      lab.classList.add('is-dragging', 'is-lit');
       lockPageScroll();
       revealAt(t.clientX, t.clientY);
     }, { passive: true });
@@ -1039,6 +1158,7 @@ gsap.from('.about-block > *', {
     const closeReveal = () => {
       if (!armed) return;
       armed = false;
+      lastPunch = null;
       lab.classList.remove('is-dragging');
       unlockPageScroll();
       scheduleClose();

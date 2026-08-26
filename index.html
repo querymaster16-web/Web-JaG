@@ -93,9 +93,11 @@
     <!-- ============================================================
          SECCIÓN "LUPA DE CÓDIGO" — reveal mask que sigue al cursor
          Debajo hay código de verdad (a modo de broma/guiño); por
-         encima, una capa limpia con un agujero que sigue al ratón
-         (o, en móvil, al dedo al pulsar y deslizar) y deja ver lo
-         de abajo.
+         encima, una capa limpia con un agujero que sigue al ratón y
+         deja ver lo de abajo. En móvil el agujero lo dibuja un
+         <canvas> (.reveal-lab-canvas): al arrastrar el dedo se va
+         "pintando" un rastro que queda iluminado, y solo se vuelve a
+         tapar (.reveal-lab-recover) si pasan 30s sin tocar.
          ============================================================ -->
     <section class="reveal-lab" id="revealLab">
       <div class="reveal-lab-code" aria-hidden="true">
@@ -298,6 +300,8 @@ git log --oneline <span class="tk-com">// spoiler: hay muchos "fix" ahí dentro<
 <span class="tk-kw">const</span> latencia = ping(<span class="tk-str">"acoruna.es"</span>); <span class="tk-com">// broma, ni existe esa función</span></code></pre>
       </div>
 
+      <canvas class="reveal-lab-canvas" aria-hidden="true"></canvas>
+      <div class="reveal-lab-recover" aria-hidden="true"></div>
       <div class="reveal-lab-glow" aria-hidden="true"></div>
 
       <div class="reveal-lab-cover">
