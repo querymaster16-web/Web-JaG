@@ -768,18 +768,21 @@ window.scrollTo(0, 0);
 
 /* Entrada escalonada de los textos del hero */
 gsap.set(['.hero-tag', '.hero-title', '.hero-subtitle', '.hero-hint'], { opacity: 0, y: 28 });
-gsap.set('.site-header', { opacity: 0, y: -20 });
+/* Sin "y" aquí (a diferencia del resto de la entrada) — un transform
+   en .site-header, aunque solo dure la animación, convierte a la
+   cabecera en el "containing block" de cualquier descendiente con
+   position: fixed (spec de CSS). El menú móvil de pantalla completa
+   (.main-nav, position: fixed) vive dentro de la cabecera, así que
+   mientras esta animación no había terminado (y quitado el transform
+   con clearProps) el menú se veía a medio tamaño un instante y luego
+   "saltaba" a pantalla completa si se abría justo entonces. Animando
+   solo opacity, la cabecera nunca lleva transform y el problema
+   desaparece del todo, sin depender de ningún timing. */
+gsap.set('.site-header', { opacity: 0 });
 
 const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
 intro
-  /* clearProps: 'transform' — GSAP anima "y" con un transform inline
-     que, aunque termine en 0, se queda puesto en el elemento. Eso
-     convierte a .site-header en el "containing block" de cualquier
-     descendiente position: fixed (spec de CSS), así que el menú móvil
-     de pantalla completa (.main-nav, position: fixed) quedaba
-     encogido dentro de la cabecera en vez de cubrir toda la pantalla.
-     Quitando el transform al terminar la entrada, se soluciona. */
-  .to('.site-header',   { opacity: 1, y: 0, duration: 1.0, delay: 0.3, clearProps: 'transform' })
+  .to('.site-header',   { opacity: 1, duration: 1.0, delay: 0.3 })
   .to('.hero-tag',      { opacity: 1, y: 0, duration: 0.9 }, '-=0.6')
   .to('.hero-title',    { opacity: 1, y: 0, duration: 1.1 }, '-=0.6')
   .to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.9 }, '-=0.7')
