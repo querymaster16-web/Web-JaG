@@ -1095,17 +1095,63 @@ ul { list-style: none; }
 
 .extra-tile-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.6rem;
+  gap: 0.3rem 0.6rem;
 }
 .extra-tile-head .extra-name { font-weight: 600; font-size: 0.92rem; }
+
+.extra-name-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Botón "?" — abre una explicación sencilla de qué es cada extra sin
+   marcar el checkbox (preventDefault + stopPropagation en el script,
+   ya que vive dentro del <label> que activa el extra). */
+.extra-info-btn {
+  flex-shrink: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+.extra-info-btn:hover,
+.extra-info-btn[aria-expanded="true"] {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  background: rgba(201, 162, 75, 0.12);
+}
 
 .extra-desc {
   color: var(--text-dim);
   font-size: 0.8rem;
   line-height: 1.55;
 }
+
+/* Explicación sencilla, oculta hasta que se pulsa el botón "?" */
+.extra-explain {
+  display: none;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--line);
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+.extra-explain.is-open { display: block; }
 
 /* Check circular a la derecha: relleno dorado + marca cuando está
    activo, controlado en CSS puro a partir del checkbox oculto */
