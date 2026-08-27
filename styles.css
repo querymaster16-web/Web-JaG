@@ -719,6 +719,14 @@ ul { list-style: none; }
   gap: clamp(1.25rem, 3vw, 2.5rem);
 }
 
+/* CTA de cierre bajo una rejilla de tarjetas (Servicios, y reutilizable
+   donde haga falta un "ver más" centrado tras un bloque de contenido) */
+.section-footer-cta {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  display: flex;
+  justify-content: center;
+}
+
 .glass-card {
   /* Mismo lenguaje visual que los bloques 3D: cristal esmerilado */
   position: relative;
@@ -920,6 +928,76 @@ ul { list-style: none; }
   color: var(--gold);
 }
 
+/* ---------- Extras configurables (estilo "configura tu Mac") ----------
+   Cada checkbox suma su precio al total de abajo (.total-amount), sin
+   tocar nunca el precio base de arriba (.price-amount) — ver el script
+   de precios.html. */
+.price-card-extras {
+  margin-top: 1.6rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--line);
+}
+
+.extras-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.9rem;
+}
+
+.extras-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.extra-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.extra-check {
+  accent-color: var(--gold);
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.extra-name { flex-grow: 1; color: var(--text); }
+
+.extra-price {
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.price-card-total {
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.total-label {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.total-amount {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--gold-bright);
+}
+
 .price-card-cta {
   margin-top: 1.8rem;
   width: 100%;
@@ -999,13 +1077,31 @@ ul { list-style: none; }
   font-size: 1rem;
 }
 
-.about-cta { margin-top: 3rem; }
+.about-cta {
+  margin-top: 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
 
 .cta-button--large {
   display: inline-block;
   font-size: 0.85rem;
   padding: 1em 2.2em;
   letter-spacing: 0.22em;
+}
+
+/* Variante secundaria ("ver planes", etc.): mismo tamaño que .cta-button
+   pero sin el relleno dorado, para no competir con la acción principal. */
+.cta-button--ghost {
+  border-color: var(--line);
+  color: var(--text-dim) !important;
+}
+.cta-button--ghost:hover {
+  background: transparent;
+  border-color: var(--gold);
+  color: var(--gold-bright) !important;
+  box-shadow: none;
 }
 
 /* ================================================================

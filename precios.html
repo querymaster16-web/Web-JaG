@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Precios — JaG Diseño y Desarrollo Web</title>
+  <meta name="description" content="Planes claros y precios cerrados para tu web: Landing Page, Web Profesional o a Medida. Añade extras y mira cómo cambia el presupuesto al momento." />
+  <link rel="icon" type="image/png" href="assets/logoJaGdorado.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="bg-brand" aria-hidden="true">
+    <div class="bg-brand-glow bg-brand-glow--a"></div>
+    <div class="bg-brand-glow bg-brand-glow--b"></div>
+  </div>
+
+  <header class="site-header" id="header">
+    <a class="brand" href="index.html" aria-label="JaG — Inicio">
+      <span class="brand-letter">J</span><span class="brand-letter brand-letter--gold">a</span><span class="brand-letter">G</span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navegación principal">
+      <ul>
+        <li><a href="index.html#hero">INICIO</a></li>
+        <li><a href="index.html#servicios">SERVICIOS</a></li>
+        <li><a href="precios.html">PRECIOS</a></li>
+        <li><a href="index.html#metodo">MÉTODO</a></li>
+        <li><a href="index.html#nosotros">NOSOTROS</a></li>
+        <li><a href="index.html#presupuesto" class="cta-button">CONTÁCTANOS</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main>
+    <section class="section section--fade-top">
+      <div class="section-inner">
+        <header class="section-head">
+          <p class="section-tag">PRECIOS <span class="tag-dot">•</span> JaG</p>
+          <h1 class="section-title">Planes claros, sin letra pequeña</h1>
+          <p class="section-lead">
+            Tres formas de empezar, según lo que necesite tu negocio ahora
+            mismo. Añade extras a cualquier plan y mira cómo cambia el
+            presupuesto al momento — sin sorpresas cuando hablemos de verdad.
+          </p>
+        </header>
+
+        <!-- Precios y extras EDITAR AQUÍ ✏️ — son orientativos, ajústalos
+             cuando quieras a lo que de verdad cobréis (atributos
+             data-base-price y data-price en los checkboxes de extras). -->
+        <div class="price-grid">
+          <!-- Plan: Landing Page -->
+          <article class="price-card" data-plan-href="servicios/landing-page.html">
+            <div class="window-bar">
+              <span class="editorbar-dot editorbar-dot--red"></span>
+              <span class="editorbar-dot editorbar-dot--yellow"></span>
+              <span class="editorbar-dot editorbar-dot--green"></span>
+              <span class="window-bar-file">landing.html</span>
+            </div>
+            <div class="price-card-body">
+              <h2 class="price-card-title">Landing Page</h2>
+              <p class="price-card-desc">
+                Una sola página, un solo objetivo: vender, reservar o captar
+                contactos. Ideal para lanzar rápido o promocionar algo puntual.
+              </p>
+              <p class="price-card-price">
+                <span class="price-amount">Desde 790€</span>
+                <span class="price-note">precio cerrado · IVA no incluido</span>
+              </p>
+              <ul class="price-card-list">
+                <li>1 página, diseño 100% a medida</li>
+                <li>Optimizada para móvil y velocidad</li>
+                <li>Formulario de contacto integrado</li>
+                <li>SEO básico on-page</li>
+                <li>Entrega en 1–2 semanas</li>
+              </ul>
+
+              <div class="price-card-extras">
+                <p class="extras-title">Añade extras</p>
+                <ul class="extras-list">
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="150" />
+                      <span class="extra-name">Página adicional</span>
+                      <span class="extra-price">+150€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="250" />
+                      <span class="extra-name">Blog integrado</span>
+                      <span class="extra-price">+250€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="180" />
+                      <span class="extra-name">Copys profesionales</span>
+                      <span class="extra-price">+180€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="250" />
+                      <span class="extra-name">Logo o identidad visual</span>
+                      <span class="extra-price">+250€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="300" />
+                      <span class="extra-name">Versión en otro idioma</span>
+                      <span class="extra-price">+300€</span>
+                    </label>
+                  </li>
+                </ul>
+              </div>
+
+              <p class="price-card-total">
+                <span class="total-label">Total estimado</span>
+                <span class="total-amount" data-base-price="790">790€</span>
+              </p>
+
+              <a href="servicios/landing-page.html" class="price-card-link">Ver qué incluye este plan →</a>
+              <a href="index.html#presupuesto" class="cta-button price-card-cta">CONTÁCTANOS</a>
+            </div>
+          </article>
+
+          <!-- Plan: Web Profesional (destacado) -->
+          <article class="price-card price-card--featured" data-plan-href="servicios/web-profesional.html">
+            <span class="price-card-badge">LA MÁS ELEGIDA</span>
+            <div class="window-bar">
+              <span class="editorbar-dot editorbar-dot--red"></span>
+              <span class="editorbar-dot editorbar-dot--yellow"></span>
+              <span class="editorbar-dot editorbar-dot--green"></span>
+              <span class="window-bar-file">web-profesional.html</span>
+            </div>
+            <div class="price-card-body">
+              <h2 class="price-card-title">Web Profesional</h2>
+              <p class="price-card-desc">
+                La web completa de tu negocio: varias páginas, posicionada en
+                Google y lista para que la gestiones tú sin depender de nadie.
+              </p>
+              <p class="price-card-price">
+                <span class="price-amount">Desde 1.500€</span>
+                <span class="price-note">precio cerrado · IVA no incluido</span>
+              </p>
+              <ul class="price-card-list">
+                <li>Hasta 5 páginas (Inicio, Servicios, Sobre ti…)</li>
+                <li>Diseño exclusivo para tu marca</li>
+                <li>SEO local optimizado</li>
+                <li>Panel sencillo para que la actualices tú</li>
+                <li>Formulario de contacto + email automático</li>
+                <li>Dominio, hosting y SSL configurados</li>
+              </ul>
+
+              <div class="price-card-extras">
+                <p class="extras-title">Añade extras</p>
+                <ul class="extras-list">
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="150" />
+                      <span class="extra-name">Página adicional</span>
+                      <span class="extra-price">+150€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="600" />
+                      <span class="extra-name">Tienda online (hasta 20 productos)</span>
+                      <span class="extra-price">+600€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="180" />
+                      <span class="extra-name">Copys profesionales</span>
+                      <span class="extra-price">+180€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="250" />
+                      <span class="extra-name">Logo o identidad visual</span>
+                      <span class="extra-price">+250€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="300" />
+                      <span class="extra-name">Versión en otro idioma</span>
+                      <span class="extra-price">+300€</span>
+                    </label>
+                  </li>
+                </ul>
+              </div>
+
+              <p class="price-card-total">
+                <span class="total-label">Total estimado</span>
+                <span class="total-amount" data-base-price="1500">1.500€</span>
+              </p>
+
+              <a href="servicios/web-profesional.html" class="price-card-link">Ver qué incluye este plan →</a>
+              <a href="index.html#presupuesto" class="cta-button price-card-cta">CONTÁCTANOS</a>
+            </div>
+          </article>
+
+          <!-- Plan: Web a Medida -->
+          <article class="price-card" data-plan-href="servicios/a-medida.html">
+            <div class="window-bar">
+              <span class="editorbar-dot editorbar-dot--red"></span>
+              <span class="editorbar-dot editorbar-dot--yellow"></span>
+              <span class="editorbar-dot editorbar-dot--green"></span>
+              <span class="window-bar-file">a-medida.tsx</span>
+            </div>
+            <div class="price-card-body">
+              <h2 class="price-card-title">Web a Medida</h2>
+              <p class="price-card-desc">
+                Cuando necesitas algo que no cabe en un plan cerrado:
+                reservas, tienda online, automatizaciones… lo construimos
+                a tu manera.
+              </p>
+              <p class="price-card-price">
+                <span class="price-amount">Desde 2.000€</span>
+                <span class="price-note">presupuesto cerrado tras la reunión inicial</span>
+              </p>
+              <ul class="price-card-list">
+                <li>Funcionalidades a medida (reservas, tienda, más)</li>
+                <li>Automatización de procesos incluida (Make/Sheets)</li>
+                <li>Diseño exclusivo, sin límite de páginas</li>
+                <li>Integraciones con tus herramientas actuales</li>
+                <li>Soporte y mantenimiento continuo</li>
+              </ul>
+
+              <div class="price-card-extras">
+                <p class="extras-title">Añade extras</p>
+                <ul class="extras-list">
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="600" />
+                      <span class="extra-name">Tienda online (hasta 20 productos)</span>
+                      <span class="extra-price">+600€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="220" />
+                      <span class="extra-name">Fotografía profesional (sesión básica)</span>
+                      <span class="extra-price">+220€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="180" />
+                      <span class="extra-name">Copys profesionales</span>
+                      <span class="extra-price">+180€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="250" />
+                      <span class="extra-name">Logo o identidad visual</span>
+                      <span class="extra-price">+250€</span>
+                    </label>
+                  </li>
+                  <li class="extra-item">
+                    <label>
+                      <input type="checkbox" class="extra-check" data-price="300" />
+                      <span class="extra-name">Versión en otro idioma</span>
+                      <span class="extra-price">+300€</span>
+                    </label>
+                  </li>
+                </ul>
+              </div>
+
+              <p class="price-card-total">
+                <span class="total-label">Total estimado</span>
+                <span class="total-amount" data-base-price="2000">2.000€</span>
+              </p>
+
+              <a href="servicios/a-medida.html" class="price-card-link">Ver qué incluye este plan →</a>
+              <a href="index.html#presupuesto" class="cta-button price-card-cta">CONTÁCTANOS</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner section-inner--narrow plan-closing">
+        <h2 class="plan-section-title">¿No encajas en ningún plan?</h2>
+        <p class="section-lead">
+          Hablamos de tu proyecto y hacemos un presupuesto a medida, sin
+          compromiso y en menos de 24 horas.
+        </p>
+        <div class="plan-cta-row">
+          <a href="index.html#presupuesto" class="cta-button cta-button--large">CONTÁCTANOS</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span class="brand brand--small">
+      <span class="brand-letter">J</span><span class="brand-letter brand-letter--gold">a</span><span class="brand-letter">G</span>
+    </span>
+
+    <nav class="footer-legal" aria-label="Información legal">
+      <a href="index.html#aviso-legal">Aviso legal</a>
+      <span aria-hidden="true">·</span>
+      <a href="index.html#privacidad">Política de privacidad</a>
+      <span aria-hidden="true">·</span>
+      <a href="index.html#cookies">Política de cookies</a>
+      <span aria-hidden="true">·</span>
+      <a href="index.html#terminos">Términos y condiciones</a>
+    </nav>
+
+    <p class="footer-text">Diseño y desarrollo web · A Coruña · © 2026 JaG</p>
+  </footer>
+
+  <script>
+    const navToggle = document.getElementById('navToggle');
+    const mainNav = document.querySelector('.main-nav');
+    navToggle.addEventListener('click', () => {
+      const open = mainNav.classList.toggle('is-open');
+      navToggle.setAttribute('aria-expanded', String(open));
+    });
+    mainNav.querySelectorAll('a').forEach((a) =>
+      a.addEventListener('click', () => {
+        mainNav.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      })
+    );
+
+    /* Foco dorado que sigue al cursor, igual que en el resto del sitio */
+    document.querySelectorAll('.price-card').forEach((card) => {
+      card.addEventListener('pointermove', (e) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+      });
+    });
+
+    /* Tarjeta completa clicable → subpágina del plan, salvo si el toque
+       empieza en un enlace, botón, checkbox o su etiqueta (los extras) */
+    document.querySelectorAll('.price-card[data-plan-href]').forEach((card) => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a, button, label, input')) return;
+        window.location.href = card.dataset.planHref;
+      });
+    });
+
+    /* Extras "a lo Apple": cada checkbox marcado suma su precio al total
+       del plan, en tiempo real — nunca toca el precio base mostrado
+       arriba (.price-amount), solo el total con extras de abajo. */
+    document.querySelectorAll('.price-card').forEach((card) => {
+      const totalEl = card.querySelector('.total-amount');
+      if (!totalEl) return;
+      const basePrice = parseFloat(totalEl.dataset.basePrice, 10) || 0;
+      const checks = card.querySelectorAll('.extra-check');
+
+      function updateTotal() {
+        let sum = basePrice;
+        checks.forEach((check) => {
+          if (check.checked) sum += parseFloat(check.dataset.price, 10) || 0;
+        });
+        totalEl.textContent = `${sum.toLocaleString('es-ES')}€`;
+      }
+
+      checks.forEach((check) => check.addEventListener('change', updateTotal));
+    });
+  </script>
+</body>
+</html>

@@ -1244,9 +1244,10 @@ gsap.from('.about-block > *', {
 
 /* ================================================================
    11. MICROINTERACCIÓN — foco dorado que sigue al cursor en las
-       tarjetas de cristal y de precios (variables CSS --mx / --my)
-   ================================================================ */
-document.querySelectorAll('.glass-card, .price-card').forEach((card) => {
+       tarjetas de cristal (variables CSS --mx / --my). Las tarjetas de
+       precio tienen el mismo efecto, pero viven en precios.html, que
+       no carga este script — ver el <script> propio de esa página. */
+document.querySelectorAll('.glass-card').forEach((card) => {
   card.addEventListener('pointermove', (e) => {
     const rect = card.getBoundingClientRect();
     card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
@@ -1254,20 +1255,8 @@ document.querySelectorAll('.glass-card, .price-card').forEach((card) => {
   });
 });
 
-/* Tarjeta de precio completa clicable: pulsar en cualquier parte del
-   "cuadrado" lleva a la subpágina de explicación del plan, igual que el
-   enlace "Ver qué incluye este plan →". Los enlaces/botones internos
-   (esa misma explicación y "PEDIR PRESUPUESTO") conservan su propio
-   comportamiento y no disparan esta navegación. */
-document.querySelectorAll('.price-card[data-plan-href]').forEach((card) => {
-  card.addEventListener('click', (e) => {
-    if (e.target.closest('a, button')) return;
-    window.location.href = card.dataset.planHref;
-  });
-});
-
 /* ================================================================
-   12. MODAL "PEDIR PRESUPUESTO" + FORMULARIO
+   12. MODAL "CONTÁCTANOS" (id "budgetModal", sin tocar) + FORMULARIO
    ================================================================ */
 const modal        = document.getElementById('budgetModal');
 const modalPanel   = modal.querySelector('.modal-panel');
@@ -1297,10 +1286,7 @@ function closeModal() {
   gsap.timeline({
     onComplete: () => {
       modal.hidden = true;
-      /* Solo desbloquea el scroll si el modal de precios (que puede
-         quedar abierto detrás, ver CTA "Pedir presupuesto") tampoco
-         está abierto */
-      if (pricingModal.hidden) document.body.style.overflow = '';
+      document.body.style.overflow = '';
       /* Reset para la próxima apertura */
       successView.hidden = true;
       formView.hidden = false;
@@ -1390,64 +1376,8 @@ document.querySelectorAll('.js-open-terms').forEach((link) =>
   link.addEventListener('click', (e) => { e.preventDefault(); terms.open(); })
 );
 
-/* ---------- Modal de Precios ----------
-   Ya no es una sección más del scroll: vive oculta hasta que se pulsa
-   "PRECIOS" en el menú de arriba. */
-const pricingModal    = document.getElementById('pricingModal');
-const pricingPanel    = pricingModal.querySelector('.modal-panel');
-const pricingBackdrop = pricingModal.querySelector('.modal-backdrop');
-
-function openPricingModal() {
-  pricingModal.hidden = false;
-  document.body.style.overflow = 'hidden';
-
-  gsap.timeline()
-    .fromTo(pricingBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' })
-    .fromTo(
-      pricingPanel,
-      { opacity: 0, y: 46, scale: 0.96 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power3.out' },
-      '-=0.15'
-    )
-    /* Tarjetas de precio: suben y aparecen escalonadas al abrir
-       (antes se disparaba con el scroll, pero el modal no forma
-       parte del flujo de scroll de la página) */
-    .fromTo(
-      pricingPanel.querySelectorAll('.price-card'),
-      { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, stagger: 0.14, ease: 'power3.out' },
-      '-=0.25'
-    );
-}
-
-function closePricingModal() {
-  gsap.timeline({
-    onComplete: () => {
-      pricingModal.hidden = true;
-      /* No desbloquea el scroll si el modal de presupuesto se abrió
-         encima (CTA "Pedir presupuesto" de una tarjeta de precio) */
-      if (modal.hidden) document.body.style.overflow = '';
-    },
-  })
-    .to(pricingPanel, { opacity: 0, y: 30, scale: 0.97, duration: 0.3, ease: 'power2.in' })
-    .to(pricingBackdrop, { opacity: 0, duration: 0.25 }, '-=0.1');
-}
-
-/* Enlace que abre los precios (PRECIOS en el menú) */
-document.querySelectorAll('.js-open-pricing-modal').forEach((link) =>
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    openPricingModal();
-  })
-);
-
-/* Elementos que cierran los precios (X, fondo) */
-pricingModal.querySelectorAll('[data-close-pricing]').forEach((el) =>
-  el.addEventListener('click', closePricingModal)
-);
-
-/* Tecla Escape: cierra primero el modal superior (privacidad, luego
-   presupuesto, luego precios) */
+/* Tecla Escape: cierra primero el modal superior (privacidad, aviso
+   legal, cookies, términos, y por último el de contacto) */
 window.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   if (!privacyModal.hidden) privacy.close();
@@ -1455,7 +1385,6 @@ window.addEventListener('keydown', (e) => {
   else if (!cookiesModal.hidden) cookies.close();
   else if (!termsModal.hidden) terms.close();
   else if (!modal.hidden) closeModal();
-  else if (!pricingModal.hidden) closePricingModal();
 });
 
 /* ================================================================
@@ -1467,7 +1396,6 @@ window.addEventListener('keydown', (e) => {
    antes de que se limpiara la URL. */
 const HASH_MODAL_OPENERS = {
   '#presupuesto': openModal,
-  '#precios': openPricingModal,
   '#privacidad': privacy.open,
   '#aviso-legal': legal.open,
   '#cookies': cookies.open,
