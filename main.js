@@ -1261,6 +1261,17 @@ function openModal() {
   modal.hidden = false;
   document.body.style.overflow = 'hidden';   // Bloquea el scroll de fondo
 
+  /* Si venimos de "SOLICITAR ESTE PLAN" en precios.html, esa página deja
+     aquí un resumen del plan + extras elegidos antes de navegar — lo
+     precargamos en "Detalles del proyecto" y lo consumimos una sola vez,
+     el resto de campos (nombre, correo…) los sigue rellenando el usuario. */
+  const pendingPlan = sessionStorage.getItem('jagPlanRequest');
+  if (pendingPlan) {
+    const detailsField = document.getElementById('fDetails');
+    if (detailsField) detailsField.value = pendingPlan;
+    sessionStorage.removeItem('jagPlanRequest');
+  }
+
   gsap.timeline()
     .fromTo(backdrop, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' })
     .fromTo(

@@ -37,7 +37,7 @@
 
   <main>
     <section class="section section--fade-top">
-      <div class="section-inner">
+      <div class="section-inner section-inner--wide">
         <header class="section-head">
           <p class="section-tag">PRECIOS <span class="tag-dot">•</span> JaG</p>
           <h1 class="section-title">Planes claros, sin letra pequeña</h1>
@@ -55,7 +55,7 @@
              afectan a los 3 totales a la vez. -->
         <div class="price-grid">
           <!-- Plan: Landing Page -->
-          <article class="price-card" data-plan-href="servicios/landing-page.html">
+          <article class="price-card">
             <div class="window-bar">
               <span class="editorbar-dot editorbar-dot--red"></span>
               <span class="editorbar-dot editorbar-dot--yellow"></span>
@@ -84,12 +84,12 @@
               </p>
 
               <a href="servicios/landing-page.html" class="price-card-link">Ver qué incluye este plan →</a>
-              <a href="index.html#presupuesto" class="cta-button price-card-cta">CONTÁCTANOS</a>
+              <a href="index.html#presupuesto" class="cta-button price-card-cta">SOLICITAR ESTE PLAN</a>
             </div>
           </article>
 
           <!-- Plan: Web Profesional (destacado) -->
-          <article class="price-card price-card--featured" data-plan-href="servicios/web-profesional.html">
+          <article class="price-card price-card--featured">
             <span class="price-card-badge">LA MÁS ELEGIDA</span>
             <div class="window-bar">
               <span class="editorbar-dot editorbar-dot--red"></span>
@@ -119,12 +119,12 @@
               </p>
 
               <a href="servicios/web-profesional.html" class="price-card-link">Ver qué incluye este plan →</a>
-              <a href="index.html#presupuesto" class="cta-button price-card-cta">CONTÁCTANOS</a>
+              <a href="index.html#presupuesto" class="cta-button price-card-cta">SOLICITAR ESTE PLAN</a>
             </div>
           </article>
 
           <!-- Plan: Web a Medida -->
-          <article class="price-card" data-plan-href="servicios/a-medida.html">
+          <article class="price-card">
             <div class="window-bar">
               <span class="editorbar-dot editorbar-dot--red"></span>
               <span class="editorbar-dot editorbar-dot--yellow"></span>
@@ -154,7 +154,7 @@
               </p>
 
               <a href="servicios/a-medida.html" class="price-card-link">Ver qué incluye este plan →</a>
-              <a href="index.html#presupuesto" class="cta-button price-card-cta">CONTÁCTANOS</a>
+              <a href="index.html#presupuesto" class="cta-button price-card-cta">SOLICITAR ESTE PLAN</a>
             </div>
           </article>
         </div>
@@ -165,66 +165,127 @@
         <div class="extras-panel">
           <div class="extras-panel-head">
             <p class="extras-title">Extras para cualquier plan</p>
+            <h2 class="extras-panel-title">Haz tu web todavía más potente</h2>
             <p class="extras-panel-lead">
-              Actívalos una vez y se aplican a los 3 planes: el total
-              estimado de cada tarjeta se actualiza al momento.
+              Actívalos una vez y se aplican a los 3 planes a la vez: el
+              total estimado de cada tarjeta se actualiza al momento.
             </p>
           </div>
 
           <ul class="extras-list extras-list--panel">
             <li class="extra-item">
-              <label>
+              <label class="extra-tile">
                 <input type="checkbox" class="extra-check" data-price="50" />
-                <span class="extra-name">Formulario de contacto</span>
-                <span class="extra-price">+50€</span>
+                <span class="extra-tile-icon" aria-hidden="true">📩</span>
+                <span class="extra-tile-body">
+                  <span class="extra-tile-head">
+                    <span class="extra-name">Formulario de contacto</span>
+                    <span class="extra-price">+50€</span>
+                  </span>
+                  <span class="extra-desc">Que tus clientes te escriban sin salir de la web.</span>
+                </span>
+                <span class="extra-tile-check" aria-hidden="true"></span>
               </label>
             </li>
+
             <li class="extra-item extra-item--stepper">
-              <div class="extra-item-row">
-                <span class="extra-name">Integración de herramientas / automatización</span>
-                <span class="extra-price">+25–75€ cada una</span>
+              <div class="extra-tile extra-tile--stepper" id="integrationsTile">
+                <span class="extra-tile-icon" aria-hidden="true">🔗</span>
+                <span class="extra-tile-body">
+                  <span class="extra-tile-head">
+                    <span class="extra-name">Integración de herramientas / automatización</span>
+                    <span class="extra-price">+65€ por integración</span>
+                  </span>
+                  <span class="extra-desc">Conecta tu web con las herramientas que ya usas (Make, Sheets, tu CRM…).</span>
+                </span>
+                <div class="qty-stepper" data-price-per-unit="65">
+                  <button type="button" class="qty-btn qty-btn--minus" aria-label="Quitar una integración">−</button>
+                  <span class="qty-value" aria-live="polite">0</span>
+                  <button type="button" class="qty-btn qty-btn--plus" aria-label="Añadir una integración">+</button>
+                </div>
               </div>
-              <label class="extra-stepper">
-                <span>Cuántas integraciones</span>
-                <input type="number" class="extra-qty" min="0" max="20" step="1" value="0" data-price-per-unit="50" />
-              </label>
             </li>
+
             <li class="extra-item">
-              <label>
+              <label class="extra-tile">
                 <input type="checkbox" class="extra-check" data-price="250" />
-                <span class="extra-name">Mejora del SEO y visibilidad online</span>
-                <span class="extra-price">+250€</span>
+                <span class="extra-tile-icon" aria-hidden="true">📈</span>
+                <span class="extra-tile-body">
+                  <span class="extra-tile-head">
+                    <span class="extra-name">Mejora del SEO y visibilidad online</span>
+                    <span class="extra-price">+250€</span>
+                  </span>
+                  <span class="extra-desc">Sube posiciones en Google y que te encuentren antes que a la competencia.</span>
+                </span>
+                <span class="extra-tile-check" aria-hidden="true"></span>
               </label>
             </li>
+
             <li class="extra-item">
-              <label>
+              <label class="extra-tile">
                 <input type="checkbox" class="extra-check" data-price="500" />
-                <span class="extra-name">Panel de administrador</span>
-                <span class="extra-price">+500€</span>
+                <span class="extra-tile-icon" aria-hidden="true">🛠️</span>
+                <span class="extra-tile-body">
+                  <span class="extra-tile-head">
+                    <span class="extra-name">Panel de administrador</span>
+                    <span class="extra-price">+500€</span>
+                  </span>
+                  <span class="extra-desc">Gestiona contenido, pedidos o reservas tú mismo, sin tocar código.</span>
+                </span>
+                <span class="extra-tile-check" aria-hidden="true"></span>
               </label>
             </li>
+
             <li class="extra-item">
-              <label>
+              <label class="extra-tile">
                 <input type="checkbox" class="extra-check" data-price="400" />
-                <span class="extra-name">Chatbot</span>
-                <span class="extra-price">+400€</span>
+                <span class="extra-tile-icon" aria-hidden="true">💬</span>
+                <span class="extra-tile-body">
+                  <span class="extra-tile-head">
+                    <span class="extra-name">Chatbot</span>
+                    <span class="extra-price">+400€</span>
+                  </span>
+                  <span class="extra-desc">Responde dudas y capta clientes las 24 horas, también mientras duermes.</span>
+                </span>
+                <span class="extra-tile-check" aria-hidden="true"></span>
               </label>
             </li>
+
             <li class="extra-item">
-              <label>
+              <label class="extra-tile">
                 <input type="checkbox" class="extra-check" data-price="750" />
-                <span class="extra-name">Agente autónomo de IA</span>
-                <span class="extra-price">+750€</span>
+                <span class="extra-tile-icon" aria-hidden="true">🤖</span>
+                <span class="extra-tile-body">
+                  <span class="extra-tile-head">
+                    <span class="extra-name">Agente autónomo de IA</span>
+                    <span class="extra-price">+750€</span>
+                  </span>
+                  <span class="extra-desc">Automatiza tareas complejas de principio a fin, sin supervisión constante.</span>
+                </span>
+                <span class="extra-tile-check" aria-hidden="true"></span>
               </label>
             </li>
+
             <li class="extra-item">
-              <label>
+              <label class="extra-tile">
                 <input type="checkbox" class="extra-check" data-price="0" />
-                <span class="extra-name">Mantenimiento y soporte</span>
-                <span class="extra-price">Consultar</span>
+                <span class="extra-tile-icon" aria-hidden="true">🛡️</span>
+                <span class="extra-tile-body">
+                  <span class="extra-tile-head">
+                    <span class="extra-name">Mantenimiento y soporte</span>
+                    <span class="extra-price">Consultar</span>
+                  </span>
+                  <span class="extra-desc">Estamos ahí después del lanzamiento, cuando lo necesites.</span>
+                </span>
+                <span class="extra-tile-check" aria-hidden="true"></span>
               </label>
             </li>
           </ul>
+
+          <div class="extras-summary">
+            <span class="extras-summary-label">Tu configuración</span>
+            <span class="extras-summary-value" id="extrasSummaryValue">Todavía no has añadido ningún extra</span>
+          </div>
         </div>
       </div>
     </section>
@@ -284,36 +345,50 @@
       });
     });
 
-    /* Tarjeta completa clicable → subpágina del plan, salvo si el toque
-       empieza en un enlace, botón, checkbox, su etiqueta o la barra
-       superior (esa es el asa para arrastrar la "ventana", no navega) */
-    document.querySelectorAll('.price-card[data-plan-href]').forEach((card) => {
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('a, button, label, input, .window-bar')) return;
-        window.location.href = card.dataset.planHref;
-      });
-    });
-
-    /* Extras "a lo Apple", ahora en un único cuadro compartido: cada
-       checkbox (o la cantidad de integraciones) suma su precio y el
+    /* Extras "a lo Apple", en un único cuadro compartido: cada tarjeta
+       marcada (o la cantidad de integraciones) suma su precio y el
        resultado se aplica a los 3 totales a la vez, en tiempo real —
        nunca toca el precio base mostrado arriba (.price-amount). */
     const extrasPanel = document.querySelector('.extras-panel');
     const totalEls = document.querySelectorAll('.total-amount');
+    const qtyStepper = extrasPanel ? extrasPanel.querySelector('.qty-stepper') : null;
+    const qtyValueEl = qtyStepper ? qtyStepper.querySelector('.qty-value') : null;
+    const integrationsTile = document.getElementById('integrationsTile');
+    const summaryValueEl = document.getElementById('extrasSummaryValue');
+    const QTY_MIN = 0;
+    const QTY_MAX = 20;
+
+    function getQty() {
+      return qtyValueEl ? parseInt(qtyValueEl.textContent, 10) || 0 : 0;
+    }
+
     if (extrasPanel && totalEls.length) {
       const checks = extrasPanel.querySelectorAll('.extra-check');
-      const qtyInput = extrasPanel.querySelector('.extra-qty');
 
       function extrasTotal() {
         let sum = 0;
         checks.forEach((check) => {
           if (check.checked) sum += parseFloat(check.dataset.price, 10) || 0;
         });
-        if (qtyInput) {
-          const qty = Math.max(0, parseInt(qtyInput.value, 10) || 0);
-          sum += qty * (parseFloat(qtyInput.dataset.pricePerUnit, 10) || 0);
+        if (qtyStepper) {
+          sum += getQty() * (parseFloat(qtyStepper.dataset.pricePerUnit, 10) || 0);
         }
         return sum;
+      }
+
+      function updateSummary(extras) {
+        if (!summaryValueEl) return;
+        let count = 0;
+        checks.forEach((check) => { if (check.checked) count += 1; });
+        const qty = getQty();
+        if (qty > 0) count += 1;
+
+        if (count === 0) {
+          summaryValueEl.textContent = 'Todavía no has añadido ningún extra';
+        } else {
+          const noun = count === 1 ? 'extra añadido' : 'extras añadidos';
+          summaryValueEl.textContent = `${count} ${noun} · +${extras.toLocaleString('es-ES')}€ sobre el plan base`;
+        }
       }
 
       function updateAllTotals() {
@@ -322,22 +397,80 @@
           const basePrice = parseFloat(totalEl.dataset.basePrice, 10) || 0;
           totalEl.textContent = `${(basePrice + extras).toLocaleString('es-ES')}€`;
         });
+        updateSummary(extras);
       }
 
       checks.forEach((check) => check.addEventListener('change', updateAllTotals));
-      if (qtyInput) qtyInput.addEventListener('input', updateAllTotals);
+
+      if (qtyStepper && qtyValueEl) {
+        const minusBtn = qtyStepper.querySelector('.qty-btn--minus');
+        const plusBtn = qtyStepper.querySelector('.qty-btn--plus');
+
+        function setQty(next) {
+          const clamped = Math.min(QTY_MAX, Math.max(QTY_MIN, next));
+          qtyValueEl.textContent = String(clamped);
+          if (integrationsTile) integrationsTile.classList.toggle('is-active', clamped > 0);
+          updateAllTotals();
+        }
+
+        minusBtn.addEventListener('click', () => setQty(getQty() - 1));
+        plusBtn.addEventListener('click', () => setQty(getQty() + 1));
+      }
+
+      updateAllTotals();
     }
 
+    /* Botón "SOLICITAR ESTE PLAN" de cada tarjeta: antes de seguir el
+       enlace a index.html#presupuesto (que abre el modal de contacto
+       que ya existe), deja en sessionStorage un resumen del plan y los
+       extras elegidos, para que el formulario llegue precargado — el
+       usuario sigue teniendo que rellenar sus datos de contacto, igual
+       que en el formulario de siempre. */
+    function buildPlanSummary(card) {
+      const planName = card.querySelector('.price-card-title');
+      const totalEl = card.querySelector('.total-amount');
+      const lines = [
+        `Plan solicitado: ${planName ? planName.textContent.trim() : ''}`,
+        `Total estimado: ${totalEl ? totalEl.textContent.trim() : ''}`,
+      ];
+
+      const extras = [];
+      if (extrasPanel) {
+        extrasPanel.querySelectorAll('.extra-check:checked').forEach((check) => {
+          const name = check.closest('.extra-tile')?.querySelector('.extra-name');
+          if (!name) return;
+          const price = parseFloat(check.dataset.price, 10) || 0;
+          extras.push(price > 0 ? `${name.textContent.trim()} (+${price}€)` : name.textContent.trim());
+        });
+        const qty = getQty();
+        if (qty > 0 && qtyStepper) {
+          const unit = parseFloat(qtyStepper.dataset.pricePerUnit, 10) || 0;
+          extras.push(`Integración de herramientas / automatización ×${qty} (+${qty * unit}€)`);
+        }
+      }
+      lines.push(extras.length ? `Extras incluidos: ${extras.join(', ')}` : 'Extras incluidos: ninguno');
+
+      return lines.join('\n');
+    }
+
+    document.querySelectorAll('.price-card-cta').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.price-card');
+        if (!card) return;
+        sessionStorage.setItem('jagPlanRequest', buildPlanSummary(card));
+      });
+    });
+
     /* Tarjetas de precios "a lo ventana de escritorio": se agarran por
-       la barra superior (.window-bar) y se mueven libremente dentro del
-       cuadro de planes (.price-grid). Si se sueltan y pasan 5s sin
-       tocarlas, vuelven solas a su sitio con una animación rápida —
-       la misma transición de .price-card que ya usan hover/etc, solo
-       que aquí anima las variables --drag-x/--drag-y hasta 0. */
+       la barra superior (.window-bar) y se mueven libremente por toda
+       la ventana visible, no solo dentro del cuadro de planes. Si se
+       sueltan y pasan 5s sin tocarlas, vuelven solas a su sitio con una
+       animación rápida — la misma transición de .price-card que ya
+       usan hover/etc, solo que aquí anima las variables --drag-x/
+       --drag-y hasta 0. */
     document.querySelectorAll('.price-card').forEach((card) => {
       const bar = card.querySelector('.window-bar');
-      const grid = card.closest('.price-grid');
-      if (!bar || !grid) return;
+      if (!bar) return;
 
       const RETURN_DELAY = 5000;
       let dragging = false;
@@ -401,11 +534,12 @@
         startClientX = e.clientX;
         startClientY = e.clientY;
 
-        const gridRect = grid.getBoundingClientRect();
-        minX = gridRect.left - restRect.left;
-        maxX = gridRect.right - restRect.right;
-        minY = gridRect.top - restRect.top;
-        maxY = gridRect.bottom - restRect.bottom;
+        /* Límites = toda la ventana visible (no solo el cuadro de
+           planes), así la tarjeta puede pasearse por la página entera */
+        minX = 0 - restRect.left;
+        maxX = window.innerWidth - restRect.right;
+        minY = 0 - restRect.top;
+        maxY = window.innerHeight - restRect.bottom;
       });
 
       bar.addEventListener('pointermove', (e) => {

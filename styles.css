@@ -686,6 +686,7 @@ ul { list-style: none; }
   margin-inline: auto;
 }
 .section-inner--narrow { max-width: 52rem; }
+.section-inner--wide { max-width: 88rem; }
 
 /* Cabecera de cada sección */
 .section-head { margin-bottom: clamp(2.5rem, 6vw, 4.5rem); }
@@ -800,23 +801,27 @@ ul { list-style: none; }
   color: var(--gold);
 }
 
-/* ---------- Tarjetas de precios (ventanas macOS) ---------- */
+/* ---------- Tarjetas de precios (ventanas macOS) ----------
+   align-items: stretch (el valor por defecto, así que no hace falta
+   declararlo) iguala la altura de las 3 tarjetas a la de la más alta
+   de la fila; minmax más ancho que el de .cards-grid para que se note
+   más el "más anchas" pedido. */
 .price-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
   gap: clamp(1.5rem, 3vw, 2.5rem);
-  align-items: start;
 }
 
 .price-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   overflow: hidden;
-  cursor: pointer;   /* toda la tarjeta lleva a la subpágina del plan */
   /* --drag-x/--drag-y las mueve precios.html al arrastrar la tarjeta
      por su .window-bar, como si fuera una ventana de escritorio */
   --drag-x: 0px;
@@ -900,6 +905,10 @@ ul { list-style: none; }
   padding: clamp(1.6rem, 3vw, 2.2rem) clamp(1.6rem, 3.5vw, 2.4rem) clamp(2rem, 3.5vw, 2.6rem);
   display: flex;
   flex-direction: column;
+  /* Ocupa toda la altura que .price-card estira (align-items: stretch
+     del .price-grid), así el CTA de las 3 tarjetas queda a la misma
+     altura aunque la descripción o la lista tengan largos distintos */
+  flex: 1 1 auto;
 }
 
 .price-card-title {
@@ -955,18 +964,18 @@ ul { list-style: none; }
   color: var(--gold);
 }
 
-/* ---------- Extras configurables (estilo "configura tu Mac") ----------
+/* ---------- Extras configurables (estilo "configura tu Mac/iPhone") ----------
    Un único cuadro compartido bajo el .price-grid (.extras-panel, más
-   abajo): cada checkbox marcado suma su precio a los 3 totales a la vez
-   (.total-amount), sin tocar nunca el precio base de arriba
-   (.price-amount) — ver el script de precios.html. */
+   abajo): cada tarjeta marcada (o la cantidad de integraciones) suma su
+   precio a los 3 totales a la vez (.total-amount), sin tocar nunca el
+   precio base de arriba (.price-amount) — ver el script de precios.html. */
 
 .extras-title {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--gold);
   margin-bottom: 0.9rem;
 }
 
@@ -975,23 +984,7 @@ ul { list-style: none; }
   gap: 0.6rem;
 }
 
-.extra-item label {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  font-size: 0.84rem;
-  cursor: pointer;
-}
-
-.extra-check {
-  accent-color: var(--gold);
-  width: 1.05rem;
-  height: 1.05rem;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.extra-name { flex-grow: 1; color: var(--text); }
+.extra-name { color: var(--text); }
 
 .extra-price {
   color: var(--gold);
@@ -1002,75 +995,217 @@ ul { list-style: none; }
 
 /* ---------- Cuadro de extras compartido (bajo el .price-grid) ----------
    Reemplaza los extras por plan: se marcan una vez y afectan a los 3
-   totales a la vez. */
+   totales a la vez. Inspirado en configuradores "a lo Apple": tarjetas
+   con icono + beneficio + precio, que se iluminan en dorado al
+   marcarlas, para que añadir extras dé gusto en vez de dar pereza. */
 .extras-panel {
   margin-top: clamp(2.5rem, 5vw, 3.5rem);
   padding: clamp(1.8rem, 3.5vw, 2.6rem);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
 
 .extras-panel-head {
-  margin-bottom: 1.8rem;
+  margin-bottom: 2rem;
   text-align: center;
 }
-.extras-panel-head .extras-title { margin-bottom: 0.5rem; }
+.extras-panel-head .extras-title { margin-bottom: 0.6rem; }
+
+.extras-panel-title {
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
 
 .extras-panel-lead {
   max-width: 34rem;
   margin-inline: auto;
+  margin-top: 0.7rem;
   color: var(--text-dim);
   font-size: 0.9rem;
   line-height: 1.6;
 }
 
 .extras-list--panel {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  column-gap: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
 }
 
-.extras-list--panel .extra-item {
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--line);
+/* Tarjeta de extra: icono + nombre/precio + beneficio, con un check
+   circular a la derecha. El checkbox real queda invisible pero sigue
+   siendo focuseable/clicable — solo cambia su apariencia. */
+.extra-tile {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  height: 100%;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: border-color 0.3s ease, background 0.3s ease,
+              transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
 }
-.extras-list--panel .extra-item:last-child { border-bottom: none; }
 
-.extra-item--stepper {
+.extra-tile:hover {
+  border-color: rgba(201, 162, 75, 0.4);
+  transform: translateY(-3px);
+}
+
+/* Estado "añadido": borde y fondo dorados, como si acabaras de meter
+   algo al carrito — el refuerzo visual que anima a seguir añadiendo */
+.extra-tile:has(.extra-check:checked),
+.extra-tile.is-active {
+  border-color: var(--gold);
+  background: rgba(201, 162, 75, 0.09);
+  box-shadow: 0 10px 28px rgba(201, 162, 75, 0.14);
+}
+
+.extra-check {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+.extra-check:focus-visible ~ .extra-tile-check {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.extra-tile-icon {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.extra-tile-body {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.35rem;
+  min-width: 0;
 }
 
-.extra-item-row {
+.extra-tile-head {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.65rem;
-  font-size: 0.84rem;
-}
-.extra-item-row .extra-name { color: var(--text); }
-
-.extra-stepper {
-  display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 0.6rem;
-  font-size: 0.82rem;
+}
+.extra-tile-head .extra-name { font-weight: 600; font-size: 0.92rem; }
+
+.extra-desc {
   color: var(--text-dim);
-  cursor: default;
+  font-size: 0.8rem;
+  line-height: 1.55;
 }
 
-.extra-qty {
-  width: 4.5rem;
-  padding: 0.35rem 0.5rem;
-  border-radius: 6px;
+/* Check circular a la derecha: relleno dorado + marca cuando está
+   activo, controlado en CSS puro a partir del checkbox oculto */
+.extra-tile-check {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+.extra-check:checked ~ .extra-tile-check {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+}
+.extra-tile-check::after {
+  content: "";
+  width: 0.5rem;
+  height: 0.3rem;
+  border-left: 2px solid #0a0a0a;
+  border-bottom: 2px solid #0a0a0a;
+  transform: rotate(-45deg) translateY(-1px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.extra-check:checked ~ .extra-tile-check::after { opacity: 1; }
+
+/* Tarjeta de las integraciones: mismo look, pero con el stepper en vez
+   de checkbox/check circular (no hay un único "sí/no" que marcar) */
+.extra-tile--stepper { cursor: default; }
+.extra-tile--stepper:hover { transform: none; }
+
+.qty-stepper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.15rem;
+}
+
+.qty-btn {
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text);
-  font-size: 0.85rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+}
+.qty-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+.qty-btn:active { transform: scale(0.92); }
+
+.qty-value {
+  min-width: 1.7rem;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--gold-bright);
+}
+
+/* Resumen en vivo: "llevas X extras añadidos, +Y€" — cierra el bucle
+   de incentivo con un número que crece cada vez que marcas algo */
+.extras-summary {
+  margin-top: 1.8rem;
+  padding: 1rem 1.3rem;
+  border-radius: 12px;
+  border: 1px dashed rgba(201, 162, 75, 0.45);
+  background: rgba(201, 162, 75, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.extras-summary-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.extras-summary-value {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--gold-bright);
 }
 
 .price-card-total {
