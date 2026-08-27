@@ -23,7 +23,6 @@
     <nav class="main-nav" aria-label="Navegación principal">
       <ul>
         <li><a href="index.html#hero">INICIO</a></li>
-        <li><a href="index.html#servicios">SERVICIOS</a></li>
         <li><a href="precios.html">PRECIOS</a></li>
         <li><a href="index.html#metodo">MÉTODO</a></li>
         <li><a href="index.html#nosotros">NOSOTROS</a></li>
@@ -49,9 +48,11 @@
           </p>
         </header>
 
-        <!-- Precios y extras EDITAR AQUÍ ✏️ — son orientativos, ajústalos
-             cuando quieras a lo que de verdad cobréis (atributos
-             data-base-price y data-price en los checkboxes de extras). -->
+        <!-- Precios EDITAR AQUÍ ✏️ — son orientativos, ajústalos cuando
+             quieras a lo que de verdad cobréis (atributo data-base-price
+             en cada .total-amount). Los extras ya no van por plan: están
+             todos en el cuadro compartido .extras-panel, más abajo, y
+             afectan a los 3 totales a la vez. -->
         <div class="price-grid">
           <!-- Plan: Landing Page -->
           <article class="price-card" data-plan-href="servicios/landing-page.html">
@@ -72,53 +73,10 @@
                 <span class="price-note">precio cerrado · IVA no incluido</span>
               </p>
               <ul class="price-card-list">
-                <li>1 página, diseño 100% a medida</li>
-                <li>Optimizada para móvil y velocidad</li>
-                <li>Formulario de contacto integrado</li>
-                <li>SEO básico on-page</li>
-                <li>Entrega en 1–2 semanas</li>
+                <li><strong>Número de páginas:</strong> 1 página, centrada en un único objetivo (vender, reservar o captar contactos).</li>
+                <li><strong>Estética y animaciones:</strong> diseño 100% a medida, con animaciones sutiles de entrada.</li>
+                <li><strong>Utilidad y funciones:</strong> optimizada para móvil y velocidad, con SEO básico on-page.</li>
               </ul>
-
-              <div class="price-card-extras">
-                <p class="extras-title">Añade extras</p>
-                <ul class="extras-list">
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="150" />
-                      <span class="extra-name">Página adicional</span>
-                      <span class="extra-price">+150€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="250" />
-                      <span class="extra-name">Blog integrado</span>
-                      <span class="extra-price">+250€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="180" />
-                      <span class="extra-name">Copys profesionales</span>
-                      <span class="extra-price">+180€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="250" />
-                      <span class="extra-name">Logo o identidad visual</span>
-                      <span class="extra-price">+250€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="300" />
-                      <span class="extra-name">Versión en otro idioma</span>
-                      <span class="extra-price">+300€</span>
-                    </label>
-                  </li>
-                </ul>
-              </div>
 
               <p class="price-card-total">
                 <span class="total-label">Total estimado</span>
@@ -150,54 +108,10 @@
                 <span class="price-note">precio cerrado · IVA no incluido</span>
               </p>
               <ul class="price-card-list">
-                <li>Hasta 5 páginas (Inicio, Servicios, Sobre ti…)</li>
-                <li>Diseño exclusivo para tu marca</li>
-                <li>SEO local optimizado</li>
-                <li>Panel sencillo para que la actualices tú</li>
-                <li>Formulario de contacto + email automático</li>
-                <li>Dominio, hosting y SSL configurados</li>
+                <li><strong>Número de páginas:</strong> hasta 5 páginas (Inicio, Servicios, Sobre ti…).</li>
+                <li><strong>Estética y animaciones:</strong> diseño exclusivo para tu marca, con animaciones más elaboradas en cada sección.</li>
+                <li><strong>Utilidad y funciones:</strong> panel sencillo para que la actualices tú, SEO local optimizado y dominio, hosting y SSL configurados.</li>
               </ul>
-
-              <div class="price-card-extras">
-                <p class="extras-title">Añade extras</p>
-                <ul class="extras-list">
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="150" />
-                      <span class="extra-name">Página adicional</span>
-                      <span class="extra-price">+150€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="600" />
-                      <span class="extra-name">Tienda online (hasta 20 productos)</span>
-                      <span class="extra-price">+600€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="180" />
-                      <span class="extra-name">Copys profesionales</span>
-                      <span class="extra-price">+180€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="250" />
-                      <span class="extra-name">Logo o identidad visual</span>
-                      <span class="extra-price">+250€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="300" />
-                      <span class="extra-name">Versión en otro idioma</span>
-                      <span class="extra-price">+300€</span>
-                    </label>
-                  </li>
-                </ul>
-              </div>
 
               <p class="price-card-total">
                 <span class="total-label">Total estimado</span>
@@ -229,53 +143,10 @@
                 <span class="price-note">presupuesto cerrado tras la reunión inicial</span>
               </p>
               <ul class="price-card-list">
-                <li>Funcionalidades a medida (reservas, tienda, más)</li>
-                <li>Automatización de procesos incluida (Make/Sheets)</li>
-                <li>Diseño exclusivo, sin límite de páginas</li>
-                <li>Integraciones con tus herramientas actuales</li>
-                <li>Soporte y mantenimiento continuo</li>
+                <li><strong>Número de páginas:</strong> sin límite, la estructura que tu proyecto necesite.</li>
+                <li><strong>Estética y animaciones:</strong> diseño y animaciones 100% a medida, sin restricciones de plantilla.</li>
+                <li><strong>Utilidad y funciones:</strong> funcionalidades a medida (reservas, tienda…) y automatización de procesos incluida (Make/Sheets).</li>
               </ul>
-
-              <div class="price-card-extras">
-                <p class="extras-title">Añade extras</p>
-                <ul class="extras-list">
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="600" />
-                      <span class="extra-name">Tienda online (hasta 20 productos)</span>
-                      <span class="extra-price">+600€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="220" />
-                      <span class="extra-name">Fotografía profesional (sesión básica)</span>
-                      <span class="extra-price">+220€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="180" />
-                      <span class="extra-name">Copys profesionales</span>
-                      <span class="extra-price">+180€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="250" />
-                      <span class="extra-name">Logo o identidad visual</span>
-                      <span class="extra-price">+250€</span>
-                    </label>
-                  </li>
-                  <li class="extra-item">
-                    <label>
-                      <input type="checkbox" class="extra-check" data-price="300" />
-                      <span class="extra-name">Versión en otro idioma</span>
-                      <span class="extra-price">+300€</span>
-                    </label>
-                  </li>
-                </ul>
-              </div>
 
               <p class="price-card-total">
                 <span class="total-label">Total estimado</span>
@@ -286,6 +157,74 @@
               <a href="index.html#presupuesto" class="cta-button price-card-cta">CONTÁCTANOS</a>
             </div>
           </article>
+        </div>
+
+        <!-- Extras compartidos EDITAR AQUÍ ✏️ — únicos para los 3 planes:
+             al marcar cualquiera, su precio se suma a los 3 totales a la
+             vez (ver el script al final del archivo). -->
+        <div class="extras-panel">
+          <div class="extras-panel-head">
+            <p class="extras-title">Extras para cualquier plan</p>
+            <p class="extras-panel-lead">
+              Actívalos una vez y se aplican a los 3 planes: el total
+              estimado de cada tarjeta se actualiza al momento.
+            </p>
+          </div>
+
+          <ul class="extras-list extras-list--panel">
+            <li class="extra-item">
+              <label>
+                <input type="checkbox" class="extra-check" data-price="50" />
+                <span class="extra-name">Formulario de contacto</span>
+                <span class="extra-price">+50€</span>
+              </label>
+            </li>
+            <li class="extra-item extra-item--stepper">
+              <div class="extra-item-row">
+                <span class="extra-name">Integración de herramientas / automatización</span>
+                <span class="extra-price">+25–75€ cada una</span>
+              </div>
+              <label class="extra-stepper">
+                <span>Cuántas integraciones</span>
+                <input type="number" class="extra-qty" min="0" max="20" step="1" value="0" data-price-per-unit="50" />
+              </label>
+            </li>
+            <li class="extra-item">
+              <label>
+                <input type="checkbox" class="extra-check" data-price="250" />
+                <span class="extra-name">Mejora del SEO y visibilidad online</span>
+                <span class="extra-price">+250€</span>
+              </label>
+            </li>
+            <li class="extra-item">
+              <label>
+                <input type="checkbox" class="extra-check" data-price="500" />
+                <span class="extra-name">Panel de administrador</span>
+                <span class="extra-price">+500€</span>
+              </label>
+            </li>
+            <li class="extra-item">
+              <label>
+                <input type="checkbox" class="extra-check" data-price="400" />
+                <span class="extra-name">Chatbot</span>
+                <span class="extra-price">+400€</span>
+              </label>
+            </li>
+            <li class="extra-item">
+              <label>
+                <input type="checkbox" class="extra-check" data-price="750" />
+                <span class="extra-name">Agente autónomo de IA</span>
+                <span class="extra-price">+750€</span>
+              </label>
+            </li>
+            <li class="extra-item">
+              <label>
+                <input type="checkbox" class="extra-check" data-price="0" />
+                <span class="extra-name">Mantenimiento y soporte</span>
+                <span class="extra-price">Consultar</span>
+              </label>
+            </li>
+          </ul>
         </div>
       </div>
     </section>
@@ -346,32 +285,148 @@
     });
 
     /* Tarjeta completa clicable → subpágina del plan, salvo si el toque
-       empieza en un enlace, botón, checkbox o su etiqueta (los extras) */
+       empieza en un enlace, botón, checkbox, su etiqueta o la barra
+       superior (esa es el asa para arrastrar la "ventana", no navega) */
     document.querySelectorAll('.price-card[data-plan-href]').forEach((card) => {
       card.addEventListener('click', (e) => {
-        if (e.target.closest('a, button, label, input')) return;
+        if (e.target.closest('a, button, label, input, .window-bar')) return;
         window.location.href = card.dataset.planHref;
       });
     });
 
-    /* Extras "a lo Apple": cada checkbox marcado suma su precio al total
-       del plan, en tiempo real — nunca toca el precio base mostrado
-       arriba (.price-amount), solo el total con extras de abajo. */
-    document.querySelectorAll('.price-card').forEach((card) => {
-      const totalEl = card.querySelector('.total-amount');
-      if (!totalEl) return;
-      const basePrice = parseFloat(totalEl.dataset.basePrice, 10) || 0;
-      const checks = card.querySelectorAll('.extra-check');
+    /* Extras "a lo Apple", ahora en un único cuadro compartido: cada
+       checkbox (o la cantidad de integraciones) suma su precio y el
+       resultado se aplica a los 3 totales a la vez, en tiempo real —
+       nunca toca el precio base mostrado arriba (.price-amount). */
+    const extrasPanel = document.querySelector('.extras-panel');
+    const totalEls = document.querySelectorAll('.total-amount');
+    if (extrasPanel && totalEls.length) {
+      const checks = extrasPanel.querySelectorAll('.extra-check');
+      const qtyInput = extrasPanel.querySelector('.extra-qty');
 
-      function updateTotal() {
-        let sum = basePrice;
+      function extrasTotal() {
+        let sum = 0;
         checks.forEach((check) => {
           if (check.checked) sum += parseFloat(check.dataset.price, 10) || 0;
         });
-        totalEl.textContent = `${sum.toLocaleString('es-ES')}€`;
+        if (qtyInput) {
+          const qty = Math.max(0, parseInt(qtyInput.value, 10) || 0);
+          sum += qty * (parseFloat(qtyInput.dataset.pricePerUnit, 10) || 0);
+        }
+        return sum;
       }
 
-      checks.forEach((check) => check.addEventListener('change', updateTotal));
+      function updateAllTotals() {
+        const extras = extrasTotal();
+        totalEls.forEach((totalEl) => {
+          const basePrice = parseFloat(totalEl.dataset.basePrice, 10) || 0;
+          totalEl.textContent = `${(basePrice + extras).toLocaleString('es-ES')}€`;
+        });
+      }
+
+      checks.forEach((check) => check.addEventListener('change', updateAllTotals));
+      if (qtyInput) qtyInput.addEventListener('input', updateAllTotals);
+    }
+
+    /* Tarjetas de precios "a lo ventana de escritorio": se agarran por
+       la barra superior (.window-bar) y se mueven libremente dentro del
+       cuadro de planes (.price-grid). Si se sueltan y pasan 5s sin
+       tocarlas, vuelven solas a su sitio con una animación rápida —
+       la misma transición de .price-card que ya usan hover/etc, solo
+       que aquí anima las variables --drag-x/--drag-y hasta 0. */
+    document.querySelectorAll('.price-card').forEach((card) => {
+      const bar = card.querySelector('.window-bar');
+      const grid = card.closest('.price-grid');
+      if (!bar || !grid) return;
+
+      const RETURN_DELAY = 5000;
+      let dragging = false;
+      let pointerId = null;
+      let startClientX = 0;
+      let startClientY = 0;
+      let originX = 0;
+      let originY = 0;
+      let minX = 0, maxX = 0, minY = 0, maxY = 0;
+      let returnTimer = null;
+
+      function clearReturnTimer() {
+        if (returnTimer) {
+          clearTimeout(returnTimer);
+          returnTimer = null;
+        }
+      }
+
+      function scheduleReturn() {
+        clearReturnTimer();
+        returnTimer = setTimeout(() => {
+          card.style.setProperty('--drag-x', '0px');
+          card.style.setProperty('--drag-y', '0px');
+          card.addEventListener('transitionend', function onEnd(e) {
+            if (e.propertyName !== 'transform') return;
+            card.classList.remove('is-elevated');
+            card.removeEventListener('transitionend', onEnd);
+          });
+        }, RETURN_DELAY);
+      }
+
+      bar.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        e.preventDefault();
+        clearReturnTimer();
+
+        /* Posición real en pantalla ahora mismo (puede ser mitad de la
+           animación de "vuelta a casa" si se agarra en ese instante) y
+           posición de reposo (con --drag-x/--drag-y a 0), para saber el
+           desplazamiento exacto ya acumulado sin fiarnos del valor de la
+           variable CSS, que durante una transición no refleja el punto
+           intermedio real. */
+        const liveRect = card.getBoundingClientRect();
+        const prevTransition = card.style.transition;
+        card.style.transition = 'none';
+        card.style.setProperty('--drag-x', '0px');
+        card.style.setProperty('--drag-y', '0px');
+        const restRect = card.getBoundingClientRect();
+        card.style.transition = prevTransition;
+
+        originX = liveRect.left - restRect.left;
+        originY = liveRect.top - restRect.top;
+        card.style.setProperty('--drag-x', `${originX}px`);
+        card.style.setProperty('--drag-y', `${originY}px`);
+
+        dragging = true;
+        pointerId = e.pointerId;
+        bar.setPointerCapture(pointerId);
+        card.classList.add('is-dragging', 'is-elevated');
+
+        startClientX = e.clientX;
+        startClientY = e.clientY;
+
+        const gridRect = grid.getBoundingClientRect();
+        minX = gridRect.left - restRect.left;
+        maxX = gridRect.right - restRect.right;
+        minY = gridRect.top - restRect.top;
+        maxY = gridRect.bottom - restRect.bottom;
+      });
+
+      bar.addEventListener('pointermove', (e) => {
+        if (!dragging || e.pointerId !== pointerId) return;
+        const nextX = originX + (e.clientX - startClientX);
+        const nextY = originY + (e.clientY - startClientY);
+        const clampedX = Math.min(Math.max(nextX, Math.min(minX, maxX)), Math.max(minX, maxX));
+        const clampedY = Math.min(Math.max(nextY, Math.min(minY, maxY)), Math.max(minY, maxY));
+        card.style.setProperty('--drag-x', `${clampedX}px`);
+        card.style.setProperty('--drag-y', `${clampedY}px`);
+      });
+
+      function endDrag(e) {
+        if (!dragging || e.pointerId !== pointerId) return;
+        dragging = false;
+        card.classList.remove('is-dragging');
+        scheduleReturn();
+      }
+
+      bar.addEventListener('pointerup', endDrag);
+      bar.addEventListener('pointercancel', endDrag);
     });
   </script>
 </body>

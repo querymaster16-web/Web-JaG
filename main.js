@@ -858,16 +858,6 @@ document.querySelectorAll('.section-head').forEach((head) => {
   });
 });
 
-/* Tarjetas de servicios: suben y aparecen escalonadas */
-gsap.from('.glass-card', {
-  scrollTrigger: { trigger: '.cards-grid', start: 'top 80%' },
-  y: 70,
-  opacity: 0,
-  duration: 1.1,
-  stagger: 0.18,
-  ease: 'power3.out',
-});
-
 /* Pasos del método: entran desde la izquierda uno a uno */
 gsap.from('.step', {
   scrollTrigger: { trigger: '.steps', start: 'top 78%' },

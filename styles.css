@@ -817,10 +817,35 @@ ul { list-style: none; }
   -webkit-backdrop-filter: blur(14px);
   overflow: hidden;
   cursor: pointer;   /* toda la tarjeta lleva a la subpágina del plan */
+  /* --drag-x/--drag-y las mueve precios.html al arrastrar la tarjeta
+     por su .window-bar, como si fuera una ventana de escritorio */
+  --drag-x: 0px;
+  --drag-y: 0px;
+  transform: translate(var(--drag-x), var(--drag-y));
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
               border-color 0.45s ease,
               box-shadow 0.45s ease;
 }
+
+/* Mientras se arrastra, sin transición en el transform: la tarjeta debe
+   seguir al puntero 1 a 1, sin el "retraso" fluido que sí queremos al
+   soltarla (esa transición ya activa vuelve sola en cuanto se quita
+   esta clase, para el regreso a los 5s). */
+.price-card.is-dragging {
+  transition: border-color 0.45s ease, box-shadow 0.45s ease;
+  cursor: grabbing;
+}
+
+/* Por encima de sus hermanas mientras está fuera de su sitio, para que
+   se pueda "poner delante" al arrastrarla como una ventana de verdad */
+.price-card.is-elevated { z-index: 30; }
+
+.price-card .window-bar {
+  cursor: grab;
+  touch-action: none;   /* el gesto en la barra es arrastrar, no hacer scroll */
+  user-select: none;
+}
+.price-card.is-dragging .window-bar { cursor: grabbing; }
 
 /* Foco de luz dorada que sigue al cursor (coords --mx/--my desde JS) */
 .price-card::after {
@@ -838,21 +863,23 @@ ul { list-style: none; }
 }
 
 .price-card:hover {
-  transform: translateY(-6px);
   border-color: rgba(201, 162, 75, 0.45);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(201, 162, 75, 0.08);
 }
 .price-card:hover::after { opacity: 1; }
 
-/* El plan destacado: borde dorado permanente + ligera elevación */
+/* El plan destacado: borde dorado permanente + ligera elevación.
+   La elevación se suma (no sustituye) al arrastre: por eso se combina
+   en el propio transform en vez de fijarlo aparte. */
 .price-card--featured {
   border-color: rgba(201, 162, 75, 0.55);
   background: rgba(201, 162, 75, 0.05);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45), 0 0 50px rgba(201, 162, 75, 0.1);
 }
 @media (min-width: 860px) {
-  .price-card--featured { transform: translateY(-0.9rem); }
-  .price-card--featured:hover { transform: translateY(-1.5rem); }
+  .price-card--featured {
+    transform: translate(var(--drag-x, 0px), calc(-0.9rem + var(--drag-y, 0px)));
+  }
 }
 
 .price-card-badge {
@@ -929,14 +956,10 @@ ul { list-style: none; }
 }
 
 /* ---------- Extras configurables (estilo "configura tu Mac") ----------
-   Cada checkbox suma su precio al total de abajo (.total-amount), sin
-   tocar nunca el precio base de arriba (.price-amount) — ver el script
-   de precios.html. */
-.price-card-extras {
-  margin-top: 1.6rem;
-  padding-top: 1.4rem;
-  border-top: 1px solid var(--line);
-}
+   Un único cuadro compartido bajo el .price-grid (.extras-panel, más
+   abajo): cada checkbox marcado suma su precio a los 3 totales a la vez
+   (.total-amount), sin tocar nunca el precio base de arriba
+   (.price-amount) — ver el script de precios.html. */
 
 .extras-title {
   font-size: 0.72rem;
@@ -975,6 +998,79 @@ ul { list-style: none; }
   font-weight: 600;
   font-size: 0.8rem;
   white-space: nowrap;
+}
+
+/* ---------- Cuadro de extras compartido (bajo el .price-grid) ----------
+   Reemplaza los extras por plan: se marcan una vez y afectan a los 3
+   totales a la vez. */
+.extras-panel {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  padding: clamp(1.8rem, 3.5vw, 2.6rem);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.extras-panel-head {
+  margin-bottom: 1.8rem;
+  text-align: center;
+}
+.extras-panel-head .extras-title { margin-bottom: 0.5rem; }
+
+.extras-panel-lead {
+  max-width: 34rem;
+  margin-inline: auto;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.extras-list--panel {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  column-gap: 2.5rem;
+}
+
+.extras-list--panel .extra-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.extras-list--panel .extra-item:last-child { border-bottom: none; }
+
+.extra-item--stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.extra-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  font-size: 0.84rem;
+}
+.extra-item-row .extra-name { color: var(--text); }
+
+.extra-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  cursor: default;
+}
+
+.extra-qty {
+  width: 4.5rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-size: 0.85rem;
 }
 
 .price-card-total {
