@@ -298,7 +298,126 @@ body {
 git log --oneline <span class="tk-com">// spoiler: hay muchos "fix" ahí dentro</span>
 
 <span class="tk-com">/* si esto tarda en cargar, no es la web, es tu wifi */</span>
-<span class="tk-kw">const</span> latencia = ping(<span class="tk-str">"acoruna.es"</span>); <span class="tk-com">// broma, ni existe esa función</span></code></pre>
+<span class="tk-kw">const</span> latencia = ping(<span class="tk-str">"acoruna.es"</span>); <span class="tk-com">// broma, ni existe esa función</span>
+
+<span class="tk-kw">const</span> horarioAtencion = { lunes: <span class="tk-str">"9 a 14 y 16 a 19"</span>, viernesTarde: <span class="tk-gold">false</span> };
+<span class="tk-com">/* si escribes a las 3 de la mañana, contestamos a las 9, lo prometido */</span>
+
+.hero-cta {
+  animation: <span class="tk-fn">pulse</span> <span class="tk-num">2s</span> ease-in-out infinite;
+  <span class="tk-com">/* para que no se te pase pedir presupuesto */</span>
+}
+
+<span class="tk-kw">function</span> <span class="tk-fn">calcularROI</span>(inversion) {
+  <span class="tk-kw">return</span> inversion * <span class="tk-gold">muchísimo</span>; <span class="tk-com">// fórmula patentada, no preguntes</span>
+}
+
+<span class="tk-tag">&lt;section</span> <span class="tk-attr">id</span>=<span class="tk-str">"testimonios"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-com">&lt;!-- aquí van las reseñas, cuando nos acordemos de pedirlas --&gt;</span>
+<span class="tk-tag">&lt;/section&gt;</span>
+
+<span class="tk-kw">const</span> stackTecnico = [<span class="tk-str">"HTML"</span>, <span class="tk-str">"CSS de verdad"</span>, <span class="tk-str">"JS sin frameworks innecesarios"</span>];
+
+.precio-card:hover {
+  transform: scale(<span class="tk-num">1.02</span>);
+  <span class="tk-com">/* sutil, como nosotros */</span>
+}
+
+<span class="tk-com">// esta función existe solo para que la sección de código no se vea vacía</span>
+<span class="tk-kw">function</span> <span class="tk-fn">rellenarHueco</span>() {
+  <span class="tk-kw">return</span> <span class="tk-str">"nadie lo va a notar"</span>; <span class="tk-com">// bueno, tú sí, ahora</span>
+}
+
+<span class="tk-kw">const</span> tiempoRespuesta = <span class="tk-str">"antes de que te dé tiempo a arrepentirte"</span>;
+
+@media (min-width: <span class="tk-num">1440px</span>) {
+  .reveal-lab-code { padding-inline: <span class="tk-num">3rem</span>; } <span class="tk-com">/* para pantallas grandes, como la tuya */</span>
+}
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onClick</span>=<span class="tk-str">{pedirPresupuesto}</span><span class="tk-tag">&gt;</span>
+  Vamos a hablar
+<span class="tk-tag">&lt;/button&gt;</span>
+
+<span class="tk-kw">const</span> excusasQueNoUsamos = [<span class="tk-str">"culpa del servidor"</span>, <span class="tk-str">"es que el cliente no sabía lo que quería"</span>];
+
+.badge-dorado {
+  background: <span class="tk-gold">var(--gold)</span>;
+  color: black; <span class="tk-com">/* contraste, cosas básicas */</span>
+}
+
+<span class="tk-kw">async function</span> <span class="tk-fn">enviarFormulario</span>(datos) {
+  <span class="tk-kw">await</span> <span class="tk-fn">guardarEnSheets</span>(datos);
+  <span class="tk-kw">return</span> <span class="tk-str">"gracias, te escribimos pronto"</span>;
+}
+
+<span class="tk-com">/* nombre en clave del proyecto: "el de la lupa" */</span>
+<span class="tk-kw">const</span> nombreEnClave = <span class="tk-str">"el de la lupa"</span>;
+
+.footer-legal a {
+  text-decoration: underline dotted; <span class="tk-com">/* para que se note que es de verdad */</span>
+}
+
+<span class="tk-kw">const</span> razonesParaElegirnos = [
+  <span class="tk-str">"contestamos rápido"</span>,
+  <span class="tk-str">"no desaparecemos tras cobrar"</span>,
+  <span class="tk-str">"nos gusta lo que hacemos"</span>,
+];
+
+<span class="tk-tag">&lt;link</span> <span class="tk-attr">rel</span>=<span class="tk-str">"preload"</span> <span class="tk-attr">href</span>=<span class="tk-str">"cafeina.woff2"</span><span class="tk-tag">&gt;</span>
+<span class="tk-com">// spoiler: no existe cafeina.woff2, pero debería</span>
+
+<span class="tk-kw">function</span> <span class="tk-fn">estimarPresupuesto</span>(paginas, prisa) {
+  <span class="tk-kw">return</span> paginas * <span class="tk-num">100</span> + (prisa ? <span class="tk-num">9999</span> : <span class="tk-num">0</span>); <span class="tk-com">// la prisa se paga</span>
+}
+
+.testimonio-card {
+  font-style: italic; <span class="tk-com">/* para que suene más creíble */</span>
+}
+
+<span class="tk-kw">const</span> <span class="tk-gold">nuestraFilosofia</span> = <span class="tk-str">"hacerlo bien la primera vez"</span>;
+
+git blame styles.css <span class="tk-com">// mejor no, en serio, mejor no</span>
+
+<span class="tk-kw">export function</span> <span class="tk-fn">garantizarCalidad</span>() {
+  <span class="tk-kw">while</span> (<span class="tk-gold">true</span>) {
+    <span class="tk-fn">revisar</span>();
+    <span class="tk-fn">revisar</span>(otraVez);
+  }
+}
+<span class="tk-com">/* el bucle anterior es la razón por la que tardamos un poco más */</span>
+
+.aviso-cookies {
+  bottom: <span class="tk-num">0</span>; <span class="tk-com">/* discreto, no como los de otras webs */</span>
+}
+
+<span class="tk-kw">const</span> promesa = <span class="tk-str">"sin sorpresas en la factura final"</span>;
+
+<span class="tk-tag">&lt;img</span> <span class="tk-attr">src</span>=<span class="tk-str">"logo.svg"</span> <span class="tk-attr">alt</span>=<span class="tk-str">"JaG"</span> <span class="tk-attr">loading</span>=<span class="tk-str">"eager"</span><span class="tk-tag">/&gt;</span>
+<span class="tk-com">&lt;!-- el logo carga siempre el primero, tiene prioridad --&gt;</span>
+
+<span class="tk-kw">const</span> nivelDeDetalle = <span class="tk-gold">Infinity</span>; <span class="tk-com">// sí, otra vez Infinity, es que es verdad</span>
+
+.mapa-coruña {
+  filter: grayscale(<span class="tk-num">0</span>); <span class="tk-com">/* aquí no hay nada en blanco y negro */</span>
+}
+
+<span class="tk-kw">function</span> <span class="tk-fn">contarClientesContentos</span>() {
+  <span class="tk-kw">return</span> clientes.filter(c =&gt; c.volveria); <span class="tk-com">// spoiler: casi todos</span>
+}
+
+<span class="tk-com">// checklist antes de entregar cualquier web</span>
+<span class="tk-kw">const</span> checklist = [
+  <span class="tk-str">"carga rápido"</span>,
+  <span class="tk-str">"se ve bien en el móvil de tu tía"</span>,
+  <span class="tk-str">"el formulario funciona de verdad"</span>,
+  <span class="tk-str">"nada de lorem ipsum olvidado"</span>,
+];
+
+.precio-final {
+  font-weight: <span class="tk-num">700</span>; <span class="tk-com">/* el único número que importa */</span>
+}
+
+<span class="tk-kw">const</span> siguientePaso = <span class="tk-str">"escríbenos y lo vemos"</span>; <span class="tk-com">// así de sencillo</span></code></pre>
       </div>
 
       <canvas class="reveal-lab-canvas" aria-hidden="true"></canvas>

@@ -385,7 +385,11 @@ ul { list-style: none; }
   margin: 0;
   padding: 1.6rem clamp(1.25rem, 4vw, 3rem);
   overflow: hidden;
-  columns: clamp(190px, 20vw, 260px) auto;
+  /* Tope más alto que antes (260px → 320px): en monitores grandes,
+     con el tope bajo salían muchas más columnas de las que el código
+     de broma llega a llenar, y se veía una franja vacía a la derecha.
+     Con columnas más anchas hacen falta menos para cubrir el ancho. */
+  columns: clamp(190px, 20vw, 320px) auto;
   column-gap: clamp(1.5rem, 3vw, 3rem);
   /* "auto" (en vez de "balance"): cada columna se rellena hasta el
      final antes de pasar a la siguiente, así el código ocupa toda
