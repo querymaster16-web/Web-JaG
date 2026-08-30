@@ -883,32 +883,32 @@ ul { list-style: none; }
 }
 .price-card:hover::after { opacity: 1; }
 
-/* El plan destacado: antes llevaba fondo dorado + resplandor de color +
-   una elevación marcada. Rediseño "a lo Apple": el énfasis se reduce a
-   un borde apenas más claro y una elevación mínima — nunca un cartel
-   de color. La elevación se suma (no sustituye) al arrastre: por eso
-   se combina en el propio transform en vez de fijarlo aparte. */
+/* El plan destacado: borde dorado permanente + ligera elevación.
+   La elevación se suma (no sustituye) al arrastre: por eso se combina
+   en el propio transform en vez de fijarlo aparte. */
 .price-card--featured {
-  border-color: rgba(234, 231, 224, 0.28);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  border-color: rgba(201, 162, 75, 0.55);
+  background: rgba(201, 162, 75, 0.05);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45), 0 0 50px rgba(201, 162, 75, 0.1);
 }
 @media (min-width: 860px) {
   .price-card--featured {
-    transform: translate(var(--drag-x, 0px), calc(-0.4rem + var(--drag-y, 0px)));
+    transform: translate(var(--drag-x, 0px), calc(-0.9rem + var(--drag-y, 0px)));
   }
 }
 
-/* Antes era una pastilla dorada rellena en la esquina, tipo sticker.
-   Ahora es una etiqueta de texto, discreta, encima del nombre del plan
-   — el acento dorado se reserva para el precio y el CTA principal. */
 .price-card-badge {
-  display: block;
-  margin-bottom: 0.7rem;
-  font-size: 0.64rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold-bright);
+  position: absolute;
+  top: 0.62rem;
+  right: 1.1rem;
+  z-index: 2;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #0a0a0a;
+  background: linear-gradient(100deg, var(--gold), var(--gold-bright));
+  padding: 0.35em 0.7em;
+  border-radius: 999px;
 }
 
 .price-card-body {
@@ -921,21 +921,14 @@ ul { list-style: none; }
   flex: 1 1 auto;
 }
 
-/* Nombre del plan: antes competía en tamaño con el precio. Ahora es
-   pequeño, en mayúsculas y con letter-spacing — una etiqueta, no un
-   titular — para que el único punto de énfasis real sea el precio. */
 .price-card-title {
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-dim);
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .price-card-desc {
-  margin-top: 0.6rem;
+  margin-top: 0.7rem;
   color: var(--text-dim);
-  font-weight: 300;
   line-height: 1.65;
   font-size: 0.9rem;
 }
@@ -949,34 +942,15 @@ ul { list-style: none; }
   gap: 0.3rem;
 }
 
-/* "Desde" / "790€" / "proyecto": el número es lo único con peso fuerte;
-   el prefijo y el sufijo van pequeños y en gris, nunca dentro del
-   propio número — así el precio se lee de un vistazo. */
-.price-figure {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-}
-
-.price-eyebrow,
-.price-suffix {
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: var(--text-dim);
-}
-.price-eyebrow { margin-right: 0.35em; }
-.price-suffix { margin-left: 0.45em; }
-
 .price-amount {
   font-size: clamp(1.8rem, 3vw, 2.2rem);
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--text);
+  color: var(--gold-bright);
 }
 
 .price-note {
   font-size: 0.74rem;
-  font-weight: 300;
   color: var(--text-dim);
 }
 
@@ -997,23 +971,22 @@ ul { list-style: none; }
   content: "—";
   position: absolute;
   left: 0;
-  color: var(--text-dim);
+  color: var(--gold);
 }
 
-/* ---------- Extras configurables ----------
+/* ---------- Extras configurables (estilo "configura tu Mac/iPhone") ----------
    Cada tarjeta de plan despliega su propio bloque de extras al pulsar
    "SOLICITAR ESTE PLAN" (ver .price-card-extras y el script de
    precios.html). Lo marcado suma al total de esa tarjeta
    (.total-amount) sin tocar nunca el precio base de arriba
-   (.price-amount). El acento dorado se reserva para el CTA del plan
-   destacado, así que aquí todo el feedback de selección es monocromo. */
+   (.price-amount). */
 
 .extras-title {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--gold);
   margin-bottom: 0.9rem;
 }
 
@@ -1022,13 +995,13 @@ ul { list-style: none; }
   gap: 0.6rem;
 }
 
-.extra-name { color: var(--text); font-weight: 400; }
+.extra-name { color: var(--text); }
 .extra-benefit { color: var(--text-dim); font-weight: 300; }
 
 .extra-price {
-  color: var(--text-dim);
-  font-weight: 500;
-  font-size: 0.78rem;
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 0.8rem;
   white-space: nowrap;
 }
 
@@ -1051,16 +1024,17 @@ ul { list-style: none; }
 }
 
 .extra-tile:hover {
-  border-color: rgba(234, 231, 224, 0.3);
+  border-color: rgba(201, 162, 75, 0.4);
   transform: translateY(-3px);
 }
 
-/* Estado "añadido": un borde y fondo apenas más claros, sin brillo ni
-   color — el acento dorado se reserva para el CTA del plan destacado. */
+/* Estado "añadido": borde y fondo dorados, como si acabaras de meter
+   algo al carrito — el refuerzo visual que anima a seguir añadiendo */
 .extra-tile:has(.extra-check:checked),
 .extra-tile.is-active {
-  border-color: rgba(234, 231, 224, 0.45);
-  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--gold);
+  background: rgba(201, 162, 75, 0.09);
+  box-shadow: 0 10px 28px rgba(201, 162, 75, 0.14);
 }
 
 .extra-check {
@@ -1071,26 +1045,22 @@ ul { list-style: none; }
   pointer-events: none;
 }
 .extra-check:focus-visible ~ .extra-tile-check {
-  outline: 2px solid var(--text-dim);
+  outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
 
 .extra-tile-icon {
   flex-shrink: 0;
   margin-top: 0.1rem;
-  width: 1.15rem;
-  height: 1.15rem;
-  color: var(--text-dim);
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--gold-bright);
   display: inline-flex;
 }
 .extra-tile-icon svg {
   width: 100%;
   height: 100%;
   display: block;
-}
-.extra-tile:has(.extra-check:checked) .extra-tile-icon,
-.extra-tile.is-active .extra-tile-icon {
-  color: var(--text);
 }
 
 .extra-tile-body {
@@ -1108,7 +1078,7 @@ ul { list-style: none; }
   justify-content: space-between;
   gap: 0.3rem 0.6rem;
 }
-.extra-tile-head .extra-name { font-weight: 500; font-size: 0.92rem; }
+.extra-tile-head .extra-name { font-weight: 600; font-size: 0.92rem; }
 
 .extra-name-wrap {
   display: inline-flex;
@@ -1138,9 +1108,9 @@ ul { list-style: none; }
 }
 .extra-info-btn:hover,
 .extra-info-btn[aria-expanded="true"] {
-  border-color: var(--text-dim);
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  background: rgba(201, 162, 75, 0.12);
 }
 
 .extra-desc {
@@ -1176,15 +1146,15 @@ ul { list-style: none; }
   transition: border-color 0.3s ease, background 0.3s ease;
 }
 .extra-check:checked ~ .extra-tile-check {
-  border-color: var(--text);
-  background: var(--text);
+  border-color: var(--gold);
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
 }
 .extra-tile-check::after {
   content: "";
   width: 0.5rem;
   height: 0.3rem;
-  border-left: 2px solid var(--bg);
-  border-bottom: 2px solid var(--bg);
+  border-left: 2px solid #0a0a0a;
+  border-bottom: 2px solid #0a0a0a;
   transform: rotate(-45deg) translateY(-1px);
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -1220,8 +1190,8 @@ ul { list-style: none; }
   transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease, transform 0.15s ease;
 }
 .qty-btn:hover {
-  border-color: var(--text-dim);
-  color: var(--text);
+  border-color: var(--gold);
+  color: var(--gold-bright);
 }
 .qty-btn:active { transform: scale(0.92); }
 
@@ -1229,8 +1199,8 @@ ul { list-style: none; }
   min-width: 1.7rem;
   text-align: center;
   font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text);
+  font-weight: 800;
+  color: var(--gold-bright);
 }
 
 .price-card-total {
@@ -1250,8 +1220,8 @@ ul { list-style: none; }
 
 .total-amount {
   font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--text);
+  font-weight: 800;
+  color: var(--gold-bright);
   transition: opacity 0.18s ease;
 }
 .total-amount.is-updating { opacity: 0.4; }
@@ -1260,21 +1230,6 @@ ul { list-style: none; }
   margin-top: 1.8rem;
   width: 100%;
   text-align: center;
-}
-
-/* Jerarquía de acento: el dorado se reserva para el CTA del plan
-   destacado. Landing y A Medida usan un botón secundario, discreto —
-   borde fino y sin relleno — para que el ojo vaya primero al
-   recomendado. Mismo tamaño/tacto que .cta-button, solo cambia color. */
-.price-card:not(.price-card--featured) .price-card-cta {
-  border-color: var(--line);
-  color: var(--text) !important;
-}
-.price-card:not(.price-card--featured) .price-card-cta:hover {
-  border-color: var(--text-dim);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text) !important;
-  box-shadow: none;
 }
 
 /* Panel de extras de cada tarjeta — se despliega al pulsar "SOLICITAR
@@ -1297,24 +1252,32 @@ ul { list-style: none; }
 .price-card-extras .extra-explain { font-size: 0.74rem; }
 .price-card-extras .price-card-total { margin-top: 1.2rem; }
 
+/* Al desplegarse un plan el contenido puede ser largo y el <header>
+   con "INICIO" queda fuera de la vista al hacer scroll — este enlace
+   da una vuelta rápida a la home sin tener que subir del todo. */
+.price-card-extras-home {
+  display: inline-block;
+  margin-bottom: 1.1rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  transition: color 0.25s ease;
+}
+.price-card-extras-home:hover { color: var(--gold-bright); }
+
 /* Enlace a la subpágina de explicación de cada plan */
 .price-card-link {
   display: inline-block;
   margin-top: 1.4rem;
   font-size: 0.82rem;
   letter-spacing: 0.03em;
-  color: var(--text-dim);
+  color: var(--gold);
   border-bottom: 1px solid transparent;
   transition: color 0.3s ease, border-color 0.3s ease;
 }
 .price-card-link:hover {
-  color: var(--text);
-  border-bottom-color: var(--text-dim);
-}
-.price-card--featured .price-card-link {
   color: var(--gold-bright);
-}
-.price-card--featured .price-card-link:hover {
   border-bottom-color: var(--gold-bright);
 }
 
