@@ -1131,6 +1131,19 @@ ul { list-style: none; }
 }
 .extra-explain.is-open { display: block; }
 
+/* Extras "de solo lectura" en las subpáginas de cada plan
+   (servicios/*.html): mismas tarjetas que en precios.html, pero sin
+   checkbox ni total — no hay nada que marcar aquí, solo se muestra qué
+   se puede añadir. La explicación va siempre visible (no hace falta
+   el botón "?" si no hay que ahorrar espacio dentro de una tarjeta). */
+.extras-list--static { max-width: 42rem; }
+.extra-tile--static { cursor: default; }
+.extra-tile--static:hover {
+  border-color: var(--line);
+  transform: none;
+}
+.extras-list--static .extra-explain { display: block; }
+
 /* Check circular a la derecha: relleno dorado + marca cuando está
    activo, controlado en CSS puro a partir del checkbox oculto */
 .extra-tile-check {
@@ -1227,6 +1240,7 @@ ul { list-style: none; }
 .total-amount.is-updating { opacity: 0.4; }
 
 .price-card-cta {
+  display: block;
   margin-top: 1.8rem;
   width: 100%;
   text-align: center;
