@@ -237,37 +237,13 @@ ul { list-style: none; }
 /* …excepto en los elementos interactivos de texto */
 .hero a, .hero button { pointer-events: auto; }
 
-/* El fondo 3D reparte sus piezas por casi toda la pantalla (posición
-   aleatoria en cada carga), así que ninguna posición fija del eslogan
-   garantiza que nunca lo cruce un cubo o un fragmento de código. En
-   vez de perseguir ese hueco imposible, el propio texto lleva un halo
-   difuminado detrás (::before) que lo separa del entorno se ponga
-   donde se ponga — sobre negro puro (--bg) es del mismo tono y no se
-   nota; en cuanto aparece la escena, actúa de cristal esmerilado. */
-.hero-content {
-  position: relative;
-  max-width: 62rem;
-}
-.hero-content::before {
-  content: "";
-  position: absolute;
-  inset: -1.4rem -2.2rem;
-  border-radius: 22px;
-  background: radial-gradient(closest-side, rgba(10, 10, 10, 0.65), rgba(10, 10, 10, 0) 72%);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  z-index: -1;
-  pointer-events: none;
-}
+.hero-content { max-width: 62rem; }
 
 .hero-tag {
   font-size: 0.72rem;
   letter-spacing: 0.4em;
   color: var(--text-dim);
   margin-bottom: 2rem;
-  /* Igual que en .hero-title: separa el texto de la escena 3D de
-     fondo cuando el eslogan encoge y sube (ver revealScene en main.js) */
-  text-shadow: 0 0 24px rgba(10, 10, 10, 0.95);
 }
 .tag-dot { color: var(--gold); margin: 0 0.4em; }
 
@@ -276,22 +252,18 @@ ul { list-style: none; }
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.02em;
-  /* Sombra en dos capas para separar el texto de la escena 3D: un
-     halo ancho + una de contacto más cerrada, así se mantiene legible
-     aunque encoja (ver revealScene en main.js, que reduce esta
-     tarjeta a escala 0.34 — la sombra se reduce con ella). */
-  text-shadow: 0 0 80px rgba(10, 10, 10, 0.95), 0 2px 22px rgba(10, 10, 10, 0.95);
+  /* Sombra suave para separar el texto de la escena 3D */
+  text-shadow: 0 0 60px rgba(10, 10, 10, 0.9);
 }
 
 .hero-title em {
   font-style: normal;
   /* Degradado metálico dorado, como el acabado del logo */
   background: linear-gradient(100deg,
-    var(--bronze) 0%,
-    var(--gold) 35%,
-    var(--gold-bright) 50%,
-    var(--gold) 65%,
-    var(--bronze) 100%);
+    var(--gold) 0%,
+    var(--gold-bright) 45%,
+    var(--gold-bright) 55%,
+    var(--gold) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
