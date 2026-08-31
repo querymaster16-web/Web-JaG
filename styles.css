@@ -812,13 +812,17 @@ ul { list-style: none; }
 }
 
 /* ---------- Tarjetas de precios (ventanas macOS) ----------
-   align-items: stretch (el valor por defecto, así que no hace falta
-   declararlo) iguala la altura de las 3 tarjetas a la de la más alta
-   de la fila; minmax más ancho que el de .cards-grid para que se note
-   más el "más anchas" pedido. */
+   align-items: start (en vez del stretch por defecto): cada tarjeta
+   mide solo lo que ocupa su propio contenido. Con stretch, al abrir
+   los extras de una tarjeta la fila entera se hacía más alta y las
+   otras dos "crecían" con ella (aunque solo fuera hueco vacío) — con
+   start, abrir un plan ya no mueve ni agranda los otros dos. minmax
+   más ancho que el de .cards-grid para que se note más el "más
+   anchas" pedido. */
 .price-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
+  align-items: start;
   gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 
