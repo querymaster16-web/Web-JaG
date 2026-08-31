@@ -787,9 +787,12 @@ function revealScene() {
   if (revealed) return;
   revealed = true;
   gsap.timeline({ defaults: { ease: 'power3.out' } })
-    .to(canvas,           { opacity: 1, duration: 1.6 }, 0)
-    .to('.bg-brand',      { opacity: 1, duration: 1.6 }, 0)
-    .to('.hero-content',  { y: '-15vh', scale: 0.38, duration: 1.1, ease: 'power3.inOut' }, 0.15)
+    .to(canvas,           { opacity: 1, duration: 1.8 }, 0)
+    .to('.bg-brand',      { opacity: 1, duration: 1.8 }, 0)
+    /* power2.out (en vez de poner in-out): arranca el movimiento
+       enseguida, en cuanto el usuario mueve el ratón, en vez de tener
+       un instante de arranque lento — se nota más fluido y reactivo. */
+    .to('.hero-content',  { y: '-20vh', scale: 0.34, duration: 1.3, ease: 'power2.out' }, 0.1)
     .to('.hero-hint',     { opacity: 1, y: 0, duration: 0.8 }, 0.5);
 }
 
@@ -815,7 +818,10 @@ if (desktopIntro) {
 
   intro
     .to('.site-header',  { opacity: 1, duration: 1.0, delay: 0.3 })
-    .to('.hero-content', { opacity: 1, y: 0, duration: 1.2, ease: 'back.out(1.6)' }, '-=0.5');
+    /* power2.out en vez de un "back" con rebote: cae y se asienta en
+       un solo gesto continuo, sin el latigazo final — se ve más
+       fluido y menos "juguetón". */
+    .to('.hero-content', { opacity: 1, y: 0, duration: 1.4, ease: 'power2.out' }, '-=0.5');
 } else {
   gsap.set(['.hero-tag', '.hero-title', '.hero-subtitle', '.hero-hint'], { opacity: 0, y: 28 });
   intro
