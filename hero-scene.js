@@ -103,6 +103,7 @@ const CODE_SNIPPETS = [
    2. ESCENA BASE
    ================================================================ */
 const canvas = document.getElementById('scene');
+const bgBrand = document.querySelector('.bg-brand');
 
 /* alpha:true → el canvas es transparente y deja ver la capa decorativa
    del fondo (aurora dorada + logo real en 3D, z-index -1). */
@@ -408,8 +409,18 @@ const drag = { active: false, lastX: 0, lastY: 0, velX: 0, velY: 0 };
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Opacidad de la escena 3D del hero (se desvanece al hacer scroll) */
+/* Opacidad de la escena 3D del hero (se desvanece al hacer scroll) —
+   se recalcula en cada scroll SIEMPRE (ver el listener más abajo), no
+   solo cuando ya se reveló, para que nunca quede un valor obsoleto. */
 let sceneOpacity = 1;
+
+/* En escritorio con ratón y sin movimiento reducido, la entrada es en
+   dos actos (ver revealScene()/requestReveal() en la sección 8) y
+   "revealed" arranca en false. En cualquier otro caso (móvil o
+   reduced-motion) no hay dos actos: el canvas seguirá sceneOpacity
+   desde el primer frame. */
+const desktopIntro = !isTouchDevice && !prefersReducedMotion;
+let revealed = !desktopIntro;
 
 window.addEventListener('pointermove', (e) => {
   if (desktopIntro) requestReveal();
@@ -513,6 +524,22 @@ function animate() {
     p.sprite.material.opacity = Math.sin(u * Math.PI);
   }
 
+  /* Canvas y aurora persiguen sceneOpacity con suavizado exponencial
+     (mismo patrón que la fricción del arrastre, unas líneas arriba),
+     en vez de un tween puntual que solo acierta si adivinó bien el
+     valor en el instante exacto en que arrancó. sceneOpacity se
+     recalcula en cada scroll (ver el listener más abajo) esté o no
+     revelada la escena todavía, así que en cuanto "revealed" pasa a
+     true aquí abajo ya está al día — sea cual sea el camino por el
+     que se llegó (mover el ratón arriba del todo, o hacerlo después
+     de haber bajado ya varias secciones). */
+  if (revealed) {
+    const curOpacity = parseFloat(canvas.style.opacity) || 0;
+    const nextOpacity = curOpacity + (sceneOpacity - curOpacity) * 0.033;
+    canvas.style.opacity = nextOpacity;
+    if (bgBrand) bgBrand.style.opacity = nextOpacity;
+  }
+
   /* Solo renderizamos si la escena es visible: ahorro de GPU */
   if (sceneOpacity > 0) renderer.render(scene, camera);
 }
@@ -545,38 +572,28 @@ document.addEventListener('visibilitychange', () => {
         interacción aquí a propósito: puede dispararse solo, sin que
         el usuario haya tocado nada — ver el listener de scroll.)
    En móvil (sin ratón) o con movimiento reducido, se mantiene la
-   entrada simple de siempre: todo visible desde el principio. */
-const desktopIntro = !isTouchDevice && !prefersReducedMotion;
-
-let revealed = false;
+   entrada simple de siempre: todo visible desde el principio.
+   ("desktopIntro"/"revealed" ya se calculan en la sección 6, antes de
+   que el bucle de render los necesite.) */
 function revealScene() {
   if (revealed) return;
   revealed = true;
+  startLoop();
 
-  /* Si el usuario ya había bajado de la sección del hero antes de
-     mover el ratón por primera vez (p. ej. hizo scroll con el
-     teclado o la rueda sin llegar a mover el cursor), revelar a
-     opacidad 1 a secas hacía que el cluster de bloques apareciera
-     flotando sobre secciones muy por debajo del hero, como
-     "Nuestra identidad" — el bug que se veía al recargar y bajar
-     directo. En vez de un 1 fijo, apunta a la misma opacidad que ya
-     le tocaría por la posición de scroll actual (0 si ya se bajó del
-     todo), con la misma fórmula que usa el listener de scroll. */
-  sceneOpacity = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.7));
-  if (sceneOpacity > 0) startLoop(); else stopLoop();
-
+  /* La opacidad del canvas y de la aurora ya NO las anima este tween
+     — las persigue el bucle de render frame a frame hacia sceneOpacity
+     (ver sección 7), que se mantiene siempre al día con el scroll real.
+     Antes este tween apuntaba a un valor fijo calculado UNA vez aquí;
+     si el usuario seguía haciendo scroll durante los 2.3s de la
+     animación (o si el valor calculado en este instante ya iba con
+     retraso respecto al scroll real), el cluster de bloques podía
+     acabar visible sobre secciones muy por debajo del hero, como
+     "Cómo trabajamos" — el bug que se veía al recargar y bajar rápido.
+     Solo queda aquí lo que de verdad es un gesto puntual, no ligado al
+     scroll: el titular encogiendo y el indicador apareciendo. */
   gsap.timeline({ defaults: { ease: 'power3.out' } })
-    .to(canvas,           { opacity: sceneOpacity, duration: 2.3 }, 0)
-    .to('.bg-brand',      { opacity: sceneOpacity, duration: 2.3 }, 0)
-    /* power2.out (en vez de poner in-out): arranca el movimiento
-       enseguida, en cuanto el usuario mueve el ratón, en vez de tener
-       un instante de arranque lento — se nota más fluido y reactivo.
-       Duración larga (2.2s) para que el encogido se vea pausado, y
-       el resto de piezas (canvas, bg-brand, hint) terminan todas a la
-       vez en ~2.3s — si una acaba antes que las demás, la transición
-       se ve "cortada" en vez de un único gesto limpio. */
-    .to('.hero-content',  { y: '-20vh', scale: 0.34, duration: 2.2, ease: 'power2.out' }, 0.1)
-    .to('.hero-hint',     { opacity: 1, y: 0, duration: 0.8 }, 1.5);
+    .to('.hero-content', { y: '-20vh', scale: 0.34, duration: 2.2, ease: 'power2.out' }, 0)
+    .to('.hero-hint',    { opacity: 1, y: 0, duration: 0.8 }, 1.4);
 }
 
 /* Si el usuario mueve el ratón (o hace scroll) MIENTRAS el eslogan
@@ -641,21 +658,33 @@ if (desktopIntro) {
 window.addEventListener('scroll', () => {
   const hint = document.getElementById('heroHint');
 
+  /* sceneOpacity se recalcula SIEMPRE, se haya revelado la escena o
+     no — así, si el usuario baja de scroll antes de mover el ratón
+     por primera vez, en cuanto lo mueva revealScene() (y el bucle de
+     render) ya encuentran el valor correcto en vez de uno obsoleto. */
+  sceneOpacity = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.7));
+
   /* El scroll NUNCA dispara la revelación por su cuenta (a diferencia
      de versiones anteriores): un scroll puede llegar sin que el
      usuario haya tocado nada — por ejemplo, el scrollTo(0,0) de más
      arriba, al recargar la página con un scroll restaurado, genera un
      evento "scroll" real sin intervención suya. Solo el ratón
      (pointermove, ver requestReveal()) cuenta como interacción. Hasta
-     que eso pase, esto se queda tal y como lo deja la entrada. */
+     que eso pase, el indicador y el bucle se quedan tal y como los
+     deja la entrada. */
   if (!desktopIntro || revealed) {
     hint.style.opacity = Math.max(0, 1 - window.scrollY / 200);
 
-    sceneOpacity = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.7));
-    canvas.style.opacity = sceneOpacity;
-    /* Nada que renderizar por debajo del hero: paramos el bucle del
-       todo en vez de solo saltarnos el render() cada frame. */
-    if (sceneOpacity > 0) startLoop(); else stopLoop();
+    if (sceneOpacity > 0) {
+      startLoop();
+    } else {
+      /* Al parar el bucle de golpe, el suavizado del canvas hacia 0
+         (ver animate()) se queda a medias — un residuo de opacidad
+         muy pequeño pero perceptible si no se remata aquí a mano. */
+      canvas.style.opacity = 0;
+      if (bgBrand) bgBrand.style.opacity = 0;
+      stopLoop();
+    }
   }
 }, { passive: true });
 /* ================================================================

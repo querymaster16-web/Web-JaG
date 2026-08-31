@@ -182,9 +182,10 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
        + .is-dragging en styles.css). Al soltar el dedo, lo revelado se
        queda iluminado (no se cierra al momento): la propia pista
        (.reveal-lab-hint) reaparece para poder volver a tocarla, pero
-       el título/texto no vuelven hasta que pasan 30s sin tocar y el
-       rastro se tapa del todo otra vez (ver scheduleClose). Tocar de
-       nuevo antes de esos 30s cancela el apagado y retoma el rastro. */
+       el título/texto no vuelven hasta que pasan 10s sin tocar y el
+       rastro se tapa progresivamente otra vez (ver scheduleClose).
+       Tocar de nuevo antes de esos 10s cancela el apagado y retoma
+       el rastro. */
     const hint = lab.querySelector('.reveal-lab-hint');
     const content = lab.querySelector('.reveal-lab-content');
     const canvas = lab.querySelector('.reveal-lab-canvas');
@@ -235,7 +236,7 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 
     // ms — debe coincidir con la transición de opacidad de
     // .reveal-lab-recover en styles.css (el fundido que vuelve a tapar
-    // el rastro una vez pasan los 30s).
+    // el rastro una vez pasan los 10s).
     const RECOVER_MS = 600;
     const soft = 65; // igual que --reveal-soft, para el borde difuminado del rastro
 
@@ -371,7 +372,7 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
             resetCanvas();
           }
         }, RECOVER_MS);
-      }, 30000);
+      }, 10000);
     }
 
     /* Antes esto fijaba el <body> con position: fixed (guardando el

@@ -27,7 +27,11 @@
 /* ---------- Reset básico ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+/* overflow-x también aquí, no solo en body: en iOS Safari el rebote
+   elástico del scroll puede saltarse el overflow-x:hidden de un solo
+   elemento — con los dos, el ancho nunca se pasa del viewport en
+   ningún móvil, por grande o raro que sea. */
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
   background: var(--bg);
@@ -85,27 +89,30 @@ ul { list-style: none; }
    más cargar, así que nunca hay un fotograma "visible de más".
    ================================================================ */
 
-/* .site-header y .hero-hint: las oculta y revela por JS TANTO la
-   entrada "desktopIntro" como su alternativa con reduced-motion (ver
-   main.js) — a salvo de pre-ocultarlos en cualquier anchura de
-   escritorio, sea cual sea la otra rama. */
+/* .site-header, .hero-hint, #scene y .bg-brand: los oculta y revela
+   por JS tanto la entrada "desktopIntro" como su alternativa con
+   reduced-motion (ver hero-scene.js) — #scene/.bg-brand los persigue
+   el bucle de render hacia sceneOpacity en cuanto "revealed" es true
+   (inmediato en la rama sin dos actos), así que a salvo de
+   pre-ocultarlos en cualquier anchura de escritorio, sea cual sea la
+   rama. */
 @media (min-width: 821px) {
   .site-header,
-  .hero-hint {
+  .hero-hint,
+  #scene,
+  .bg-brand {
     opacity: 0;
   }
 }
 
-/* #scene, .bg-brand y .hero-content en cambio SOLO los oculta y
-   revela la rama "desktopIntro" de main.js (sin táctil, sin
-   reduced-motion) — la rama alternativa nunca los toca, así que
-   pre-ocultarlos siempre los dejaría invisibles para siempre en esos
-   casos. Esta condición replica a propósito, campo a campo, el
+/* .hero-content en cambio SOLO lo oculta y revela la rama
+   "desktopIntro" (sin táctil, sin reduced-motion) — la rama
+   alternativa nunca lo toca como bloque (solo sus hijos, uno a uno),
+   así que pre-ocultarlo siempre lo dejaría invisible para siempre en
+   esos casos. Esta condición replica a propósito, campo a campo, el
    `desktopIntro = !isTouchDevice && !prefersReducedMotion` de
-   main.js. */
+   hero-scene.js. */
 @media (min-width: 821px) and (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
-  #scene,
-  .bg-brand,
   .hero-content {
     opacity: 0;
   }
@@ -254,6 +261,13 @@ ul { list-style: none; }
   align-items: center;
   text-align: center;
   padding: var(--header-h) var(--pad-x) 4rem;
+  /* La malla y la aurora de móvil se salen a propósito de sus propios
+     bordes (left/right negativos) para que el brillo se difumine sin
+     un canto visible — recortado aquí, en su origen, en vez de fiarlo
+     solo al overflow-x:hidden del body (que algunos navegadores
+     móviles, sobre todo iOS Safari, no respetan del todo con el
+     rebote elástico del scroll). */
+  overflow: hidden;
   /* Deja pasar los eventos del ratón al canvas 3D… */
   pointer-events: none;
 }
@@ -863,35 +877,10 @@ ul { list-style: none; }
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   overflow: hidden;
-  /* --drag-x/--drag-y las mueve precios.html al arrastrar la tarjeta
-     por su .window-bar, como si fuera una ventana de escritorio */
-  --drag-x: 0px;
-  --drag-y: 0px;
-  transform: translate(var(--drag-x), var(--drag-y));
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
               border-color 0.45s ease,
               box-shadow 0.45s ease;
 }
-
-/* Mientras se arrastra, sin transición en el transform: la tarjeta debe
-   seguir al puntero 1 a 1, sin el "retraso" fluido que sí queremos al
-   soltarla (esa transición ya activa vuelve sola en cuanto se quita
-   esta clase, para el regreso a los 5s). */
-.price-card.is-dragging {
-  transition: border-color 0.45s ease, box-shadow 0.45s ease;
-  cursor: grabbing;
-}
-
-/* Por encima de sus hermanas mientras está fuera de su sitio, para que
-   se pueda "poner delante" al arrastrarla como una ventana de verdad */
-.price-card.is-elevated { z-index: 30; }
-
-.price-card .window-bar {
-  cursor: grab;
-  touch-action: none;   /* el gesto en la barra es arrastrar, no hacer scroll */
-  user-select: none;
-}
-.price-card.is-dragging .window-bar { cursor: grabbing; }
 
 /* Foco de luz dorada que sigue al cursor (coords --mx/--my desde JS) */
 .price-card::after {
@@ -914,9 +903,7 @@ ul { list-style: none; }
 }
 .price-card:hover::after { opacity: 1; }
 
-/* El plan destacado: borde dorado permanente + ligera elevación.
-   La elevación se suma (no sustituye) al arrastre: por eso se combina
-   en el propio transform en vez de fijarlo aparte. */
+/* El plan destacado: borde dorado permanente + ligera elevación. */
 .price-card--featured {
   border-color: rgba(201, 162, 75, 0.55);
   background: rgba(201, 162, 75, 0.05);
@@ -924,7 +911,7 @@ ul { list-style: none; }
 }
 @media (min-width: 860px) {
   .price-card--featured {
-    transform: translate(var(--drag-x, 0px), calc(-0.9rem + var(--drag-y, 0px)));
+    transform: translateY(-0.9rem);
   }
 }
 
@@ -1898,26 +1885,29 @@ ul { list-style: none; }
   /* .hero-content por encima de las capas de fondo */
   .hero-content { position: relative; z-index: 1; }
 
-  /* ---------- Capa 3: titular palabra a palabra ---------- */
+  /* ---------- Capa 3: titular palabra a palabra ----------
+     Bastante más pausado que un fundido normal a propósito — se lee
+     casi como si se fuera escribiendo palabra a palabra, no como un
+     simple fade-in de texto. */
   .word {
     display: inline-block;
     opacity: 0;
     transform: translateY(14px);
     filter: blur(6px);
-    animation: wordReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: wordReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
   @keyframes wordReveal {
     to { opacity: 1; transform: translateY(0); filter: blur(0); }
   }
-  .hero-title .word:nth-child(1) { animation-delay: 0.05s; }
-  .hero-title .word:nth-child(2) { animation-delay: 0.13s; }
-  .hero-title .word:nth-child(3) { animation-delay: 0.21s; }
-  .hero-title .word:nth-child(4) { animation-delay: 0.29s; }
-  .hero-title em .word:nth-child(1) { animation-delay: 0.42s; }
-  .hero-title em .word:nth-child(2) { animation-delay: 0.50s; }
-  .hero-title em .word:nth-child(3) { animation-delay: 0.58s; }
-  .hero-title em .word:nth-child(4) { animation-delay: 0.66s; }
-  .hero-title em .word:nth-child(5) { animation-delay: 0.74s; }
+  .hero-title .word:nth-child(1) { animation-delay: 0.1s; }
+  .hero-title .word:nth-child(2) { animation-delay: 0.38s; }
+  .hero-title .word:nth-child(3) { animation-delay: 0.66s; }
+  .hero-title .word:nth-child(4) { animation-delay: 0.94s; }
+  .hero-title em .word:nth-child(1) { animation-delay: 1.22s; }
+  .hero-title em .word:nth-child(2) { animation-delay: 1.5s; }
+  .hero-title em .word:nth-child(3) { animation-delay: 1.78s; }
+  .hero-title em .word:nth-child(4) { animation-delay: 2.06s; }
+  .hero-title em .word:nth-child(5) { animation-delay: 2.34s; }
 
   /* .hero-title em ya pinta su texto con un degradado dorado
      (background-clip: text, ver la regla base más arriba) — pero
