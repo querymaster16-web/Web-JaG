@@ -88,6 +88,44 @@ ul { list-style: none; }
   pointer-events: none;
 }
 
+/* ================================================================
+   PRE-OCULTAR LA ENTRADA DE ESCRITORIO ANTES DEL PRIMER PINTADO
+   hero-scene.js (Three.js/GSAP) ahora se carga DESPUÉS del primer
+   pintado (ver el bootstrap en main.js), no antes como antes. Sin
+   esto, estos elementos se verían un instante en su estado final
+   (visibles, sin animar) antes de que hero-scene.js llegue y los
+   oculte de golpe para animarlos — un parpadeo. Ocultándolos aquí,
+   por CSS, desde antes del primer pintado, ese parpadeo desaparece:
+   hero-scene.js hace exactamente lo mismo (gsap.set opacity:0) nada
+   más cargar, así que nunca hay un fotograma "visible de más".
+   ================================================================ */
+
+/* .site-header y .hero-hint: las oculta y revela por JS TANTO la
+   entrada "desktopIntro" como su alternativa con reduced-motion (ver
+   main.js) — a salvo de pre-ocultarlos en cualquier anchura de
+   escritorio, sea cual sea la otra rama. */
+@media (min-width: 821px) {
+  .site-header,
+  .hero-hint {
+    opacity: 0;
+  }
+}
+
+/* #scene, .bg-brand y .hero-content en cambio SOLO los oculta y
+   revela la rama "desktopIntro" de main.js (sin táctil, sin
+   reduced-motion) — la rama alternativa nunca los toca, así que
+   pre-ocultarlos siempre los dejaría invisibles para siempre en esos
+   casos. Esta condición replica a propósito, campo a campo, el
+   `desktopIntro = !isTouchDevice && !prefersReducedMotion` de
+   main.js. */
+@media (min-width: 821px) and (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  #scene,
+  .bg-brand,
+  .hero-content {
+    opacity: 0;
+  }
+}
+
 /* Aurora / ambient glow: dos manchas de luz dorada muy tenues que
    derivan lentamente para dar profundidad de "estudio de diseño" */
 .bg-brand-glow {
@@ -313,6 +351,11 @@ ul { list-style: none; }
   color: var(--text-dim);
   text-transform: uppercase;
 }
+
+/* "Interactúa con el entorno" no tiene sentido en móvil (no hay
+   entorno 3D que tocar) — se cambia por un texto neutro. Toggle por
+   breakpoint, ver @media (max-width: 820px) más abajo. */
+.hint-text--mobile { display: none; }
 
 /* ================================================================
    LUPA DE CÓDIGO — sección justo debajo del Hero
@@ -1777,6 +1820,138 @@ ul { list-style: none; }
   .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
   .hero-hint .hint-text { font-size: 0.58rem; }
+
+  /* ============================================================
+     HERO DE MÓVIL — CSS puro, sin Three.js/GSAP (ver el bootstrap
+     de main.js: hero-scene.js no se descarga por debajo de 821px).
+     ============================================================ */
+
+  /* El fondo 3D de escritorio no se carga aquí — sus elementos se
+     ocultan del todo en vez de dejarlos vacíos en el DOM. */
+  #scene, #logoScene, .bg-brand { display: none; }
+
+  /* Menos aire bajo el bloque de texto: en escritorio el hero se
+     apoya en el canvas 3D detrás, pero en móvil, sin él, el padding
+     inferior de siempre dejaba un hueco vacío entre el titular
+     centrado y el indicador de scroll. */
+  .hero { padding-bottom: 2.4rem; }
+
+  .hint-text--desktop { display: none; }
+  .hint-text--mobile  { display: block; }
+
+  /* ---------- Capa 1: malla de líneas doradas ---------- */
+  .hero-mesh {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(201, 162, 75, 0.13) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(201, 162, 75, 0.12) 1px, transparent 1px);
+    background-size: 34px 34px;
+    -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
+            mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
+  }
+  /* Barrido de luz diagonal: banda ancha que cruza la pantalla en
+     bucle. Solo "transform", nada que dispare reflow. */
+  .hero-mesh::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    bottom: -20%;
+    left: -70%;
+    width: 55%;
+    background: linear-gradient(115deg,
+      transparent 0%,
+      rgba(232, 200, 119, 0.16) 50%,
+      transparent 100%);
+    animation: meshSweep 5.5s linear infinite;
+  }
+  @keyframes meshSweep {
+    from { transform: translateX(0); }
+    to   { transform: translateX(260%); }
+  }
+
+  /* ---------- Capa 2: estela/aurora dorada ---------- */
+  .hero-aurora {
+    position: absolute;
+    z-index: 0;
+    border-radius: 50%;
+    filter: blur(42px);
+    pointer-events: none;
+  }
+  .hero-aurora--a {
+    width: 62vw;
+    height: 62vw;
+    left: -14%;
+    top: 6%;
+    background: radial-gradient(closest-side, rgba(201, 162, 75, 0.36), transparent 72%);
+    animation: heroAuroraDrift 16s ease-in-out infinite alternate;
+  }
+  .hero-aurora--b {
+    width: 56vw;
+    height: 56vw;
+    right: -16%;
+    top: 32%;
+    background: radial-gradient(closest-side, rgba(138, 106, 47, 0.32), transparent 72%);
+    animation: heroAuroraDrift 19s ease-in-out infinite alternate-reverse;
+  }
+  .hero-aurora--c {
+    width: 50vw;
+    height: 50vw;
+    left: 18%;
+    bottom: -12%;
+    background: radial-gradient(closest-side, rgba(232, 200, 119, 0.3), transparent 72%);
+    animation: heroAuroraDrift 14s ease-in-out infinite alternate;
+  }
+  @keyframes heroAuroraDrift {
+    from { transform: translate3d(-4%, 2%, 0) scale(1); }
+    to   { transform: translate3d(5%, -4%, 0) scale(1.15); }
+  }
+
+  /* .hero-content por encima de las capas de fondo */
+  .hero-content { position: relative; z-index: 1; }
+
+  /* ---------- Capa 3: titular palabra a palabra ---------- */
+  .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+    animation: wordReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes wordReveal {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  .hero-title .word:nth-child(1) { animation-delay: 0.05s; }
+  .hero-title .word:nth-child(2) { animation-delay: 0.13s; }
+  .hero-title .word:nth-child(3) { animation-delay: 0.21s; }
+  .hero-title .word:nth-child(4) { animation-delay: 0.29s; }
+  .hero-title em .word:nth-child(1) { animation-delay: 0.42s; }
+  .hero-title em .word:nth-child(2) { animation-delay: 0.50s; }
+  .hero-title em .word:nth-child(3) { animation-delay: 0.58s; }
+  .hero-title em .word:nth-child(4) { animation-delay: 0.66s; }
+  .hero-title em .word:nth-child(5) { animation-delay: 0.74s; }
+
+  /* .hero-title em ya pinta su texto con un degradado dorado
+     (background-clip: text, ver la regla base más arriba) — pero
+     "opacity/transform/filter" en .word (la animación de arriba)
+     ascienden cada palabra a su propia capa compuesta, y el degradado
+     del padre deja de pintarse a través de esas capas (el texto
+     desaparece del todo). Se repite aquí el mismo degradado
+     directamente en cada palabra para que cada una recorte su propio
+     texto, en vez de depender del recorte del <em> padre. */
+  .hero-title em .word {
+    background: linear-gradient(100deg,
+      var(--gold) 0%,
+      var(--gold-bright) 45%,
+      var(--gold-bright) 55%,
+      var(--gold) 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
 }
 
 /* Accesibilidad: respeta la preferencia de movimiento reducido */
@@ -1790,4 +1965,16 @@ ul { list-style: none; }
   .reveal-lab-torch { display: none; }
   .reveal-lab-canvas { display: none; }
   .reveal-lab-recover { display: none; }
+
+  /* Hero de móvil: el barrido y la aurora dejan de animarse (quedan
+     fijas, sin movimiento) y las palabras del titular aparecen
+     directamente en su posición final, sin la revelación escalonada. */
+  .hero-mesh::after { animation: none; }
+  .hero-aurora { animation: none; }
+  .word {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
 }
