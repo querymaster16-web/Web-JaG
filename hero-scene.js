@@ -77,23 +77,6 @@ const CONFIG = {
     flareScale: 7.0,         // Tamaño del destello de estrella
   },
 
-  bgLogo: {                  // Monograma "JG" dorado de fondo (sello de agua)
-    maxOpacity   : 0.16,     // Opacidad máxima del sello de agua
-    width        : 7.5,      // Ancho del logo en unidades de mundo
-    depth        : 0.4,      // Grosor de la pieza 3D (extrusión)
-    layers       : 1,        // Pieza única y limpia (sin apilado → sin sombra)
-    metalness    : 0.9,      // Acabado metálico (reacciona a la luz)
-    roughness    : 0.18,     // Rugosidad baja → material pulido y brillante
-    tint         : 0xe8c877, // Tinte dorado sobre el metal gris del PNG
-    glowBase     : 0.7,      // Brillo dorado propio (emissive) en reposo
-    glowHover    : 1.7,      // Brillo al pasar el ratón por encima
-    hoverOpacity : 0.6,      // Opacidad extra en hover (proporción sobre la base)
-    zoomSpeed    : 0.006,    // Avance en Z por segundo (casi imperceptible)
-    zoomMax      : 2.2,      // Tope del avance (nunca invade la cámara)
-    tiltAmount   : 0.14,     // Inclinación máxima siguiendo al cursor (rad)
-    shimmerRange : 5,        // Recorrido de la luz que sigue al ratón
-  },
-
   performance: {
     maxPixelRatio: 2,        // Límite de DPR (sube a 3 en equipos potentes)
   },
@@ -418,154 +401,6 @@ blockAnchors.forEach((anchor, i) => {
 });
 
 /* ================================================================
-   5B. FONDO — LOGO REAL "JG" EN 3D (monograma dibujado en canvas)
-   ----------------------------------------------------------------
-   Escena independiente en el canvas #logoScene (z-index -1, detrás
-   de las secciones). La silueta del PNG se convierte en una PIEZA
-   CON VOLUMEN: se apilan varias capas de la silueta en profundidad
-   (las traseras más oscuras → lateral con sombra propia), de modo
-   que al inclinarse con el ratón se lee como un sólido extruido
-   de metal dorado pulido:
-     · Oculto en el hero; fade-in suave al hacer scroll.
-     · Zoom-in en Z constante y casi imperceptible.
-     · Se ilumina gradualmente al pasar el cursor por encima.
-     · Inclinación parallax + PointLight que sigue al ratón
-       (reflejos cambiantes "shimmer" sobre el acabado dorado).
-   ================================================================ */
-const bgCanvas = document.getElementById('logoScene');
-const bgRenderer = new THREE.WebGLRenderer({ canvas: bgCanvas, antialias: !isTouchDevice, alpha: true });
-bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio, isTouchDevice ? 1.5 : CONFIG.performance.maxPixelRatio));
-bgRenderer.setSize(window.innerWidth, window.innerHeight);
-bgRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-bgRenderer.toneMappingExposure = 1.15;
-
-const bgScene = new THREE.Scene();
-const bgCamera = new THREE.PerspectiveCamera(
-  40, window.innerWidth / window.innerHeight, 0.1, 50
-);
-bgCamera.position.z = 10;
-
-/* Luz ambiente tenue + luz puntual dorada que sigue al cursor:
-   es la que genera los brillos móviles sobre el metal del logo */
-bgScene.add(new THREE.AmbientLight(0xffffff, 0.5));
-const shimmerLight = new THREE.PointLight(CONFIG.colors.goldBright, 90, 40, 1.6);
-shimmerLight.position.set(0, 0, 5);
-bgScene.add(shimmerLight);
-
-/* Luz direccional cálida fija: destello constante sobre el metal
-   pulido, independiente de dónde esté el cursor */
-const sheenLight = new THREE.DirectionalLight(0xfff2d0, 1.3);
-sheenLight.position.set(-4, 6, 8);
-bgScene.add(sheenLight);
-
-/* Entorno HDR procedural también en esta escena: los reflejos de
-   "estudio" sobre el metal son los que dan el brillo de calidad al
-   dorado (sin entorno, un metal pulido se ve plano y apagado) */
-const bgPmrem = new THREE.PMREMGenerator(bgRenderer);
-bgScene.environment = bgPmrem.fromScene(new RoomEnvironment(bgRenderer), 0.04).texture;
-
-/* Material base metálico pulido: cada capa del volumen usa un clon
-   con su propio sombreado. El tinte dorado multiplica el metal gris
-   del PNG → acabado dorado coherente con la marca. */
-const bgLogoBaseMaterial = new THREE.MeshStandardMaterial({
-  color       : CONFIG.bgLogo.tint,
-  transparent : true,
-  opacity     : 0,                          // Oculto hasta hacer scroll
-  metalness   : CONFIG.bgLogo.metalness,
-  roughness   : CONFIG.bgLogo.roughness,
-  /* Brillo dorado propio: el logo "emite" luz suave y no depende
-     solo de las luces de la escena para verse sobre el negro */
-  emissive         : CONFIG.bgLogo.tint,
-  emissiveIntensity: CONFIG.bgLogo.glowBase,
-  /* Reflejos del entorno HDR bien presentes sobre el oro */
-  envMapIntensity  : 1.5,
-  depthWrite  : false,
-});
-
-/* Antes se cargaba assets/IMG_0516.PNG (una foto del logo) y se
-   procesaba píxel a píxel para extraer un canal alfa — ese archivo
-   nunca llegó a subirse al repo (404 en producción, y el bloque de
-   abajo nunca llegaba a ejecutarse). En vez de depender de una imagen
-   externa, dibujamos el monograma "JG" directamente en un canvas 2D,
-   igual que ya hace createLogoTexture() más arriba con "JaG": el
-   material (bgLogoBaseMaterial) ya aplica el tinte dorado y el brillo
-   emisivo, así que aquí solo hace falta la silueta en blanco como
-   máscara alfa. */
-function createBgLogoTexture() {
-  const c = document.createElement('canvas');
-  c.width = 1024;
-  c.height = 512;
-  const ctx = c.getContext('2d');
-
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.font = '900 340px "Helvetica Neue", Arial, sans-serif';
-  ctx.fillStyle = '#ffffff';
-  ctx.fillText('J', 330, 280);
-  ctx.fillText('G', 700, 280);
-
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = bgRenderer.capabilities.getMaxAnisotropy();
-  return { tex, ratio: c.height / c.width };
-}
-
-/* Construcción del volumen: se apilan `layers` copias de la silueta
-   a lo largo de `depth`. La capa frontal va a plena luz y las
-   traseras se oscurecen progresivamente, de modo que al rotar la
-   pieza el lateral escalonado se percibe como el canto sombreado
-   de un sólido extruido. Ya no depende de una carga async (no hay
-   imagen que esperar), así que se construye aquí mismo. */
-let bgLogoGroup = null;
-const bgLogoMaterials = [];   // Materiales de todas las capas (fade/glow)
-
-{
-  const { tex, ratio } = createBgLogoTexture();
-  const geometry = new THREE.PlaneGeometry(
-    CONFIG.bgLogo.width, CONFIG.bgLogo.width * ratio
-  );
-
-  bgLogoGroup = new THREE.Group();
-  const total = CONFIG.bgLogo.layers;
-
-  for (let i = 0; i < total; i++) {
-    /* Con una sola capa `back` = 0 → pieza plena, brillante y uniforme
-       (sin capas traseras oscuras que asomen como sombra difusa) */
-    const back = total > 1 ? i / (total - 1) : 0;
-    const mat = bgLogoBaseMaterial.clone();
-    mat.map = tex;
-    /* La misma textura modula la emisión: solo brilla el monograma */
-    mat.emissiveMap = tex;
-    /* Sombreado del canto: cuanto más atrás, más oscura */
-    mat.color.multiplyScalar(1 - back * 0.5);
-    /* Atenuación del brillo/opacidad hacia el fondo de la pieza */
-    mat.userData.shade = 1 - back * 0.55;
-
-    const layer = new THREE.Mesh(geometry, mat);
-    layer.position.z = -back * CONFIG.bgLogo.depth;
-    bgLogoGroup.add(layer);
-    bgLogoMaterials.push(mat);
-  }
-
-  bgScene.add(bgLogoGroup);
-}
-
-/* Opacidad objetivo según el scroll (el bucle de render interpola
-   hacia ella → fade-in/out siempre limpio y suave) */
-let bgLogoOpacityTarget = 0;
-
-/* Hover: raycast del cursor contra el plano del logo. Cuando el
-   ratón está encima, bgHover sube suavemente hacia 1 y el logo
-   gana brillo y presencia; al salir, vuelve a su estado sutil.
-   El raycast en sí se calcula en el listener de pointermove (más
-   abajo), no en cada frame del bucle de render — total, el resultado
-   solo puede cambiar cuando el ratón se mueve. */
-const bgRaycaster = new THREE.Raycaster();
-const bgPointerNDC = new THREE.Vector2();
-let bgHover = 0;
-let bgLogoHovered = false;
-
-/* ================================================================
    6. INTERACCIÓN — ratón (parallax + arrastre) y resize
    ================================================================ */
 const pointer = { x: 0, y: 0 };          // Posición normalizada del ratón
@@ -581,12 +416,6 @@ window.addEventListener('pointermove', (e) => {
 
   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
   pointer.y = (e.clientY / window.innerHeight) * 2 - 1;
-
-  if (bgLogoGroup) {
-    bgPointerNDC.set(pointer.x, -pointer.y);
-    bgRaycaster.setFromCamera(bgPointerNDC, bgCamera);
-    bgLogoHovered = bgRaycaster.intersectObjects(bgLogoGroup.children).length > 0;
-  }
 
   if (drag.active) {
     /* Arrastre: rotación directa con inercia al soltar */
@@ -621,10 +450,6 @@ canvas.style.cursor = 'grab';
 window.addEventListener('resize', () => {
   updateCameraFov();
   renderer.setSize(window.innerWidth, window.innerHeight);
-
-  bgCamera.aspect = window.innerWidth / window.innerHeight;
-  bgCamera.updateProjectionMatrix();
-  bgRenderer.setSize(window.innerWidth, window.innerHeight);
 });
 
 /* ================================================================
@@ -633,12 +458,9 @@ window.addEventListener('resize', () => {
 const clock = new THREE.Clock();
 
 /* rafId permite pararlo del todo (no solo saltarse el render()) cuando
-   la pestaña pasa a segundo plano — ver visibilitychange más abajo.
-   No lo pauso también cuando sceneOpacity llega a 0 (al hacer scroll):
-   el logo de fondo (bgLogoGroup) sigue animándose el resto de la
-   página una vez aparece, así que "el hero ya no se ve" no significa
-   "no hay nada que animar" — pararlo ahí dejaría el logo de fondo a
-   medio camino. */
+   la pestaña pasa a segundo plano (ver visibilitychange más abajo) o
+   cuando sceneOpacity llega a 0 al hacer scroll (ver el listener de
+   scroll): sin logo de fondo, no queda nada que animar ahí abajo. */
 let rafId = null;
 function animate() {
   rafId = requestAnimationFrame(animate);
@@ -691,46 +513,8 @@ function animate() {
     p.sprite.material.opacity = Math.sin(u * Math.PI);
   }
 
-  /* ---------- Logo real de fondo (pieza 3D dorada) ---------- */
-  if (bgLogoGroup) {
-    /* Zoom-in constante en Z, milimétrico y con tope de seguridad */
-    bgLogoGroup.position.z = Math.min(t * CONFIG.bgLogo.zoomSpeed, CONFIG.bgLogo.zoomMax);
-
-    /* ¿Está el cursor sobre el logo? → brillo e intensidad extra
-       (bgLogoHovered ya se calcula en el listener de pointermove) */
-    bgHover += ((bgLogoHovered && !prefersReducedMotion ? 1 : 0) - bgHover) * 0.06;
-
-    /* Brillo y opacidad objetivo (con extra mientras hay hover) */
-    const glow = CONFIG.bgLogo.glowBase +
-      bgHover * (CONFIG.bgLogo.glowHover - CONFIG.bgLogo.glowBase);
-    const bgOpacityGoal =
-      bgLogoOpacityTarget * (1 + bgHover * CONFIG.bgLogo.hoverOpacity);
-
-    /* El monograma se "enciende" gradualmente bajo el cursor.
-       Cada capa aplica su sombreado propio (más tenue hacia atrás). */
-    for (const m of bgLogoMaterials) {
-      m.emissiveIntensity = glow * m.userData.shade;
-      m.opacity += (bgOpacityGoal * m.userData.shade - m.opacity) * 0.05;
-    }
-    shimmerLight.intensity = 90 * (1 + bgHover * 0.9);
-
-    if (!prefersReducedMotion) {
-      /* Parallax: la pieza rota e inclina sutilmente hacia el cursor
-         (al girar, el canto por capas revela el volumen) */
-      bgLogoGroup.rotation.x += (-pointer.y * CONFIG.bgLogo.tiltAmount - bgLogoGroup.rotation.x) * 0.04;
-      bgLogoGroup.rotation.y += ( pointer.x * CONFIG.bgLogo.tiltAmount * 1.4 - bgLogoGroup.rotation.y) * 0.04;
-
-      /* La luz sigue al ratón → reflejos "shimmer" sobre el dorado */
-      shimmerLight.position.x += (pointer.x * CONFIG.bgLogo.shimmerRange - shimmerLight.position.x) * 0.05;
-      shimmerLight.position.y += (-pointer.y * CONFIG.bgLogo.shimmerRange * 0.7 - shimmerLight.position.y) * 0.05;
-    }
-  }
-
-  /* Solo renderizamos cada escena si es visible: ahorro de GPU */
+  /* Solo renderizamos si la escena es visible: ahorro de GPU */
   if (sceneOpacity > 0) renderer.render(scene, camera);
-  if (bgLogoMaterials.length && bgLogoMaterials[0].opacity > 0.001) {
-    bgRenderer.render(bgScene, bgCamera);
-  }
 }
 function startLoop() { if (rafId === null) animate(); }
 function stopLoop() { if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; } }
@@ -768,9 +552,22 @@ let revealed = false;
 function revealScene() {
   if (revealed) return;
   revealed = true;
+
+  /* Si el usuario ya había bajado de la sección del hero antes de
+     mover el ratón por primera vez (p. ej. hizo scroll con el
+     teclado o la rueda sin llegar a mover el cursor), revelar a
+     opacidad 1 a secas hacía que el cluster de bloques apareciera
+     flotando sobre secciones muy por debajo del hero, como
+     "Nuestra identidad" — el bug que se veía al recargar y bajar
+     directo. En vez de un 1 fijo, apunta a la misma opacidad que ya
+     le tocaría por la posición de scroll actual (0 si ya se bajó del
+     todo), con la misma fórmula que usa el listener de scroll. */
+  sceneOpacity = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.7));
+  if (sceneOpacity > 0) startLoop(); else stopLoop();
+
   gsap.timeline({ defaults: { ease: 'power3.out' } })
-    .to(canvas,           { opacity: 1, duration: 2.3 }, 0)
-    .to('.bg-brand',      { opacity: 1, duration: 2.3 }, 0)
+    .to(canvas,           { opacity: sceneOpacity, duration: 2.3 }, 0)
+    .to('.bg-brand',      { opacity: sceneOpacity, duration: 2.3 }, 0)
     /* power2.out (en vez de poner in-out): arranca el movimiento
        enseguida, en cuanto el usuario mueve el ratón, en vez de tener
        un instante de arranque lento — se nota más fluido y reactivo.
@@ -839,9 +636,8 @@ if (desktopIntro) {
     .to('.hero-hint',     { opacity: 1, y: 0, duration: 0.9 }, '-=0.5');
 }
 
-/* El indicador inferior se desvanece al hacer scroll.
-   La escena 3D del hero también: al bajar deja paso al logo real
-   de fondo, que hace fade-in hasta su opacidad de sello de agua. */
+/* El indicador inferior y la escena 3D del hero se desvanecen al
+   hacer scroll. */
 window.addEventListener('scroll', () => {
   const hint = document.getElementById('heroHint');
 
@@ -857,15 +653,10 @@ window.addEventListener('scroll', () => {
 
     sceneOpacity = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.7));
     canvas.style.opacity = sceneOpacity;
+    /* Nada que renderizar por debajo del hero: paramos el bucle del
+       todo en vez de solo saltarnos el render() cada frame. */
+    if (sceneOpacity > 0) startLoop(); else stopLoop();
   }
-
-  /* Logo de fondo: opacidad 0 arriba del todo. Arranca su fade-in más
-     tarde (tras ~60% de viewport) para NO solaparse con la animación
-     de entrada del "JaG" del hero; luego sube gradualmente a maxOpacity */
-  const progress = Math.min(1, Math.max(0,
-    (window.scrollY - window.innerHeight * 1.1) / (window.innerHeight * 0.6)
-  ));
-  bgLogoOpacityTarget = CONFIG.bgLogo.maxOpacity * progress;
 }, { passive: true });
 /* ================================================================
    9. ANIMACIONES DE SCROLL (GSAP ScrollTrigger)

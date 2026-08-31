@@ -74,21 +74,6 @@ ul { list-style: none; }
 }
 
 /* ================================================================
-   LOGO REAL EN 3D (Three.js) — sello de agua de fondo
-   Fijo a pantalla completa, detrás de las secciones. Su opacidad
-   la controla main.js: oculto en el hero, fade-in al hacer scroll.
-   ================================================================ */
-#logoScene {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  z-index: -1;
-  pointer-events: none;
-}
-
-/* ================================================================
    PRE-OCULTAR LA ENTRADA DE ESCRITORIO ANTES DEL PRIMER PINTADO
    hero-scene.js (Three.js/GSAP) ahora se carga DESPUÉS del primer
    pintado (ver el bootstrap en main.js), no antes como antes. Sin
@@ -1828,7 +1813,7 @@ ul { list-style: none; }
 
   /* El fondo 3D de escritorio no se carga aquí — sus elementos se
      ocultan del todo en vez de dejarlos vacíos en el DOM. */
-  #scene, #logoScene, .bg-brand { display: none; }
+  #scene, .bg-brand { display: none; }
 
   /* Menos aire bajo el bloque de texto: en escritorio el hero se
      apoya en el canvas 3D detrás, pero en móvil, sin él, el padding
