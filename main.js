@@ -608,6 +608,8 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
 let sceneOpacity = 1;
 
 window.addEventListener('pointermove', (e) => {
+  if (desktopIntro) revealScene();
+
   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
   pointer.y = (e.clientY / window.innerHeight) * 2 - 1;
 
@@ -766,8 +768,31 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (location.hash) history.replaceState(null, '', location.pathname);
 window.scrollTo(0, 0);
 
-/* Entrada escalonada de los textos del hero */
-gsap.set(['.hero-tag', '.hero-title', '.hero-subtitle', '.hero-hint'], { opacity: 0, y: 28 });
+/* Entrada escalonada de los textos del hero.
+   En escritorio (con movimiento normal, no reducido) la entrada es en
+   dos actos:
+     1) Primer fotograma: pantalla en negro, sin escena 3D ni aurora
+        — solo el eslogan, que "cae" desde arriba. Se queda así hasta
+        que el usuario interactúa.
+     2) En cuanto mueve el ratón (o hace scroll, por si entra con
+        trackpad) se revela el entorno 3D con los "hilos" de fondo, y
+        el eslogan encoge y sube arriba del todo para no solaparse con
+        lo que aparece detrás — ver revealScene() más abajo.
+   En móvil (sin ratón) o con movimiento reducido, se mantiene la
+   entrada simple de siempre: todo visible desde el principio. */
+const desktopIntro = !isTouchDevice && !prefersReducedMotion;
+
+let revealed = false;
+function revealScene() {
+  if (revealed) return;
+  revealed = true;
+  gsap.timeline({ defaults: { ease: 'power3.out' } })
+    .to(canvas,           { opacity: 1, duration: 1.6 }, 0)
+    .to('.bg-brand',      { opacity: 1, duration: 1.6 }, 0)
+    .to('.hero-content',  { y: '-15vh', scale: 0.38, duration: 1.1, ease: 'power3.inOut' }, 0.15)
+    .to('.hero-hint',     { opacity: 1, y: 0, duration: 0.8 }, 0.5);
+}
+
 /* Sin "y" aquí (a diferencia del resto de la entrada) — un transform
    en .site-header, aunque solo dure la animación, convierte a la
    cabecera en el "containing block" de cualquier descendiente con
@@ -781,22 +806,46 @@ gsap.set(['.hero-tag', '.hero-title', '.hero-subtitle', '.hero-hint'], { opacity
 gsap.set('.site-header', { opacity: 0 });
 
 const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
-intro
-  .to('.site-header',   { opacity: 1, duration: 1.0, delay: 0.3 })
-  .to('.hero-tag',      { opacity: 1, y: 0, duration: 0.9 }, '-=0.6')
-  .to('.hero-title',    { opacity: 1, y: 0, duration: 1.1 }, '-=0.6')
-  .to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.9 }, '-=0.7')
-  .to('.hero-hint',     { opacity: 1, y: 0, duration: 0.9 }, '-=0.5');
+
+if (desktopIntro) {
+  gsap.set(canvas, { opacity: 0 });
+  gsap.set('.bg-brand', { opacity: 0 });
+  gsap.set('.hero-content', { opacity: 0, y: '-22vh', transformOrigin: 'top center' });
+  gsap.set('.hero-hint', { opacity: 0, y: 28 });
+
+  intro
+    .to('.site-header',  { opacity: 1, duration: 1.0, delay: 0.3 })
+    .to('.hero-content', { opacity: 1, y: 0, duration: 1.2, ease: 'back.out(1.6)' }, '-=0.5');
+} else {
+  gsap.set(['.hero-tag', '.hero-title', '.hero-subtitle', '.hero-hint'], { opacity: 0, y: 28 });
+  intro
+    .to('.site-header',   { opacity: 1, duration: 1.0, delay: 0.3 })
+    .to('.hero-tag',      { opacity: 1, y: 0, duration: 0.9 }, '-=0.6')
+    .to('.hero-title',    { opacity: 1, y: 0, duration: 1.1 }, '-=0.6')
+    .to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.9 }, '-=0.7')
+    .to('.hero-hint',     { opacity: 1, y: 0, duration: 0.9 }, '-=0.5');
+}
 
 /* El indicador inferior se desvanece al hacer scroll.
    La escena 3D del hero también: al bajar deja paso al logo real
    de fondo, que hace fade-in hasta su opacidad de sello de agua. */
 window.addEventListener('scroll', () => {
   const hint = document.getElementById('heroHint');
-  hint.style.opacity = Math.max(0, 1 - window.scrollY / 200);
 
-  sceneOpacity = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.7));
-  canvas.style.opacity = sceneOpacity;
+  /* Si esto es lo que dispara la primera revelación (alguien que hace
+     scroll con el trackpad sin haber movido antes el ratón), dejamos
+     que sea la animación de revealScene() la que controle la opacidad
+     esta vez — si la pisáramos aquí también, se pelearían las dos y
+     el fade-in daría un salto en vez de verse suave. */
+  const justRevealed = desktopIntro && !revealed;
+  if (desktopIntro) revealScene();
+
+  if (!justRevealed) {
+    hint.style.opacity = Math.max(0, 1 - window.scrollY / 200);
+
+    sceneOpacity = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.7));
+    canvas.style.opacity = sceneOpacity;
+  }
 
   /* Logo de fondo: opacidad 0 arriba del todo. Arranca su fade-in más
      tarde (tras ~60% de viewport) para NO solaparse con la animación
