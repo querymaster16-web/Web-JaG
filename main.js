@@ -789,13 +789,17 @@ function revealScene() {
   if (revealed) return;
   revealed = true;
   gsap.timeline({ defaults: { ease: 'power3.out' } })
-    .to(canvas,           { opacity: 1, duration: 1.8 }, 0)
-    .to('.bg-brand',      { opacity: 1, duration: 1.8 }, 0)
+    .to(canvas,           { opacity: 1, duration: 2.3 }, 0)
+    .to('.bg-brand',      { opacity: 1, duration: 2.3 }, 0)
     /* power2.out (en vez de poner in-out): arranca el movimiento
        enseguida, en cuanto el usuario mueve el ratón, en vez de tener
-       un instante de arranque lento — se nota más fluido y reactivo. */
-    .to('.hero-content',  { y: '-20vh', scale: 0.34, duration: 1.3, ease: 'power2.out' }, 0.1)
-    .to('.hero-hint',     { opacity: 1, y: 0, duration: 0.8 }, 0.5);
+       un instante de arranque lento — se nota más fluido y reactivo.
+       Duración larga (2.2s) para que el encogido se vea pausado, y
+       el resto de piezas (canvas, bg-brand, hint) terminan todas a la
+       vez en ~2.3s — si una acaba antes que las demás, la transición
+       se ve "cortada" en vez de un único gesto limpio. */
+    .to('.hero-content',  { y: '-20vh', scale: 0.34, duration: 2.2, ease: 'power2.out' }, 0.1)
+    .to('.hero-hint',     { opacity: 1, y: 0, duration: 0.8 }, 1.5);
 }
 
 /* Si el usuario mueve el ratón (o hace scroll) MIENTRAS el eslogan
