@@ -676,9 +676,20 @@
     function buildPlanSummary(card) {
       const planName = card.querySelector('.price-card-title');
       const totalEl = card.querySelector('.total-amount');
+
+      // "Mantenimiento y soporte" no tiene precio fijo (se muestra
+      // "Consultar" y no suma al total), así que si está marcado lo
+      // anotamos junto al total para que quede claro que el precio
+      // final lleva ese extra aparte, a consultar.
+      const maintenanceChecked = Array.from(card.querySelectorAll('.extra-check:checked')).some(
+        (check) => check.closest('.extra-tile')?.querySelector('.extra-price')?.textContent.trim() === 'Consultar'
+      );
+      let totalText = totalEl ? totalEl.textContent.trim() : '';
+      if (maintenanceChecked && totalText) totalText += ' + mantenimiento a consultar';
+
       const lines = [
         `Plan solicitado: ${planName ? planName.textContent.trim() : ''}`,
-        `Total estimado: ${totalEl ? totalEl.textContent.trim() : ''}`,
+        `Total estimado: ${totalText}`,
       ];
 
       const extras = [];
