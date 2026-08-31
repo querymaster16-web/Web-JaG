@@ -608,7 +608,7 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
 let sceneOpacity = 1;
 
 window.addEventListener('pointermove', (e) => {
-  if (desktopIntro) revealScene();
+  if (desktopIntro) requestReveal();
 
   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
   pointer.y = (e.clientY / window.innerHeight) * 2 - 1;
@@ -773,11 +773,13 @@ window.scrollTo(0, 0);
    dos actos:
      1) Primer fotograma: pantalla en negro, sin escena 3D ni aurora
         — solo el eslogan, que "cae" desde arriba. Se queda así hasta
-        que el usuario interactúa.
-     2) En cuanto mueve el ratón (o hace scroll, por si entra con
-        trackpad) se revela el entorno 3D con los "hilos" de fondo, y
-        el eslogan encoge y sube arriba del todo para no solaparse con
-        lo que aparece detrás — ver revealScene() más abajo.
+        que el usuario mueve el ratón.
+     2) En cuanto lo mueve, se revela el entorno 3D con los "hilos" de
+        fondo, y el eslogan encoge y sube arriba del todo para no
+        solaparse con lo que aparece detrás — ver revealScene() y
+        requestReveal() más abajo. (El scroll NO cuenta como
+        interacción aquí a propósito: puede dispararse solo, sin que
+        el usuario haya tocado nada — ver el listener de scroll.)
    En móvil (sin ratón) o con movimiento reducido, se mantiene la
    entrada simple de siempre: todo visible desde el principio. */
 const desktopIntro = !isTouchDevice && !prefersReducedMotion;
@@ -794,6 +796,21 @@ function revealScene() {
        un instante de arranque lento — se nota más fluido y reactivo. */
     .to('.hero-content',  { y: '-20vh', scale: 0.34, duration: 1.3, ease: 'power2.out' }, 0.1)
     .to('.hero-hint',     { opacity: 1, y: 0, duration: 0.8 }, 0.5);
+}
+
+/* Si el usuario mueve el ratón (o hace scroll) MIENTRAS el eslogan
+   todavía está cayendo, no revelamos a medias — eso es lo que se veía
+   "raro": las dos animaciones (la caída y el encogido) peleándose por
+   el mismo elemento a la vez. En vez de eso, lo dejamos apuntado
+   (pendingReveal) y se revela solo en cuanto la caída termina de
+   asentarse (ver intro.eventCallback('onComplete') más abajo) — así
+   el primer acto (pantalla negra + eslogan) se ve siempre completo,
+   sea cual sea el timing con el que el usuario interactúe. */
+let pendingReveal = false;
+function requestReveal() {
+  if (revealed) return;
+  if (intro.progress() < 1) { pendingReveal = true; return; }
+  revealScene();
 }
 
 /* Sin "y" aquí (a diferencia del resto de la entrada) — un transform
@@ -822,6 +839,12 @@ if (desktopIntro) {
        un solo gesto continuo, sin el latigazo final — se ve más
        fluido y menos "juguetón". */
     .to('.hero-content', { opacity: 1, y: 0, duration: 1.4, ease: 'power2.out' }, '-=0.5');
+
+  /* Si ya se pidió revelar mientras caía (pendingReveal), se dispara
+     en cuanto termina de asentarse, sin esperar a un segundo gesto. */
+  intro.eventCallback('onComplete', () => {
+    if (pendingReveal) revealScene();
+  });
 } else {
   gsap.set(['.hero-tag', '.hero-title', '.hero-subtitle', '.hero-hint'], { opacity: 0, y: 28 });
   intro
@@ -838,15 +861,14 @@ if (desktopIntro) {
 window.addEventListener('scroll', () => {
   const hint = document.getElementById('heroHint');
 
-  /* Si esto es lo que dispara la primera revelación (alguien que hace
-     scroll con el trackpad sin haber movido antes el ratón), dejamos
-     que sea la animación de revealScene() la que controle la opacidad
-     esta vez — si la pisáramos aquí también, se pelearían las dos y
-     el fade-in daría un salto en vez de verse suave. */
-  const justRevealed = desktopIntro && !revealed;
-  if (desktopIntro) revealScene();
-
-  if (!justRevealed) {
+  /* El scroll NUNCA dispara la revelación por su cuenta (a diferencia
+     de versiones anteriores): un scroll puede llegar sin que el
+     usuario haya tocado nada — por ejemplo, el scrollTo(0,0) de más
+     arriba, al recargar la página con un scroll restaurado, genera un
+     evento "scroll" real sin intervención suya. Solo el ratón
+     (pointermove, ver requestReveal()) cuenta como interacción. Hasta
+     que eso pase, esto se queda tal y como lo deja la entrada. */
+  if (!desktopIntro || revealed) {
     hint.style.opacity = Math.max(0, 1 - window.scrollY / 200);
 
     sceneOpacity = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.7));
